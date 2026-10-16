@@ -1,0 +1,9 @@
+{
+  "name": "@spark/game-core",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@spark/shared": "workspace:*"
+  }
+}
