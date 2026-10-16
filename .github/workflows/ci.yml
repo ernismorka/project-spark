@@ -16,7 +16,9 @@ jobs:
       - run: pnpm test
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium firefox
-      - run: pnpm test:e2e
+      - run: xvfb-run -a pnpm test:e2e --headed
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
