@@ -4,6 +4,7 @@
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
-    "@spark/shared": "workspace:*"
+    "@spark/shared": "workspace:*",
+    "@spark/electronics": "workspace:*"
   }
 }

@@ -61,8 +61,17 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@26.6.5)
 
+  packages/electronics:
+    dependencies:
+      '@spark/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   packages/game-core:
     dependencies:
+      '@spark/electronics':
+        specifier: workspace:*
+        version: link:../electronics
       '@spark/shared':
         specifier: workspace:*
         version: link:../shared

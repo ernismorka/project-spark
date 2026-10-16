@@ -31,3 +31,4 @@ export {
   horizontalDistance,
 } from "./world";
 export { movePlayer, recoverPlayer } from "./movement";
+export { diagnosticCircuit, diagnosticPoints } from "./diagnosis";
