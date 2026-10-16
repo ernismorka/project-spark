@@ -24,95 +24,97 @@ export function DiagnosticPanel({
     }).format(v);
   return (
     <div className="diagnostics">
-      <p>{t.intro}</p>
-      <svg viewBox="0 0 520 145" role="img" aria-label={t.scope}>
-        <g fill="none" stroke="#d7ee91" strokeWidth="3">
-          <path d="M55 105V35H150m70 0h70m0 0h70m0 0h80v70H55" />
-          <circle cx="55" cy="70" r="21" fill="#17343e" />
-          <path d="M45 64h20m-10-10v20m-10 10h20" />
+      <div className="diagnostic-content">
+        <p>{t.intro}</p>
+        <svg viewBox="0 0 520 145" role="img" aria-label={t.scope}>
+          <g fill="none" stroke="#d7ee91" strokeWidth="3">
+            <path d="M55 105V35H150m70 0h70m0 0h70m0 0h80v70H55" />
+            <circle cx="55" cy="70" r="21" fill="#17343e" />
+            <path d="M45 64h20m-10-10v20m-10 10h20" />
 
-          <rect x="150" y="23" width="70" height="24" fill="#17343e" />
-          <rect x="360" y="23" width="70" height="24" fill="#17343e" />
-          <path d="M440 105v14m-16 0h32m-27 7h22m-17 7h12" />
-        </g>
-        <g fill="#edf3ee" fontSize="13" fontFamily="inherit">
-          <text x="25" y="18">
-            V1 · 5 V
-          </text>
-          <text x="154" y="17">
-            R1 · 1 kΩ
-          </text>
-          <text x="364" y="17">
-            R2 · 1 kΩ
-          </text>
-          <text x="92" y="67">
-            VCC
-          </text>
-          <text x="253" y="18">
-            SENSE
-          </text>
-          <text x="320" y="128">
-            GND
-          </text>
-        </g>
-        <circle cx="110" cy="35" r="5" fill="#f4bd6b" />
-        <circle cx="290" cy="35" r="5" fill="#f4bd6b" />
-      </svg>
-      <p className="reference">{t.reference}</p>
-      <fieldset>
-        <legend>{t.evidence}</legend>
-        <div className="measurement-grid">
-          {diagnosticPoints.map((point) => (
-            <div key={point}>
-              <strong>{point}</strong>
-              <output aria-label={`${point} V`}>
-                {Object.hasOwn(state.readings, point)
-                  ? `${format(state.readings[point])} V`
-                  : t.unmeasured}
-              </output>
+            <rect x="150" y="23" width="70" height="24" fill="#17343e" />
+            <rect x="360" y="23" width="70" height="24" fill="#17343e" />
+            <path d="M440 105v14m-16 0h32m-27 7h22m-17 7h12" />
+          </g>
+          <g fill="#edf3ee" fontSize="13" fontFamily="inherit">
+            <text x="25" y="18">
+              V1 · 5 V
+            </text>
+            <text x="154" y="17">
+              R1 · 1 kΩ
+            </text>
+            <text x="364" y="17">
+              R2 · 1 kΩ
+            </text>
+            <text x="92" y="67">
+              VCC
+            </text>
+            <text x="253" y="18">
+              SENSE
+            </text>
+            <text x="320" y="128">
+              GND
+            </text>
+          </g>
+          <circle cx="110" cy="35" r="5" fill="#f4bd6b" />
+          <circle cx="290" cy="35" r="5" fill="#f4bd6b" />
+        </svg>
+        <p className="reference">{t.reference}</p>
+        <fieldset>
+          <legend>{t.evidence}</legend>
+          <div className="measurement-grid">
+            {diagnosticPoints.map((point) => (
+              <div key={point}>
+                <strong>{point}</strong>
+                <output aria-label={`${point} V`}>
+                  {Object.hasOwn(state.readings, point)
+                    ? `${format(state.readings[point])} V`
+                    : t.unmeasured}
+                </output>
+                <button
+                  disabled={Object.hasOwn(state.readings, point) || identified}
+                  onClick={() =>
+                    dispatch({ type: "measure-node", target: point })
+                  }
+                >
+                  {t.measure} {point}
+                </button>
+              </div>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>{t.hypothesis}</legend>
+          {!ready && <p>{t.need}</p>}
+          <div className="fault-options">
+            {faultChoices.map((fault) => (
               <button
-                disabled={Object.hasOwn(state.readings, point) || identified}
-                onClick={() =>
-                  dispatch({ type: "measure-node", target: point })
-                }
+                key={fault}
+                disabled={!ready || identified}
+                onClick={() => dispatch({ type: "submit-diagnosis", fault })}
               >
-                {t.measure} {point}
+                {t.faults[fault]}
               </button>
-            </div>
-          ))}
+            ))}
+          </div>
+        </fieldset>
+        <div
+          role="status"
+          className={
+            identified ? "diagnosis-feedback success" : "diagnosis-feedback"
+          }
+        >
+          {state.outcome === "incorrect" ? (
+            t.incorrect
+          ) : identified ? (
+            <>
+              <strong>{t.identified}</strong>
+              <p>{t.explanation}</p>
+            </>
+          ) : null}
         </div>
-      </fieldset>
-      <fieldset>
-        <legend>{t.hypothesis}</legend>
-        {!ready && <p>{t.need}</p>}
-        <div className="fault-options">
-          {faultChoices.map((fault) => (
-            <button
-              key={fault}
-              disabled={!ready || identified}
-              onClick={() => dispatch({ type: "submit-diagnosis", fault })}
-            >
-              {t.faults[fault]}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-      <div
-        role="status"
-        className={
-          identified ? "diagnosis-feedback success" : "diagnosis-feedback"
-        }
-      >
-        {state.outcome === "incorrect" ? (
-          t.incorrect
-        ) : identified ? (
-          <>
-            <strong>{t.identified}</strong>
-            <p>{t.explanation}</p>
-          </>
-        ) : null}
+        <p className="model-limits">{t.limits}</p>
       </div>
-      <p className="model-limits">{t.limits}</p>
       <button
         className="primary"
         onClick={() => dispatch({ type: "close-diagnostics" })}

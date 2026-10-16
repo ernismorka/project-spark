@@ -615,3 +615,34 @@ footer {
     padding: 10px;
   }
 }
+.diagnostic-menu {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 95%;
+}
+.diagnostic-menu > h2,
+.diagnostic-menu > .eyebrow {
+  flex-shrink: 0;
+}
+.diagnostics {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+.diagnostic-content {
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 8px;
+}
+.diagnostics > .primary {
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 12px !important;
+}
+@media (max-width: 600px) {
+  .diagnostic-menu {
+    max-height: 95%;
+  }
+}

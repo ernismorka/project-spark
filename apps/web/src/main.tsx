@@ -98,6 +98,9 @@ function App() {
     }
     if (document.pointerLockElement === canvas.current)
       document.exitPointerLock();
+    menu.current
+      ?.querySelector<HTMLElement>(".diagnostic-content")
+      ?.scrollTo(0, 0);
     if (document.activeElement?.tagName !== "SELECT")
       menu.current
         ?.querySelector<HTMLButtonElement>("button:not(:disabled)")
