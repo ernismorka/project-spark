@@ -75,8 +75,11 @@ function App() {
           setStatus("ready");
         }
       })
-      .catch(() => {
-        if (!controller.signal.aborted) setStatus("error");
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) {
+          console.error("Scene initialization failed", error);
+          setStatus("error");
+        }
       });
     return () => {
       controller.abort();
@@ -86,7 +89,8 @@ function App() {
   }, [attempt, mounted, dispatch, publish]);
   useEffect(() => {
     if (session.phase === "playing") {
-      canvas.current?.focus();
+      canvas.current?.focus({ preventScroll: true });
+      window.scrollTo(0, 0);
       return;
     }
     if (document.pointerLockElement === canvas.current)
@@ -240,7 +244,7 @@ function App() {
                             key={c.id}
                             onClick={() => {
                               setSelected(c.id);
-                              canvas.current?.focus();
+                              canvas.current?.focus({ preventScroll: true });
                             }}
                           >
                             {c.id} · {g.componentNames[c.kind]}

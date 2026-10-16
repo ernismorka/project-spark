@@ -33,7 +33,7 @@ export function bindInput(
   };
   const lock = () => {
     if (get().phase === "playing" && !disposed) {
-      canvas.focus();
+      canvas.focus({ preventScroll: true });
       canvas.requestPointerLock?.()?.catch(() => {
         /* Drag-to-orbit remains available when the browser denies lock. */
       });

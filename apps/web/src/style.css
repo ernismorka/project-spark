@@ -503,3 +503,13 @@ footer {
     margin: auto;
   }
 }
+.in-game .game-viewport {
+  height: calc(100dvh - 270px);
+  min-height: 360px;
+}
+.gameplay .status {
+  flex-shrink: 0;
+}
+.gameplay .scene-top > div {
+  min-width: 0;
+}

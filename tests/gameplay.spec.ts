@@ -138,7 +138,11 @@ test("context loss/retry and session unmount/remount clean up input and preserve
       callback,
       options,
     ) {
-      if (callback && watched(this, type)) {
+      if (
+        callback &&
+        watched(this, type) &&
+        !String(callback).includes("_hitTargetInterceptor")
+      ) {
         if (!listeners.has(type)) listeners.set(type, new Set());
         listeners.get(type)!.add(callback);
       }
@@ -149,7 +153,11 @@ test("context loss/retry and session unmount/remount clean up input and preserve
       callback,
       options,
     ) {
-      if (callback && watched(this, type))
+      if (
+        callback &&
+        watched(this, type) &&
+        !String(callback).includes("_hitTargetInterceptor")
+      )
         listeners.get(type)?.delete(callback);
       remove.call(this, type, callback, options);
     };
