@@ -1,3 +1,5 @@
+import { DiagnosticPanel } from "./DiagnosticPanel";
+import { diagnosisCopy } from "./diagnosis-i18n";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -28,7 +30,8 @@ function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const menu = useRef<HTMLDivElement>(null);
   const t = messages[state.language],
-    g = gameplay[state.language];
+    g = gameplay[state.language],
+    d = diagnosisCopy[state.language];
   const publish = useCallback(() => setSession(current.current), []);
   const dispatch = useCallback(
     (command: ExplorationCommand, notify = true) => {
@@ -97,7 +100,7 @@ function App() {
       document.exitPointerLock();
     if (document.activeElement?.tagName !== "SELECT")
       menu.current
-        ?.querySelector<HTMLButtonElement>("button")
+        ?.querySelector<HTMLButtonElement>("button:not(:disabled)")
         ?.focus({ preventScroll: true });
   }, [session.phase]);
   const nearby = nearbyComponents(session);
@@ -130,7 +133,7 @@ function App() {
       <header>
         <a className="brand" href="./" aria-label="Project Spark">
           <span className="logo">ϟ</span> project<span>spark</span>
-          <small>M1</small>
+          <small>M2</small>
         </a>
         <div className="header-actions">
           {session.phase === "playing" && (
@@ -163,7 +166,7 @@ function App() {
       </header>
       {session.phase === "title" && (
         <section className="intro">
-          <p className="eyebrow">{g.mission} / M1</p>
+          <p className="eyebrow">{g.mission} / M2</p>
           <h1>{t.title}</h1>
           <p>{g.brief}</p>
         </section>
@@ -287,7 +290,11 @@ function App() {
                   }
                 >
                   <div
-                    className="game-menu"
+                    className={
+                      session.phase === "diagnosing"
+                        ? "game-menu diagnostic-menu"
+                        : "game-menu"
+                    }
                     ref={menu}
                     role="dialog"
                     aria-modal="true"
@@ -298,13 +305,15 @@ function App() {
                           ? g.paused
                           : session.phase === "complete"
                             ? g.complete
-                            : g.selected
+                            : session.phase === "diagnosing"
+                              ? d.title
+                              : g.selected
                     }
                     onKeyDown={(e) => {
                       if (e.key === "Tab") {
                         const buttons = Array.from(
                           e.currentTarget.querySelectorAll<HTMLButtonElement>(
-                            "button",
+                            "button:not(:disabled)",
                           ),
                         );
                         if (
@@ -333,9 +342,11 @@ function App() {
                           ? g.paused
                           : session.phase === "complete"
                             ? g.complete
-                            : inspected
-                              ? `${inspected.id} · ${g.componentNames[inspected.kind]}`
-                              : ""}
+                            : session.phase === "diagnosing"
+                              ? d.title
+                              : inspected
+                                ? `${inspected.id} · ${g.componentNames[inspected.kind]}`
+                                : ""}
                     </h2>
                     {session.phase === "title" && (
                       <>
@@ -369,9 +380,22 @@ function App() {
                         </button>
                       </>
                     )}
+                    {session.phase === "diagnosing" && session.diagnosis && (
+                      <DiagnosticPanel
+                        state={session.diagnosis}
+                        language={state.language}
+                        dispatch={dispatch}
+                      />
+                    )}
                     {session.phase === "complete" && (
                       <>
                         <p>{g.completedBody}</p>
+                        <button
+                          className="primary"
+                          onClick={() => dispatch({ type: "open-diagnostics" })}
+                        >
+                          {d.open}
+                        </button>
                         <p>{g.terminal}</p>
                         <button
                           className="primary"
@@ -385,8 +409,12 @@ function App() {
                         <button onClick={end}>{g.returnTitle}</button>
                       </>
                     )}
-                    <p className="menu-controls">{g.controls}</p>
-                    <p className="menu-controls">{g.camera}</p>
+                    {session.phase !== "diagnosing" && (
+                      <p className="menu-controls">{g.controls}</p>
+                    )}
+                    {session.phase !== "diagnosing" && (
+                      <p className="menu-controls">{g.camera}</p>
+                    )}
                   </div>
                 </div>
               )}

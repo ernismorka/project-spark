@@ -54,7 +54,7 @@ const en: Copy = {
   completedBody:
     "You identified the components and reached the controller. The real repair is still ahead.",
   terminal:
-    "The controller is malfunctioning. Its repair will require a closer investigation in M2. No electrical measurements are available yet.",
+    "The controller is malfunctioning. Open the terminal diagnostics to investigate a separate DC training circuit. Repair and MCU execution are not available.",
   controls:
     "WASD · Walk   Shift · Run   Space · Jump   E · Inspect   F · Identify   Esc · Pause",
   camera:
@@ -112,7 +112,7 @@ const lt: Copy = {
   completedBody:
     "Atpažinai komponentus ir pasiekei valdiklį. Tikrasis remontas dar laukia.",
   terminal:
-    "Valdiklis neveikia tinkamai. Jo remontui reikės išsamesnio tyrimo M2 etape. Elektros matavimų kol kas nėra.",
+    "Valdiklis neveikia tinkamai. Terminalo diagnostikoje gali ištirti atskirą mokomąją nuolatinės srovės grandinę. Remontas ir mikrovaldiklio programos vykdymas neprieinami.",
   controls:
     "WASD · Eiti   Shift · Bėgti   Space · Šokti   E · Apžiūrėti   F · Atpažinti   Esc · Pauzė",
   camera:
