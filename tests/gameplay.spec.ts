@@ -283,3 +283,18 @@ test("records an observational 1080p frame sample and responsive menu captures",
     ),
   ).toBe(true);
 });
+
+test("keyboard language selection pauses gameplay without stealing selector focus", async ({
+  page,
+}) => {
+  await begin(page);
+  await page.getByRole("combobox").focus();
+  await expect(page.getByRole("combobox")).toBeFocused();
+  await page.getByRole("combobox").selectOption("lt");
+  await expect(page.locator("canvas")).toHaveAttribute("data-phase", "paused");
+  await expect(
+    page.getByRole("button", { name: "Tęsti tyrinėjimą" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Tęsti tyrinėjimą" }).click();
+  await expect(page.locator("canvas")).toHaveAttribute("data-phase", "playing");
+});

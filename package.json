@@ -13,7 +13,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build": "pnpm --filter @spark/web build",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "verify": "node scripts/verify.mjs",
+    "doctor:project": "node scripts/doctor.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

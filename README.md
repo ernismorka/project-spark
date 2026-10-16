@@ -50,3 +50,7 @@ Linux CI installs browsers with `--with-deps` and runs headed tests under Xvfb/s
 5. Lose WebGL context using browser tools; verify explicit error, retry and preserved progress. End session/remount several times; verify one canvas, no stuck input or stale callbacks.
 
 See docs/GDD.md, docs/ARCHITECTURE.md, docs/ROADMAP.md and docs/VALIDATION-M1.md for scope and actual validation. Performance targets are not certified on representative midrange hardware. Session progress is not saved across reloads.
+
+## Autonomous development
+
+`pnpm doctor:project` checks versions and installed browser binaries. `pnpm verify` runs every quality gate sequentially and fails on the first unsuccessful stage. CI runs the same verifier, with headed browsers under Xvfb. See AGENTS.md, docs/AUTONOMOUS_WORKFLOW.md, docs/EXECUTION_PLAN.md and docs/DEVELOPMENT_STATUS.md for standing instructions, environment limits and exact session handoff. No scheduled runner is enabled automatically.

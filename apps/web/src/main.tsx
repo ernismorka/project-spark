@@ -95,7 +95,10 @@ function App() {
     }
     if (document.pointerLockElement === canvas.current)
       document.exitPointerLock();
-    menu.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    if (document.activeElement?.tagName !== "SELECT")
+      menu.current
+        ?.querySelector<HTMLButtonElement>("button")
+        ?.focus({ preventScroll: true });
   }, [session.phase]);
   const nearby = nearbyComponents(session);
   const target = nearby.find((c) => c.id === selected) ?? nearby[0];
