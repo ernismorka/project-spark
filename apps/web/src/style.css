@@ -1,0 +1,281 @@
+:root {
+  font-family:
+    Inter,
+    Segoe UI,
+    sans-serif;
+  color: #edf3ee;
+  background: #101f28;
+  font-synthesis: none;
+  font-weight: 400;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 1440px;
+  margin: auto;
+  padding: 0 6%;
+}
+header {
+  min-height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ffffff18;
+}
+.brand {
+  color: #f3f4eb;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  letter-spacing: -1px;
+}
+.brand > span:not(.logo) {
+  font-weight: 750;
+}
+.logo {
+  display: grid;
+  place-items: center;
+  background: #d7ee91;
+  color: #172b30;
+  border-radius: 12px;
+  width: 39px;
+  height: 43px;
+  font-size: 36px;
+  margin-right: 12px;
+}
+.brand small {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  border: 1px solid #648077;
+  border-radius: 4px;
+  padding: 6px;
+  margin-left: 17px;
+  color: #b9d4b5;
+}
+label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 12px;
+  color: #a7b9be;
+}
+select,
+button {
+  font: inherit;
+  background: #21343e;
+  color: #edf3ee;
+  border: 1px solid #566972;
+  border-radius: 7px;
+  padding: 10px;
+  cursor: pointer;
+}
+select:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #d7ee91;
+  outline-offset: 4px;
+}
+.intro {
+  padding: 65px 0 38px;
+  max-width: 720px;
+}
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #cde79c;
+  margin: 0 0 15px;
+}
+h1 {
+  font-size: clamp(34px, 4.1vw, 58px);
+  line-height: 1.09;
+  letter-spacing: -2px;
+  margin: 0 0 22px;
+  font-weight: 600;
+}
+.intro > p:last-child {
+  color: #a8bbc1;
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 550px;
+}
+.scene {
+  border: 1px solid #ffffff20;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #152b35;
+}
+.scene-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+}
+.scene-top .eyebrow {
+  font-size: 9px;
+  margin-bottom: 8px;
+  color: #94b1ba;
+}
+h2 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+}
+.status {
+  font-size: 11px;
+  color: #d7ee91;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.status:before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+}
+.status.error {
+  color: #ffb19d;
+}
+.viewport {
+  height: 430px;
+  position: relative;
+  background: #152b35;
+}
+.viewport canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.scene-caption {
+  position: absolute;
+  bottom: 18px;
+  left: 28px;
+  font-size: 10px;
+  color: #a8bec3;
+  pointer-events: none;
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 25px;
+  background: #152b35;
+}
+.overlay p {
+  max-width: 450px;
+  line-height: 1.6;
+  color: #b6c5c8;
+}
+.orb {
+  font-size: 38px;
+  color: #d7ee91;
+  margin-bottom: 18px;
+}
+.scene-bottom {
+  padding: 16px 28px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #ffffff12;
+  font-size: 10px;
+  color: #91abb5;
+  letter-spacing: 1px;
+}
+.below {
+  padding: 32px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 36px;
+}
+.below .eyebrow {
+  font-size: 9px;
+  color: #94aeb7;
+  margin-bottom: 10px;
+}
+.below h2 span {
+  color: #d7ee91;
+  margin-left: 15px;
+}
+.below p {
+  font-size: 12px;
+  color: #91abb5;
+  line-height: 1.7;
+}
+.below > p {
+  max-width: 285px;
+}
+footer {
+  border-top: 1px solid #ffffff18;
+  padding: 24px 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #7f9ba6;
+}
+@media (max-width: 600px) {
+  main {
+    padding: 0 5%;
+  }
+  header {
+    min-height: 85px;
+    gap: 15px;
+  }
+  .brand {
+    font-size: 19px;
+  }
+  .brand small {
+    display: none;
+  }
+  label {
+    font-size: 0;
+    gap: 0;
+  }
+  select {
+    font-size: 12px;
+  }
+  .intro {
+    padding-top: 40px;
+  }
+  h1 {
+    letter-spacing: -1px;
+  }
+  .scene-top {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+  .scene-top h2 {
+    font-size: 17px;
+  }
+  .status {
+    max-width: 100px;
+    font-size: 10px;
+  }
+  .viewport {
+    height: 330px;
+  }
+  .scene-caption {
+    left: 16px;
+    font-size: 9px;
+  }
+  .below {
+    flex-direction: column;
+    gap: 0;
+  }
+  .scene-bottom {
+    padding: 16px;
+  }
+  footer {
+    font-size: 8px;
+  }
+}
