@@ -16,13 +16,13 @@ M0 baseline/merge and CI verified. Implemented procedural PCB and engineer; fixe
 - Pause, jump, collision, zoom/orbit, pointer release and localization: browser checks plus camera/domain tests.
 - Cleanup: observed game input listeners removed on session unmount (known Playwright hit-test callbacks excluded); retry retains progress and remount starts clean.
 - Architecture/security: no React, engine or browser imports in domain packages; serializable commands validated at core boundary; no backend, credentials, telemetry, player code execution or networking added.
-- 17 unit tests passed. Original M0 tests retained. Last verified CI on f0f5c47: 16/16 Chromium/Firefox browser checks plus lint/types/units/build passed at https://github.com/ernismorka/project-spark/actions/runs/38916007502. Final expanded 18-check suite/common verifier to be confirmed on the final commit.
+- 17 unit tests passed. Original M0 tests retained. Implementation/setup CI on 7a715f9: project doctor and the common verifier passed, including lint/types/17 unit tests/build and 18/18 Chromium/Firefox browser checks at https://github.com/ernismorka/project-spark/actions/runs/38917152835. This evidence update changes documentation only; consult PR checks for the latest documentation commit.
 - Local Windows full run: 8 Chromium checks passed, 8 Firefox launch failures with spawn UNKNOWN. Added keyboard language-focus test passed separately. See docs/VALIDATION-M1.md for exact outcomes and performance caveats.
 
 ## Remaining tasks
 
-1. Confirm latest CI runs the common verifier and all 18 browser checks, resolve any failure, and record the actual result.
-2. Complete self-review and PR description with final screenshots/results/limitations.
+1. Completed: common verifier and all 18 browser checks confirmed green; evidence recorded.
+2. Completed: self-review and reviewable PR with gameplay screenshots, actual results and limitations.
 3. Human review and explicit merge authorization for PR #2. No automatic merge.
 4. Representative midrange laptop performance and new-player pacing playtest remain unverified product targets; do not invent certification.
 
