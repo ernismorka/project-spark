@@ -1,9 +1,9 @@
 # Development status
 
-2026-10-16 — M1 PR #2 is confirmed merged, so M2 began from main 5c84a1a on codex/m2-electrical-reasoning. Prior M0/M1 implementation and tests are retained. This session has not merged any PR.
+M2 is implemented on codex/m2-electrical-reasoning from merged M1 main 5c84a1a. PR #3: https://github.com/ernismorka/project-spark/pull/3 is open and unmerged. This session merged no PR.
 
-Implemented: bounded deterministic linear DC solver, validated circuit/result contracts, explicit topology/numerical errors, terminal measurement/evidence/diagnosis commands and EN/LT schematic/diagnostic UI. No external dependency upgrade, nonlinear/transient model, repair, MCU execution or multiplayer.
+Completed: bounded deterministic ideal linear DC solver, validated serializable contracts, explicit topology/numerical failures, terminal evidence/diagnosis commands and EN/LT schematic/measurement UI. No external package upgrades, nonlinear/transient simulation, repairs, MCU execution, backend or multiplayer.
 
-Validation so far: 57 unit tests pass, typecheck and production build pass. Browser regression/full diagnosis validation is in progress. Next: inspect actual terminal captures, run full quality gate including CI Chromium/Firefox, fix failures, update evidence and open M2 PR. Local Windows Firefox launch and unmeasured representative-hardware performance remain environmental/product limitations.
+Evidence: lint/types/build and 57 unit tests pass. Common-verifier CI at 8480cb4 passes 18/18 Chromium/Firefox browser checks: https://github.com/ernismorka/project-spark/actions/runs/38965501728. Local mission rerun completed diagnosis and narrow-panel checks; actual EN/LT captures are saved. Full local verify cannot be called passing because Windows Firefox fails to launch and an interrupted route run timed out before a successful rerun. Exact results, numerical benchmark, fixes and known performance limits are in VALIDATION-M2.md. Latest evidence/footer-copy commit needs its own CI check before final handoff.
 
-Durable scope: M2_SIMULATION_SCOPE.md. Current tasks: EXECUTION_PLAN.md. After a reviewable M2 PR, await explicit merge authorization before dependent M3 implementation. No recurring execution task has been scheduled.
+Next: inspect latest PR checks, then human review/explicit merge authorization. M3 planning exists in M3_PREPARATION.md; dependent implementation must wait for the approved M2 baseline. Current acceptance and continuation instructions: EXECUTION_PLAN.md. No recurring task, automatic restart or production deployment was configured.

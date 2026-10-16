@@ -431,7 +431,7 @@ function App() {
       </section>
       <footer>
         <span>PROJECT SPARK © 2026</span>
-        <span>{g.scanner}</span>
+        <span>{session.phase === "diagnosing" ? d.scope : g.scanner}</span>
       </footer>
     </main>
   );
