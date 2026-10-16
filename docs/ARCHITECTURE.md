@@ -1,23 +1,29 @@
 # Architecture
 
-## Modules
+## Modules and authority
 
-apps/web owns React UI, browser lifecycle, input translation and PlayCanvas rendering. packages/shared exports serializable contracts and language identifiers. packages/game-core owns immutable state and command validation. packages/electronics currently contains only scope documentation: no empty executable abstraction or pretend solver.
+apps/web owns React UI, browser lifecycle, input translation and PlayCanvas rendering. packages/shared exports serializable contracts, entity IDs and state types. packages/game-core owns the board metadata, collision dimensions, fixed-step movement, checkpoint recovery, interaction eligibility and First Contact progression. packages/electronics remains documentation only. No dependencies were added or upgraded for M1.
 
-## Commands and authority
+Input -> validated command -> game-core -> state -> presentation. The existing M0 createGame/execute language API and its tests are preserved. M1 adds a separate createSession/commandSession API. Unknown/malformed gameplay commands and invalid actions return the identical state. Domain code uses no browser globals, engine, wall clock or randomness. Commands do not accept client-reported positions or mission events. The local client executes authoritative rules; a future server could use the same functions, but ownership, transport and synchronization are not implemented. Player IDs and optional future device references are serializable.
 
-Input -> validated command -> game-core -> updated state -> presentation. Language selection demonstrates the flow with set-language and a revision counter; it is a local session preference, not a future shared-world setting. execute accepts unknown input, validates type and supported language, rejects malformed input and returns deterministic state. Identical no-op commands retain the original state. No clocks, random values or browser globals occur in domain code.
+## Motion and interactions
 
-The local MVP runs its own authoritative core. A future Colyseus server may call the same domain functions after authentication/authorization and command ordering are specified. No Colyseus dependency, transport or speculative server framework exists now.
+Movement runs at 60 fixed steps/second; browser frame deltas accumulate with a 100 ms catch-up cap. Input is a normalized world-space direction with run/jump flags. Values are configured in game-core/world.ts and browser key bindings in game/input.ts. Axis-separated collision approximates the engineer as a cylinder against expanded static boxes, with downward swept top detection, acceleration, deceleration and gravity. This intentionally small solver supports one static board and stepped platforms, not general rigid bodies. Edges permit falling; below -8 units or beyond the recovery envelope the engineer returns to the starting checkpoint without losing mission progress.
+
+Interaction commands carry stable component IDs. Core validates phase, capabilities, horizontal range (5 units) and player height. Nearby candidates are ordered by distance; the nearest is selected initially and UI buttons allow explicit selection. E inspects; F identifies supported components. Inspection is a domain phase that freezes motion and opens a localized panel. No raycast-dependent mission rules or electrical measurements exist.
+
+The six mission stages are strictly ordered: leave pad, inspect resistor, scan a different type, approach MCU, use terminal, completion. Core derives movement objectives from validated positions. Discovery lists deduplicate IDs. Early exploration is allowed without skipping objectives; actions must be repeated at the relevant stage.
 
 ## Rendering and lifecycle
 
-The official standalone engine API uses createGraphicsDevice, AppBase and only render/camera/light systems. WebGL 2 is explicit; pixel ratio is capped at 1.5. Primitive meshes and local materials need no asset download. React asynchronously loads the scene, tracks loading/ready/error independently of game state, and cleans up on unmount/retry. Aborted initialization destroys its device. ResizeObserver tracks canvas size. Disposal releases app, materials and observer; context loss displays an error. Retry creates a new canvas. A failed renderer never reports ready.
+Scene bootstrap preserves AppBase with only render/camera/light systems. game/geometry.ts owns reusable materials; game/world.ts builds procedural component and engineer visuals; game/input.ts owns browser listeners and pointer lock; game/camera.ts owns orbit, smooth follow, zoom, pitch clamp and segment-vs-expanded-box camera obstruction. Camera collision pulls the camera toward the player before an obstruction. Minimum near clip is 0.08. Visual limbs animate from velocity; no mission rules exist in renderer code.
 
-## Localization
+React keeps the authoritative session in a ref for synchronous command processing and publishes immutable snapshots at 10 Hz for HUD updates. Canvas data attributes expose read-only position/phase/camera observations for browser verification; no test teleport, injected progression command or global cheat API exists. Menus focus their first button and trap Tab inside the dialog. Resume returns focus to canvas. Clicking canvas requests pointer lock; dragging is also supported if denied. Escape, blur, menu transition and context loss clear input and release lock. Losing pointer lock pauses play.
 
-Typed English/Lithuanian dictionaries cover visible copy and canvas labels. The selector dispatches a core command; React derives copy from state and sets document language. No persistence is promised. No backend or secrets.
+ResizeObserver follows the canvas container. Retry replaces the canvas and recreates graphics while preserving the paused session. End session unmounts rendering. Cleanup is idempotent and removes input listeners/update callback/observer, releases lock, destroys app/entities/device and materials. An aborted async graphics bootstrap destroys its device. Initialization failures remain an explicit error state. WebGL 2, pixel ratio <=1.5, procedural primitives and no postprocessing keep asset cost small.
 
-## Simulation and testing
+## Localization and tests
 
-Future electronics work must define supported components, units, deterministic iteration order, numerical tolerances and convergence failure before implementation. No electrical behavior is simulated today. Vitest runs domain tests in Node; Playwright tests Chromium/Firefox production builds, language switching, error-free application startup and deliberately denied WebGL. An allowed fallback is distinct from successful rendering; inspect test results and renderer status when reporting compatibility. CI runs formatting, lint, types, units, build and browser checks. No browser-specific logic enters the domain.
+Typed English/Lithuanian dictionaries include objectives, component explanations, controls, menus and feedback. Language selection pauses active play and updates document language; preferences and progress are session-only. No backend, accounts or telemetry.
+
+Vitest runs deterministic domain fixtures plus pure camera tests in Node. Playwright preserves M0 coverage and adds real-keyboard mission traversal, jump/collision/zoom, pause/resume, loss/retry and unmount/remount checks. Tests observe state through canvas data attributes and use ordinary input and UI, never bypassing core rules. CI retains Chromium and Firefox, using Xvfb/software GL for strict real rendering. Local Windows Firefox launch may be blocked by the known environment error; this does not remove Firefox CI coverage. Performance targets need representative hardware measurements; no 60 FPS certification is claimed.
