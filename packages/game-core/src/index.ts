@@ -17,3 +17,17 @@ export function execute(state: GameState, command: unknown): GameState {
     ? state
     : { ...state, language, revision: state.revision + 1 };
 }
+export {
+  createSession,
+  commandSession,
+  canInteract,
+  nearbyComponents,
+} from "./session";
+export {
+  world,
+  components,
+  solids,
+  movement,
+  horizontalDistance,
+} from "./world";
+export { movePlayer, recoverPlayer } from "./movement";

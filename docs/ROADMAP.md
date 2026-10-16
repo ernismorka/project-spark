@@ -9,4 +9,4 @@
 | M4 Creative programming | Circuit building and constrained block/text microcontroller environment                   | Equivalent blocks/text produce deterministic results; execution bounded and isolated; no arbitrary JavaScript   |
 | M5 Cooperative pilot    | Colyseus authority using shared domain, synchronized roles and recovery                   | Two clients cooperate; malformed commands rejected; reconnect and ordering tested; no premature scale promises  |
 
-M1 requires a separate implementation request. Multiplayer begins only after the first complete playable episode. Prioritize accessibility and technical accuracy throughout.
+M1 implements First Contact: third-person walk/run/jump, orbit camera, static collision, identification and ordered introductory objectives. Acceptance is gated by domain tests and real-input browser completion, including teardown and WebGL handling. User pacing and 60 FPS on target hardware remain playtest/measurement work. Multiplayer begins only after the first complete playable episode. Prioritize accessibility and technical accuracy throughout.

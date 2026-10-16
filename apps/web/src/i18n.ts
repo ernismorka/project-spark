@@ -21,7 +21,7 @@ const en = {
   episode: "The Dark Circuit",
   description: "A silent device. A world waiting to light up.",
   mark: "FOUNDATION",
-  canvas: "Stylized circuit board technical scene",
+  canvas: "Miniature engineer exploring a circuit board",
 };
 const lt: typeof en = {
   language: "Kalba",
@@ -45,6 +45,6 @@ const lt: typeof en = {
   episode: "Tamsioji grandinė",
   description: "Tylus įrenginys. Pasaulis, laukiantis šviesos.",
   mark: "PAMATAI",
-  canvas: "Stilizuotos plokštės techninė scena",
+  canvas: "Miniatiūrinis inžinierius tyrinėja plokštę",
 };
 export const messages: Record<Language, typeof en> = { en, lt };

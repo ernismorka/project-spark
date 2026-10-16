@@ -279,3 +279,237 @@ footer {
     font-size: 8px;
   }
 }
+/* M1 gameplay overlays keep the circuit board as the primary surface. */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.in-game {
+  max-width: none;
+  padding: 0 2%;
+}
+.in-game header {
+  min-height: 72px;
+}
+.in-game .scene {
+  margin-top: 16px;
+}
+.game-viewport {
+  height: clamp(420px, 65vh, 850px);
+  min-height: 420px;
+  overflow: hidden;
+}
+.in-game .game-viewport {
+  height: calc(100vh - 220px);
+}
+.game-viewport canvas {
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+.gameplay .scene-top {
+  padding: 18px 24px;
+  min-height: 86px;
+}
+.gameplay .scene-top h2 {
+  font-size: 17px;
+  line-height: 1.4;
+  max-width: 850px;
+}
+.gameplay .scene-bottom {
+  gap: 20px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  font-size: 11px;
+}
+.menu-layer {
+  position: absolute;
+  inset: 0;
+  background: #0c2029a8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: auto;
+}
+.game-menu {
+  width: 490px;
+  max-width: 100%;
+  padding: 28px;
+  border: 1px solid #66818b;
+  border-radius: 14px;
+  background: #132d39ed;
+  box-shadow: 0 12px 70px #0005;
+}
+.game-menu h2 {
+  font-size: 28px;
+  letter-spacing: -0.5px;
+}
+.game-menu p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #c0d3d8;
+}
+.game-menu button {
+  margin: 4px 10px 8px 0;
+}
+.game-menu .primary {
+  background: #d7ee91;
+  color: #142e33;
+  border-color: #d7ee91;
+  font-weight: 650;
+}
+.game-menu .menu-controls {
+  font-size: 11px;
+  color: #91adb9;
+  margin-bottom: 0;
+}
+.game-menu .eyebrow {
+  font-size: 10px;
+  color: #d7ee91;
+}
+.inspection-layer {
+  justify-content: flex-end;
+  background: #0c20292a;
+}
+.compass {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  padding: 12px 16px;
+  background: #112a37dc;
+  border: 1px solid #ffffff30;
+  border-radius: 8px;
+}
+.compass span:first-child {
+  color: #d7ee91;
+}
+.crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  color: white;
+  font-size: 30px;
+  pointer-events: none;
+}
+.position {
+  position: absolute;
+  bottom: 20px;
+  left: 24px;
+  font-size: 11px;
+  color: #d0e0df;
+  background: #102631b8;
+  padding: 8px;
+  border-radius: 6px;
+}
+.interaction {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  max-width: 340px;
+  padding: 18px;
+  background: #112a37ed;
+  border: 1px solid #d7ee9170;
+  border-radius: 12px;
+  font-size: 13px;
+}
+.interaction p {
+  font-size: 10px;
+  color: #a9c3cc;
+  margin-top: 0;
+}
+.interaction strong {
+  display: block;
+  padding: 10px 0;
+}
+.interaction-actions {
+  display: flex;
+  gap: 8px;
+}
+.target-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.target-list button {
+  font-size: 10px;
+  padding: 6px;
+}
+.target-list button[aria-pressed="true"] {
+  border-color: #d7ee91;
+}
+.in-game footer {
+  padding: 12px 0;
+}
+.gameplay {
+  position: relative;
+}
+@media (max-width: 600px) {
+  .header-actions {
+    gap: 8px;
+  }
+  .header-actions button {
+    font-size: 11px;
+  }
+  .gameplay .scene-top {
+    padding: 14px;
+  }
+  .gameplay .scene-top h2 {
+    font-size: 13px;
+  }
+  .compass {
+    left: 10px;
+    top: 10px;
+    padding: 9px;
+    font-size: 10px;
+    gap: 10px;
+  }
+  .game-menu {
+    padding: 20px;
+  }
+  .game-menu h2 {
+    font-size: 22px;
+  }
+  .game-menu p {
+    font-size: 12px;
+  }
+  .gameplay .scene-bottom {
+    font-size: 9px;
+  }
+  .game-viewport {
+    height: 520px;
+  }
+  .in-game .game-viewport {
+    height: calc(100dvh - 235px);
+    min-height: 400px;
+  }
+  .interaction {
+    right: 10px;
+    bottom: 45px;
+    max-width: 270px;
+  }
+  .position {
+    left: 10px;
+    bottom: 10px;
+  }
+  .menu-layer {
+    align-items: flex-start;
+  }
+  .game-menu {
+    margin: auto;
+  }
+}
+.in-game .game-viewport {
+  height: calc(100dvh - 270px);
+  min-height: 360px;
+}
+.gameplay .status {
+  flex-shrink: 0;
+}
+.gameplay .scene-top > div {
+  min-width: 0;
+}
