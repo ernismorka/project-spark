@@ -1,6 +1,6 @@
-# M2 preparation — planning only
+# M2 preparation — historical plan
 
-Source of truth: existing ROADMAP.md M2 Electrical reasoning and GDD.md. Dependency: approved/merged M1 baseline. No solver, repair mechanics or measurement UI is implemented by this document.
+M1 PR #2 has now merged. The user authorized the next milestone; docs/M2_SIMULATION_SCOPE.md is the concrete implementation contract. The historical preparation below is retained for context; current progress is in EXECUTION_PLAN.md and DEVELOPMENT_STATUS.md.
 
 Before implementation, agree the deterministic simulation subset: supported sources/passive elements, DC versus time-domain behavior, polarity, explicit unsupported cases, units, tolerance and convergence/singularity behavior. Avoid promising simulated LEDs, capacitors or MCU behavior merely because M1 renders those shapes.
 

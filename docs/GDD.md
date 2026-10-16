@@ -33,3 +33,7 @@ First Contact asks the player to leave the start pad, inspect R1, identify a dif
 Intended pacing is 3–5 minutes for a new player exploring and reading. A direct route can be completed faster; no artificial timers enforce duration. Timing and usability with the target audience remain to be evaluated. Pause and inspection freeze motion. Falling returns to the start while preserving mission progress. Mobile menus adapt, but gameplay requires desktop keyboard and mouse.
 
 M1 non-goals: solver, MCU execution, blocks/code editor, backend, multiplayer, inventory, crafting, accounts, detailed customization, procedural level generation or multiple levels. The Dark Circuit remains the future complete episode; First Contact is its introductory exploration slice.
+
+## M2: electrical reasoning
+
+Authorized after M1 PR #2 merged. Scope is a bounded, ideal steady-state DC training network accessed from T1 after First Contact. Players measure VCC/SENSE against GND and identify an open resistor using evidence. The existing world scanner still identifies components only; capacitor, LED and MCU visuals are not simulated. Repairs and complete episode design remain M3 work. Supported circuit elements, units, topology/numerical failures and educational claims are specified in M2_SIMULATION_SCOPE.md.

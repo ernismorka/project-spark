@@ -1,6 +1,6 @@
 # Project Spark
 
-Browser-first educational 3D engineering adventure. M1 First Contact is a single-player procedural circuit-board exploration slice. No accounts, telemetry, backend or external assets. PR #1 (M0) was merged before M1 began.
+Browser-first educational 3D engineering adventure. M2 adds evidence-based DC diagnosis to the single-player First Contact circuit-board exploration slice. No accounts, telemetry, backend or external assets. PR #1 (M0) was merged before M1 began.
 
 ## Run
 
@@ -54,3 +54,9 @@ See docs/GDD.md, docs/ARCHITECTURE.md, docs/ROADMAP.md and docs/VALIDATION-M1.md
 ## Autonomous development
 
 `pnpm doctor:project` checks versions and installed browser binaries. `pnpm verify` runs every quality gate sequentially and fails on the first unsuccessful stage. CI runs the same verifier, with headed browsers under Xvfb. See AGENTS.md, docs/AUTONOMOUS_WORKFLOW.md, docs/EXECUTION_PLAN.md and docs/DEVELOPMENT_STATUS.md for standing instructions, environment limits and exact session handoff. No scheduled runner is enabled automatically.
+
+## M2 terminal diagnostics
+
+Complete First Contact at T1, then choose Open terminal diagnostics. Measure VCC and SENSE relative to GND and identify the fault from the healthy reference. Wrong explanations retain your evidence; closing/reopening retains progress. The model supports only ideal steady-state resistors and voltage sources. It does not simulate the MCU, LED or capacitor, and does not perform repairs. English/Lithuanian readings use localized decimal separators and explicit volts. See docs/M2_SIMULATION_SCOPE.md.
+
+M2 manual QA: verify hypotheses are disabled until both points are measured; obtain 5.00 V at VCC and 0.00 V at SENSE; try R2 open (incorrect), then R1 open (identified). Switch language, close/reopen, and verify the diagnosis/evidence persist. Check keyboard Tab navigation and narrow menu scrolling. Restarting exploration resets diagnosis. Original M1 QA remains applicable.

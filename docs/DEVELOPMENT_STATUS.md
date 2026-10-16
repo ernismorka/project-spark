@@ -1,9 +1,9 @@
 # Development status
 
-2026-10-16 — M0 is complete and PR #1 is merged; referenced M0 CI run 38911704767 passed. M1 is implemented on codex/m1-first-contact and PR #2 is open for review. No M2 implementation started and no merge performed by this session.
+2026-10-16 — M1 PR #2 is confirmed merged, so M2 began from main 5c84a1a on codex/m2-electrical-reasoning. Prior M0/M1 implementation and tests are retained. This session has not merged any PR.
 
-Completed: engineer/world, movement/jump/collision/recovery, camera/orbit/zoom, inspection/scanner, First Contact progression, EN/LT UI, lifecycle cleanup and automated coverage. 17 unit tests pass. Implementation/setup CI at 7a715f9 passes the common verifier and 18 browser checks across Chromium and Firefox (https://github.com/ernismorka/project-spark/actions/runs/38917152835). Local Chromium suite passes; local Windows Firefox launch remains blocked (spawn UNKNOWN). The language-focus addition and shared verifier are included in that successful run.
+Implemented: bounded deterministic linear DC solver, validated circuit/result contracts, explicit topology/numerical errors, terminal measurement/evidence/diagnosis commands and EN/LT schematic/diagnostic UI. No external dependency upgrade, nonlinear/transient model, repair, MCU execution or multiplayer.
 
-Autonomy setup: global Codex/security policies inspected and preserved. AGENTS.md now contains the standing workflow. pnpm doctor:project and pnpm verify provide local checks; CI uses the shared verifier and retains browser artifacts. Execution/validation/environment files support independent session resume. No automation has been scheduled and no automatic restart is promised.
+Validation so far: 57 unit tests pass, typecheck and production build pass. Browser regression/full diagnosis validation is in progress. Next: inspect actual terminal captures, run full quality gate including CI Chromium/Firefox, fix failures, update evidence and open M2 PR. Local Windows Firefox launch and unmeasured representative-hardware performance remain environmental/product limitations.
 
-Next action: inspect current PR checks, then await explicit review/merge authorization. Implementation, self-review, screenshots and validation evidence are complete; target-hardware performance and target-audience pacing remain unverified. This final evidence update changes documentation only. Independent M2 scope/test planning is in M2_PREPARATION.md. Resume using the prompt in EXECUTION_PLAN.md.
+Durable scope: M2_SIMULATION_SCOPE.md. Current tasks: EXECUTION_PLAN.md. After a reviewable M2 PR, await explicit merge authorization before dependent M3 implementation. No recurring execution task has been scheduled.
