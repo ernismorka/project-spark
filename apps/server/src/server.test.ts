@@ -121,3 +121,25 @@ it("expires abandoned seats, resets evidence, and admits a replacement", async (
   await a.leave();
   await replacement.leave();
 }, 10000);
+
+it("bounds HTTP payloads and local request bursts", async () => {
+  const address = server.transport.server!.address();
+  if (!address || typeof address === "string") throw new Error("No port");
+  const url = "http://127.0.0.1:" + address.port;
+  const huge = await fetch(url + "/matchmake/create/pilot", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ junk: "x".repeat(3000) }),
+  });
+  expect(huge.status).toBe(413);
+  let rejected = 0;
+  for (let i = 0; i < 125; i++) {
+    const r = await fetch(url + "/health", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+    if (r.status === 429) rejected++;
+  }
+  expect(rejected).toBeGreaterThan(0);
+}, 10000);

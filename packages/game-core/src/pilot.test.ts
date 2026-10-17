@@ -84,3 +84,25 @@ it("stops disconnected/idle movement and preserves shared state through reconnec
   expect(left.mission.diagnosis?.readings).toEqual({});
   expect(joinPilot(left, "c").players[1].role).toBe("engineer");
 });
+
+it("bounds movement bursts without client-time advancement and rejects remote interactions", () => {
+  let s = room();
+  const position = s.players[0].explorer.position;
+  for (let sequence = 1; sequence <= 1000; sequence++)
+    s = send(s, "a", { type: "move", sequence, x: 1, z: 1, dt: 999 });
+  expect(s.players[0].explorer.position).toEqual(position);
+  expect(Math.hypot(s.players[0].input.x, s.players[0].input.z)).toBeCloseTo(1);
+  const far = {
+    ...s,
+    players: s.players.map((p) =>
+      p.id === "a"
+        ? { ...p, explorer: { ...p.explorer, position: { x: 20, y: 0, z: 0 } } }
+        : p,
+    ),
+  };
+  expect(
+    send(far, "a", { type: "measure", target: "VCC", sequence: 1001 }),
+  ).toBe(far);
+  const dropped = connectPilot(s, "a", false);
+  expect(dropped.players[0].explorer.velocity).toEqual({ x: 0, y: 0, z: 0 });
+});
