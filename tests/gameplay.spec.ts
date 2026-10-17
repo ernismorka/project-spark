@@ -228,6 +228,19 @@ test("plays First Contact using real movement and interaction inputs", async ({
     "2.50 V",
   );
   await page.getByRole("button", { name: "Back to First Contact" }).click();
+  await page.getByRole("button", { name: "Open creative workbench" }).click();
+  await page
+    .getByRole("dialog", { name: "Creative programming" })
+    .getByRole("button", { name: "Run controller", exact: true })
+    .click();
+  await expect(page.getByLabel("Workbench SENSE")).toHaveText("2.50 V");
+  await page
+    .getByRole("button", { name: "Return to adventure", exact: true })
+    .click();
+  await expect(page.locator("canvas")).toHaveAttribute(
+    "data-circuit-status",
+    "verified",
+  );
   await page.getByRole("button", { name: "Replay The Dark Circuit" }).click();
   await expect(page.locator("canvas")).toHaveAttribute("data-phase", "playing");
   await expect(page.locator("canvas")).toHaveAttribute(

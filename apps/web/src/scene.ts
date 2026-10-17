@@ -90,6 +90,8 @@ export async function mountScene(
       publishTime = 0,
       lastPhase = bridge.get().phase;
     update = (delta: number) => {
+      // The opaque workbench covers the scene; retain the last frame while inert.
+      app!.autoRender = !canvas.closest("main[inert]");
       const dt = Math.min(delta, 0.1);
       time += dt;
       const state = bridge.get();

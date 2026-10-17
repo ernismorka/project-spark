@@ -1,3 +1,4 @@
+import { WorkbenchPanel, programmingCopy } from "./WorkbenchPanel";
 import { repairCopy } from "./repair-i18n";
 import { DiagnosticPanel } from "./DiagnosticPanel";
 import { diagnosisCopy } from "./diagnosis-i18n";
@@ -25,6 +26,7 @@ function App() {
   );
   const [attempt, setAttempt] = useState(0);
   const [mounted, setMounted] = useState(true);
+  const [workbench, setWorkbench] = useState(false);
   const [viewBoard, setViewBoard] = useState(false);
   const [selected, setSelected] = useState<string>();
   const selectedRef = useRef(selected);
@@ -136,347 +138,374 @@ function App() {
             ? { x: 0, z: -17 }
             : components[4];
   return (
-    <main className={session.phase === "title" ? "" : "in-game"}>
-      <header>
-        <a className="brand" href="./" aria-label="Project Spark">
-          <span className="logo">ϟ</span> project<span>spark</span>
-          <small>M3</small>
-        </a>
-        <div className="header-actions">
-          {session.phase === "playing" && (
-            <button onClick={() => dispatch({ type: "pause" })}>
-              {g.pause}
-            </button>
-          )}
-          <label>
-            {t.language}
-            <select
-              value={state.language}
-              onFocus={() => dispatch({ type: "pause" })}
-              onChange={(e) =>
-                setState((s) =>
-                  execute(s, {
-                    type: "set-language",
-                    language: e.target.value,
-                  }),
-                )
-              }
-            >
-              {languages.map((language) => (
-                <option key={language} value={language}>
-                  {language === "en" ? "English" : "Lietuvių"}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </header>
-      {session.phase === "title" && (
-        <section className="intro">
-          <p className="eyebrow">{repairCopy[state.language].title} / M3</p>
-          <h1>{t.title}</h1>
-          <p>{g.brief}</p>
-        </section>
+    <>
+      {workbench && (
+        <WorkbenchPanel
+          language={state.language}
+          onClose={() => {
+            setWorkbench(false);
+            requestAnimationFrame(() =>
+              document
+                .querySelector<HTMLButtonElement>(".header-actions button")
+                ?.focus(),
+            );
+          }}
+        />
       )}
-      <section className="scene gameplay" aria-label={t.scene}>
-        <div className="scene-top">
-          <div>
-            <p className="eyebrow">
-              {session.step === 5
-                ? repairCopy[state.language].title
-                : g.mission}
-            </p>
-            <h2>
-              {session.phase === "title"
-                ? g.welcome
-                : session.repair.completed
-                  ? repairCopy[state.language].world
-                  : session.step === 5
-                    ? repairCopy[state.language].intro
-                    : g.objectives[session.step]}
-            </h2>
+      <main
+        inert={workbench}
+        className={session.phase === "title" ? "" : "in-game"}
+      >
+        <header>
+          <a className="brand" href="./" aria-label="Project Spark">
+            <span className="logo">ϟ</span> project<span>spark</span>
+            <small>M4</small>
+          </a>
+          <div className="header-actions">
+            {(session.phase === "title" || session.phase === "complete") && (
+              <button onClick={() => setWorkbench(true)}>
+                {programmingCopy[state.language].open}
+              </button>
+            )}
+            {session.phase === "playing" && (
+              <button onClick={() => dispatch({ type: "pause" })}>
+                {g.pause}
+              </button>
+            )}
+            <label>
+              {t.language}
+              <select
+                value={state.language}
+                onFocus={() => dispatch({ type: "pause" })}
+                onChange={(e) =>
+                  setState((s) =>
+                    execute(s, {
+                      type: "set-language",
+                      language: e.target.value,
+                    }),
+                  )
+                }
+              >
+                {languages.map((language) => (
+                  <option key={language} value={language}>
+                    {language === "en" ? "English" : "Lietuvių"}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
-          <span
-            role="status"
-            className={"status " + status}
-            data-testid="renderer-status"
-            data-status={status}
-          >
-            {t[status]}
-          </span>
-        </div>
-        <div className="viewport game-viewport">
-          {mounted && (
-            <canvas
-              key={attempt}
-              ref={canvas}
-              tabIndex={0}
-              aria-label={t.canvas}
-            />
-          )}
-          {mounted && status !== "ready" ? (
-            <div className="overlay" ref={menu}>
-              <h2>{t[status]}</h2>
-              {status === "error" && (
-                <>
-                  <p>{t.help}</p>
-                  <button onClick={() => setAttempt((a) => a + 1)}>
-                    {t.retry}
-                  </button>
-                </>
-              )}
+        </header>
+        {session.phase === "title" && (
+          <section className="intro">
+            <p className="eyebrow">{repairCopy[state.language].title} / M3</p>
+            <h1>{t.title}</h1>
+            <p>{g.brief}</p>
+          </section>
+        )}
+        <section className="scene gameplay" aria-label={t.scene}>
+          <div className="scene-top">
+            <div>
+              <p className="eyebrow">
+                {session.step === 5
+                  ? repairCopy[state.language].title
+                  : g.mission}
+              </p>
+              <h2>
+                {session.phase === "title"
+                  ? g.welcome
+                  : session.repair.completed
+                    ? repairCopy[state.language].world
+                    : session.step === 5
+                      ? repairCopy[state.language].intro
+                      : g.objectives[session.step]}
+              </h2>
             </div>
-          ) : (
-            <>
-              {session.phase === "playing" && (
-                <>
-                  <div className="compass">
-                    <span>{g.north} ↑</span>
-                    <span>
-                      {g.distance} ·{" "}
-                      {Math.round(
-                        horizontalDistance(
-                          session.player.position,
-                          destination,
-                        ),
-                      )}{" "}
-                      m
-                    </span>
-                  </div>
-                  <div className="crosshair" aria-hidden="true">
-                    ·
-                  </div>
-                  <div className="position" aria-label={g.coordinates}>
-                    {session.player.position.x.toFixed(1)},{" "}
-                    {session.player.position.z.toFixed(1)}
-                    {session.recoveries > 0 && (
-                      <p>
-                        {g.checkpoint} · {session.recoveries}
-                      </p>
-                    )}
-                  </div>
-                  {target && (
-                    <aside className="interaction">
-                      <p>{g.nearby}</p>
-                      <div className="target-list">
-                        {nearby.map((c) => (
-                          <button
-                            aria-pressed={target.id === c.id}
-                            key={c.id}
-                            onClick={() => {
-                              setSelected(c.id);
-                              canvas.current?.focus({ preventScroll: true });
-                            }}
-                          >
-                            {c.id} · {g.componentNames[c.kind]}
-                          </button>
-                        ))}
-                      </div>
-                      <strong>
-                        {target.id} · {g.componentNames[target.kind]}
-                      </strong>
-                      <div className="interaction-actions">
-                        <button
-                          onClick={() =>
-                            dispatch({ type: "interact", target: target.id })
-                          }
-                        >
-                          {g.inspect}
-                        </button>
-                        {target.scannable && (
+            <span
+              role="status"
+              className={"status " + status}
+              data-testid="renderer-status"
+              data-status={status}
+            >
+              {t[status]}
+            </span>
+          </div>
+          <div className="viewport game-viewport">
+            {mounted && (
+              <canvas
+                key={attempt}
+                ref={canvas}
+                tabIndex={0}
+                aria-label={t.canvas}
+              />
+            )}
+            {mounted && status !== "ready" ? (
+              <div className="overlay" ref={menu}>
+                <h2>{t[status]}</h2>
+                {status === "error" && (
+                  <>
+                    <p>{t.help}</p>
+                    <button onClick={() => setAttempt((a) => a + 1)}>
+                      {t.retry}
+                    </button>
+                  </>
+                )}
+              </div>
+            ) : (
+              <>
+                {session.phase === "playing" && (
+                  <>
+                    <div className="compass">
+                      <span>{g.north} ↑</span>
+                      <span>
+                        {g.distance} ·{" "}
+                        {Math.round(
+                          horizontalDistance(
+                            session.player.position,
+                            destination,
+                          ),
+                        )}{" "}
+                        m
+                      </span>
+                    </div>
+                    <div className="crosshair" aria-hidden="true">
+                      ·
+                    </div>
+                    <div className="position" aria-label={g.coordinates}>
+                      {session.player.position.x.toFixed(1)},{" "}
+                      {session.player.position.z.toFixed(1)}
+                      {session.recoveries > 0 && (
+                        <p>
+                          {g.checkpoint} · {session.recoveries}
+                        </p>
+                      )}
+                    </div>
+                    {target && (
+                      <aside className="interaction">
+                        <p>{g.nearby}</p>
+                        <div className="target-list">
+                          {nearby.map((c) => (
+                            <button
+                              aria-pressed={target.id === c.id}
+                              key={c.id}
+                              onClick={() => {
+                                setSelected(c.id);
+                                canvas.current?.focus({ preventScroll: true });
+                              }}
+                            >
+                              {c.id} · {g.componentNames[c.kind]}
+                            </button>
+                          ))}
+                        </div>
+                        <strong>
+                          {target.id} · {g.componentNames[target.kind]}
+                        </strong>
+                        <div className="interaction-actions">
                           <button
                             onClick={() =>
-                              dispatch({ type: "scan", target: target.id })
+                              dispatch({ type: "interact", target: target.id })
                             }
                           >
-                            {g.scan}
+                            {g.inspect}
                           </button>
-                        )}
-                      </div>
-                    </aside>
-                  )}
-                </>
-              )}
-              {showingBoard && (
-                <div className="board-report" role="status">
-                  <p>{repairCopy[state.language].world}</p>
-                  <button autoFocus onClick={() => setViewBoard(false)}>
-                    {repairCopy[state.language].report}
-                  </button>
-                </div>
-              )}
-              {session.phase !== "playing" && !showingBoard && (
-                <div
-                  className={
-                    "menu-layer " +
-                    (session.phase === "inspecting" ? "inspection-layer" : "")
-                  }
-                >
+                          {target.scannable && (
+                            <button
+                              onClick={() =>
+                                dispatch({ type: "scan", target: target.id })
+                              }
+                            >
+                              {g.scan}
+                            </button>
+                          )}
+                        </div>
+                      </aside>
+                    )}
+                  </>
+                )}
+                {showingBoard && (
+                  <div className="board-report" role="status">
+                    <p>{repairCopy[state.language].world}</p>
+                    <button autoFocus onClick={() => setViewBoard(false)}>
+                      {repairCopy[state.language].report}
+                    </button>
+                  </div>
+                )}
+                {session.phase !== "playing" && !showingBoard && (
                   <div
                     className={
-                      session.phase === "diagnosing"
-                        ? "game-menu diagnostic-menu"
-                        : "game-menu"
+                      "menu-layer " +
+                      (session.phase === "inspecting" ? "inspection-layer" : "")
                     }
-                    ref={menu}
-                    role="dialog"
-                    aria-modal="true"
-                    aria-label={
-                      session.phase === "title"
-                        ? g.welcome
-                        : session.phase === "paused"
-                          ? g.paused
-                          : session.phase === "complete"
-                            ? session.repair.completed
-                              ? repairCopy[state.language].complete
-                              : g.complete
-                            : session.phase === "diagnosing"
-                              ? d.title
-                              : g.selected
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === "Tab") {
-                        const buttons = Array.from(
-                          e.currentTarget.querySelectorAll<HTMLButtonElement>(
-                            "button:not(:disabled)",
-                          ),
-                        );
-                        if (
-                          e.shiftKey &&
-                          document.activeElement === buttons[0]
-                        ) {
-                          e.preventDefault();
-                          buttons.at(-1)?.focus();
-                        } else if (
-                          !e.shiftKey &&
-                          document.activeElement === buttons.at(-1)
-                        ) {
-                          e.preventDefault();
-                          buttons[0]?.focus();
-                        }
-                      }
-                    }}
                   >
-                    <p className="eyebrow">
-                      {session.phase === "inspecting" ? g.scanner : g.mission}
-                    </p>
-                    <h2>
-                      {session.phase === "title"
-                        ? g.welcome
-                        : session.phase === "paused"
-                          ? g.paused
-                          : session.phase === "complete"
-                            ? session.repair.completed
-                              ? repairCopy[state.language].complete
-                              : g.complete
-                            : session.phase === "diagnosing"
-                              ? d.title
-                              : inspected
-                                ? `${inspected.id} · ${g.componentNames[inspected.kind]}`
-                                : ""}
-                    </h2>
-                    {session.phase === "title" && (
-                      <>
-                        <p>{g.brief}</p>
-                        <button className="primary" onClick={start}>
-                          {g.play}
-                        </button>
-                      </>
-                    )}
-                    {session.phase === "paused" && (
-                      <>
-                        <p>{g.objectives[session.step]}</p>
-                        <button
-                          className="primary"
-                          onClick={() => dispatch({ type: "resume" })}
-                        >
-                          {g.resume}
-                        </button>
-                        <button onClick={end}>{g.leave}</button>
-                      </>
-                    )}
-                    {session.phase === "inspecting" && inspected && (
-                      <>
-                        <p>{g.descriptions[inspected.kind]}</p>
-                        {inspected.kind === "terminal" && (
+                    <div
+                      className={
+                        session.phase === "diagnosing"
+                          ? "game-menu diagnostic-menu"
+                          : "game-menu"
+                      }
+                      ref={menu}
+                      role="dialog"
+                      aria-modal="true"
+                      aria-label={
+                        session.phase === "title"
+                          ? g.welcome
+                          : session.phase === "paused"
+                            ? g.paused
+                            : session.phase === "complete"
+                              ? session.repair.completed
+                                ? repairCopy[state.language].complete
+                                : g.complete
+                              : session.phase === "diagnosing"
+                                ? d.title
+                                : g.selected
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Tab") {
+                          const buttons = Array.from(
+                            e.currentTarget.querySelectorAll<HTMLButtonElement>(
+                              "button:not(:disabled)",
+                            ),
+                          );
+                          if (
+                            e.shiftKey &&
+                            document.activeElement === buttons[0]
+                          ) {
+                            e.preventDefault();
+                            buttons.at(-1)?.focus();
+                          } else if (
+                            !e.shiftKey &&
+                            document.activeElement === buttons.at(-1)
+                          ) {
+                            e.preventDefault();
+                            buttons[0]?.focus();
+                          }
+                        }
+                      }}
+                    >
+                      <p className="eyebrow">
+                        {session.phase === "inspecting" ? g.scanner : g.mission}
+                      </p>
+                      <h2>
+                        {session.phase === "title"
+                          ? g.welcome
+                          : session.phase === "paused"
+                            ? g.paused
+                            : session.phase === "complete"
+                              ? session.repair.completed
+                                ? repairCopy[state.language].complete
+                                : g.complete
+                              : session.phase === "diagnosing"
+                                ? d.title
+                                : inspected
+                                  ? `${inspected.id} · ${g.componentNames[inspected.kind]}`
+                                  : ""}
+                      </h2>
+                      {session.phase === "title" && (
+                        <>
+                          <p>{g.brief}</p>
+                          <button className="primary" onClick={start}>
+                            {g.play}
+                          </button>
+                        </>
+                      )}
+                      {session.phase === "paused" && (
+                        <>
+                          <p>{g.objectives[session.step]}</p>
+                          <button
+                            className="primary"
+                            onClick={() => dispatch({ type: "resume" })}
+                          >
+                            {g.resume}
+                          </button>
+                          <button onClick={end}>{g.leave}</button>
+                        </>
+                      )}
+                      {session.phase === "inspecting" && inspected && (
+                        <>
+                          <p>{g.descriptions[inspected.kind]}</p>
+                          {inspected.kind === "terminal" && (
+                            <p>
+                              {session.repair.completed
+                                ? repairCopy[state.language].world
+                                : g.terminal}
+                            </p>
+                          )}
+                          <button
+                            className="primary"
+                            onClick={() =>
+                              dispatch({ type: "close-inspection" })
+                            }
+                          >
+                            {g.continue}
+                          </button>
+                        </>
+                      )}
+                      {session.phase === "diagnosing" && session.diagnosis && (
+                        <DiagnosticPanel
+                          session={session}
+                          language={state.language}
+                          dispatch={dispatch}
+                        />
+                      )}
+                      {session.phase === "complete" && (
+                        <>
+                          <p>
+                            {session.repair.completed
+                              ? repairCopy[state.language].success
+                              : g.completedBody}
+                          </p>
+                          <button
+                            className="primary"
+                            onClick={() =>
+                              dispatch({ type: "open-diagnostics" })
+                            }
+                          >
+                            {d.open}
+                          </button>
                           <p>
                             {session.repair.completed
                               ? repairCopy[state.language].world
                               : g.terminal}
                           </p>
-                        )}
-                        <button
-                          className="primary"
-                          onClick={() => dispatch({ type: "close-inspection" })}
-                        >
-                          {g.continue}
-                        </button>
-                      </>
-                    )}
-                    {session.phase === "diagnosing" && session.diagnosis && (
-                      <DiagnosticPanel
-                        session={session}
-                        language={state.language}
-                        dispatch={dispatch}
-                      />
-                    )}
-                    {session.phase === "complete" && (
-                      <>
-                        <p>
-                          {session.repair.completed
-                            ? repairCopy[state.language].success
-                            : g.completedBody}
-                        </p>
-                        <button
-                          className="primary"
-                          onClick={() => dispatch({ type: "open-diagnostics" })}
-                        >
-                          {d.open}
-                        </button>
-                        <p>
-                          {session.repair.completed
-                            ? repairCopy[state.language].world
-                            : g.terminal}
-                        </p>
-                        <button
-                          className="primary"
-                          onClick={() => {
-                            setViewBoard(false);
-                            dispatch({ type: "restart-episode" });
-                          }}
-                        >
-                          {repairCopy[state.language].restart}
-                        </button>
-                        {session.repair.completed && (
-                          <button onClick={() => setViewBoard(true)}>
-                            {repairCopy[state.language].view}
+                          <button
+                            className="primary"
+                            onClick={() => {
+                              setViewBoard(false);
+                              dispatch({ type: "restart-episode" });
+                            }}
+                          >
+                            {repairCopy[state.language].restart}
                           </button>
-                        )}
-                        <button onClick={end}>{g.returnTitle}</button>
-                      </>
-                    )}
-                    {session.phase !== "diagnosing" && (
-                      <p className="menu-controls">{g.controls}</p>
-                    )}
-                    {session.phase !== "diagnosing" && (
-                      <p className="menu-controls">{g.camera}</p>
-                    )}
+                          {session.repair.completed && (
+                            <button onClick={() => setViewBoard(true)}>
+                              {repairCopy[state.language].view}
+                            </button>
+                          )}
+                          <button onClick={end}>{g.returnTitle}</button>
+                        </>
+                      )}
+                      {session.phase !== "diagnosing" && (
+                        <p className="menu-controls">{g.controls}</p>
+                      )}
+                      {session.phase !== "diagnosing" && (
+                        <p className="menu-controls">{g.camera}</p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-        <div className="scene-bottom">
-          <span>{g.controls}</span>
-          <span>{session.step + 1}/6</span>
-        </div>
-      </section>
-      <footer>
-        <span>PROJECT SPARK © 2026</span>
-        <span>{session.step === 5 ? d.scope : g.scanner}</span>
-      </footer>
-    </main>
+                )}
+              </>
+            )}
+          </div>
+          <div className="scene-bottom">
+            <span>{g.controls}</span>
+            <span>{session.step + 1}/6</span>
+          </div>
+        </section>
+        <footer>
+          <span>PROJECT SPARK © 2026</span>
+          <span>{session.step === 5 ? d.scope : g.scanner}</span>
+        </footer>
+      </main>
+    </>
   );
 }
 createRoot(document.getElementById("root")!).render(<App />);

@@ -68,3 +68,9 @@ After identifying R1, choose Restore R1 connection. Remeasure both VCC and SENSE
 Close diagnostics to see episode completion and replay. Replay resets the entire exploration, fault, measurements and completion; reload/end session also resets progress. No persistent save. Both languages support the full flow. M2's solver is unchanged; see docs/M3_PREPARATION.md and docs/VALIDATION-M3.md.
 
 Manual M3 QA: try repair only after evidence-based R1 diagnosis, compare 0.00 V before and 2.50 V after at SENSE, verify, close/reopen and switch languages. Confirm green world response, then replay and confirm the fault and exploration reset. Repeat keyboard focus and narrow-screen menu checks. M0–M2 checks remain applicable.
+
+## M4 Creative programming
+
+Open creative workbench from title or the completed terminal. Run the initial divider/controller, connect default R3 between SENSE and GND, then run again: observe the changed solver voltage and virtual output. Edit instruction blocks or switch to the equivalent text; apply/run, inspect the bounded execution trace, remove branches and reset. Source keywords are stable English identifiers; explanations and controls are EN/LT. Closing/reopening resets workbench edits. It does not change the M3 repaired circuit.
+
+See docs/GDD.md for the exact bounded language and circuit model. No arbitrary JavaScript, MCU firmware emulation, LED physics, backend or M5 functionality. Human usability/performance testing is recorded for later consolidated playtesting.

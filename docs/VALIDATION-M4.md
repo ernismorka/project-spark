@@ -1,0 +1,17 @@
+# M4 validation
+
+Baseline: M3 PR #4 merged as 9fb195b; main CI 39001642540 passed before implementation. Branch codex/m4-creative-programming implements the existing M4 Creative programming scope.
+
+Node 24.19.0 / pnpm 11.25.0 / Git 2.56.0 on Windows. doctor:project finds both browsers. The electronics solver and dependency lockfile are unchanged.
+
+70 unit tests pass, including all 63 M0–M3 tests. M4 fixtures check block/text equivalence and round trips (including small finite thresholds), actual constructed-circuit voltages/output, strict threshold semantics, invalid/arbitrary source rejection, malformed blocks, bounded repetition and trace, atomic output clearing, reset/serialization and challenge authority. No eval, dynamic Function, host API or arbitrary source execution.
+
+Full pnpm verify was run: lint/types, 70 unit tests, build and all 10 Chromium checks passed. All 10 Firefox checks fail at browser launch with Windows spawn UNKNOWN; full local verify is not passing. Linux CI remains the required two-browser gate. The first run passed nine existing Chromium checks; the long M4 flow exceeded its default timeout, now increased to match the adventure route. A subsequent run identified an exact-label selector issue for the multiline editor; selecting its accessible textbox role fixed it, and the complete standalone M4 flow passed locally (1/1, 2.4 seconds in the browser test). Rendering the opaque covered background is suspended while the modal is active. Local Windows Firefox retains its known spawn UNKNOWN launch failure; it remains enabled in Linux CI.
+
+Real-input browser coverage includes circuit construction, controller execution, switching blocks/text, editable threshold, invalid source, step-budget exhaustion, unsolvable network, reset, EN/LT decimal formatting, narrow layout and returning to the adventure. The complete M3 route also opens/runs/closes M4 and verifies the repaired circuit persists. Reviewed production-preview captures are saved at docs/screenshots/m4-built-en.png (constructed branch and block output), m4-text-en.png (equivalent text with changed threshold), and m4-controller-lt.png (Lithuanian narrow view with persistent navigation). No horizontal overflow was observed in the tested narrow workbench. Final-head CI is recorded with the PR.
+
+Code review fixes: invalid text now clears old output and cannot execute a stale program; modal background is inert and focus returns to its opener; trace summary participates in keyboard navigation; challenge is core-derived and cannot be awarded by removing the supply branch; text serialization preserves small block thresholds. Workbench closure/reset semantics are stated in UI and docs.
+
+Outstanding consolidated human playtest (not implementation blockers): target-age understanding/pacing, assistive-technology usability, and representative-hardware CPU/GPU/frame/memory measurement. Current software-rendered test-host frame samples are observations, not product performance certification. Existing PlayCanvas chunk warning remains. No dependencies/services/M5 work added. No automatic merge.
+
+Linux CI on final gameplay code 22a7c60 passed pnpm verify: all 70 unit tests and 20 Chromium/Firefox browser checks, including the complete M4 flow. Run: https://github.com/ernismorka/project-spark/actions/runs/39018383237. PR #5: https://github.com/ernismorka/project-spark/pull/5. Current-head checks are linked in the PR. No automated checks are disabled.
