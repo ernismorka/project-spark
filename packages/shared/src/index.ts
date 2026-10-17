@@ -48,6 +48,7 @@ export interface Session {
   readonly inspection: { id: string; scan: boolean } | null;
   readonly recoveries: number;
   readonly diagnosis: DiagnosisState | null;
+  readonly repair: RepairState;
 }
 export type ExplorationCommand =
   | {
@@ -57,11 +58,15 @@ export type ExplorationCommand =
         | "resume"
         | "close-inspection"
         | "open-diagnostics"
-        | "close-diagnostics";
+        | "close-diagnostics"
+        | "restart-episode";
     }
   | { type: "step"; x: number; z: number; run: boolean; jump: boolean }
   | { type: "interact" | "scan" | "measure-node"; target: string }
-  | { type: "submit-diagnosis"; fault: DiagnosisFault };
+  | { type: "submit-diagnosis"; fault: DiagnosisFault }
+  | { type: "repair-r1"; target: string }
+  | { type: "measure-repair"; target: string }
+  | { type: "verify-repair" };
 export interface DCResistor {
   readonly id: string;
   readonly kind: "resistor";
@@ -101,4 +106,10 @@ export interface DiagnosisState {
   readonly readings: Readonly<Record<string, number>>;
   readonly outcome: "collect-evidence" | "incorrect" | "identified";
   readonly attempts: number;
+}
+
+export interface RepairState {
+  readonly r1: "open" | "restored";
+  readonly readings: Readonly<Record<string, number>>;
+  readonly completed: boolean;
 }

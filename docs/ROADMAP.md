@@ -12,3 +12,5 @@
 M1 implements First Contact: third-person walk/run/jump, orbit camera, static collision, identification and ordered introductory objectives. Acceptance is gated by domain tests and real-input browser completion, including teardown and WebGL handling. User pacing and 60 FPS on target hardware remain playtest/measurement work. Multiplayer begins only after the first complete playable episode. Prioritize accessibility and technical accuracy throughout.
 
 M2 implementation uses a documented linear DC subset (positive resistors, explicit open resistors, independent ideal voltage sources). Terminal diagnosis follows M1; repair remains outside M2. See M2_SIMULATION_SCOPE.md and current execution/status files for evidence and remaining review gates.
+
+M3 implements the full bounded repair/verify episode on merged M2. See M3_PREPARATION.md for local authority, electrical claims, completion and replay/save semantics, and VALIDATION-M3.md for measured evidence. No M4 implementation is authorized by this delivery.

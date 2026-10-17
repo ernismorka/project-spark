@@ -1,19 +1,17 @@
+import { RepairPanel } from "./RepairPanel";
 import { diagnosticPoints } from "@spark/game-core";
-import type {
-  DiagnosisState,
-  ExplorationCommand,
-  Language,
-} from "@spark/shared";
+import type { Session, ExplorationCommand, Language } from "@spark/shared";
 import { diagnosisCopy, faultChoices } from "./diagnosis-i18n";
 export function DiagnosticPanel({
-  state,
+  session,
   language,
   dispatch,
 }: {
-  state: DiagnosisState;
+  session: Session;
   language: Language;
   dispatch: (c: ExplorationCommand) => void;
 }) {
+  const state = session.diagnosis!;
   const t = diagnosisCopy[language];
   const ready = diagnosticPoints.every((p) => Object.hasOwn(state.readings, p));
   const identified = state.outcome === "identified";
@@ -113,6 +111,13 @@ export function DiagnosticPanel({
             </>
           ) : null}
         </div>
+        {identified && (
+          <RepairPanel
+            session={session}
+            language={language}
+            dispatch={dispatch}
+          />
+        )}
         <p className="model-limits">{t.limits}</p>
       </div>
       <button

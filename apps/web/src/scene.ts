@@ -138,6 +138,10 @@ export async function mountScene(
       canvas.dataset.playerZ = next.player.position.z.toFixed(3);
       canvas.dataset.cameraYaw = camera.yaw.toFixed(3);
       canvas.dataset.cameraZoom = camera.zoom.toFixed(2);
+      pcb.status(next.repair.r1 === "restored", next.repair.completed);
+      canvas.dataset.circuitStatus = next.repair.completed
+        ? "verified"
+        : next.repair.r1;
       canvas.dataset.phase = next.phase;
       canvas.dataset.missionStep = String(next.step);
       publishTime += dt;

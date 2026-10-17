@@ -1,3 +1,4 @@
+import { repairCopy } from "./repair-i18n";
 import { DiagnosticPanel } from "./DiagnosticPanel";
 import { diagnosisCopy } from "./diagnosis-i18n";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -24,6 +25,7 @@ function App() {
   );
   const [attempt, setAttempt] = useState(0);
   const [mounted, setMounted] = useState(true);
+  const [viewBoard, setViewBoard] = useState(false);
   const [selected, setSelected] = useState<string>();
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
@@ -105,7 +107,9 @@ function App() {
       menu.current
         ?.querySelector<HTMLButtonElement>("button:not(:disabled)")
         ?.focus({ preventScroll: true });
-  }, [session.phase]);
+  }, [session.phase, viewBoard]);
+  const showingBoard =
+    viewBoard && session.phase === "complete" && session.repair.completed;
   const nearby = nearbyComponents(session);
   const target = nearby.find((c) => c.id === selected) ?? nearby[0];
   const inspected = components.find((c) => c.id === session.inspection?.id);
@@ -285,7 +289,15 @@ function App() {
                   )}
                 </>
               )}
-              {session.phase !== "playing" && (
+              {showingBoard && (
+                <div className="board-report" role="status">
+                  <p>{repairCopy[state.language].world}</p>
+                  <button autoFocus onClick={() => setViewBoard(false)}>
+                    {repairCopy[state.language].report}
+                  </button>
+                </div>
+              )}
+              {session.phase !== "playing" && !showingBoard && (
                 <div
                   className={
                     "menu-layer " +
@@ -307,7 +319,9 @@ function App() {
                         : session.phase === "paused"
                           ? g.paused
                           : session.phase === "complete"
-                            ? g.complete
+                            ? session.repair.completed
+                              ? repairCopy[state.language].complete
+                              : g.complete
                             : session.phase === "diagnosing"
                               ? d.title
                               : g.selected
@@ -344,7 +358,9 @@ function App() {
                         : session.phase === "paused"
                           ? g.paused
                           : session.phase === "complete"
-                            ? g.complete
+                            ? session.repair.completed
+                              ? repairCopy[state.language].complete
+                              : g.complete
                             : session.phase === "diagnosing"
                               ? d.title
                               : inspected
@@ -374,7 +390,13 @@ function App() {
                     {session.phase === "inspecting" && inspected && (
                       <>
                         <p>{g.descriptions[inspected.kind]}</p>
-                        {inspected.kind === "terminal" && <p>{g.terminal}</p>}
+                        {inspected.kind === "terminal" && (
+                          <p>
+                            {session.repair.completed
+                              ? repairCopy[state.language].world
+                              : g.terminal}
+                          </p>
+                        )}
                         <button
                           className="primary"
                           onClick={() => dispatch({ type: "close-inspection" })}
@@ -385,30 +407,43 @@ function App() {
                     )}
                     {session.phase === "diagnosing" && session.diagnosis && (
                       <DiagnosticPanel
-                        state={session.diagnosis}
+                        session={session}
                         language={state.language}
                         dispatch={dispatch}
                       />
                     )}
                     {session.phase === "complete" && (
                       <>
-                        <p>{g.completedBody}</p>
+                        <p>
+                          {session.repair.completed
+                            ? repairCopy[state.language].success
+                            : g.completedBody}
+                        </p>
                         <button
                           className="primary"
                           onClick={() => dispatch({ type: "open-diagnostics" })}
                         >
                           {d.open}
                         </button>
-                        <p>{g.terminal}</p>
+                        <p>
+                          {session.repair.completed
+                            ? repairCopy[state.language].world
+                            : g.terminal}
+                        </p>
                         <button
                           className="primary"
                           onClick={() => {
-                            current.current = createSession();
-                            dispatch({ type: "start" });
+                            setViewBoard(false);
+                            dispatch({ type: "restart-episode" });
                           }}
                         >
-                          {g.restart}
+                          {repairCopy[state.language].restart}
                         </button>
+                        {session.repair.completed && (
+                          <button onClick={() => setViewBoard(true)}>
+                            {repairCopy[state.language].view}
+                          </button>
+                        )}
                         <button onClick={end}>{g.returnTitle}</button>
                       </>
                     )}

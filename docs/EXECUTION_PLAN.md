@@ -1,34 +1,21 @@
 # Execution plan
 
-## Current milestone and baseline
+## Current milestone and approved baseline
 
-M2 Electrical reasoning, branch codex/m2-electrical-reasoning, from main 5c84a1a. GitHub confirms M1 PR #2 merged at 2026-10-16 19:07:55 UTC. The user requested autonomous execution of the next authorized milestone; no merge was performed by this session. The bounded implementation contract is M2_SIMULATION_SCOPE.md. Reviewable PR: https://github.com/ernismorka/project-spark/pull/3 (unmerged).
+M3 The Dark Circuit, branch codex/m3-the-dark-circuit, from merged M2 main 4dc7084. PR #3 is merged; main CI run 38999625572 succeeded. The user explicitly authorized M3, PR delivery and routine fixes. No merge was performed by this session.
 
-## Completed implementation
+## Implementation and acceptance
 
-- Serializable DC circuit/result contracts and a real electronics workspace package; no external dependency additions/upgrades.
-- Deterministic modified nodal analysis for resistors/open resistors/ideal voltage sources; explicit invalid/unsupported/floating/singular/numerical outcomes with bounded input.
-- Core terminal access, computed node readings, evidence validation, incorrect/correct diagnosis and duplicate/persistence behavior.
-- Localized terminal panel with schematic, healthy reference, measurement units and EN/LT decimal formatting. No repair/editor/MCU/nonlinear simulation.
-- 57 unit tests pass, including all M0/M1 tests; lint/typecheck/build pass. CI at 8480cb4 passes the common verifier and all 18 Chromium/Firefox browser checks: https://github.com/ernismorka/project-spark/actions/runs/38965501728. Actual terminal captures are reviewed; the interrupted local route was rerun successfully. See VALIDATION-M2.md for exact local limitations.
+Implemented: one R1 reconnection in authoritative game-core, evidence/range/phase/target validation, solver-derived before/after readings, fresh verification and explicit episode completion. Amber/green abstract terminal beacon and verified route strip respond to core state. EN/LT copy explains the divider and model limits. Replay resets the whole episode deterministically. M0–M2 APIs, movement and solver remain intact; no dependencies or backend added.
 
-## Remaining acceptance tasks
+Contract: M3_PREPARATION.md; unchanged electrical scope: M2_SIMULATION_SCOPE.md.
 
-1. Completed: local checks, actual terminal capture review and UI/test fixes.
-2. Completed: common verifier and 18/18 browser checks passed in CI. Latest documentation/copy commit has its own PR checks.
-3. Completed: self-review, scope, evidence and screenshots recorded.
-4. PR #3 is open against main; await human review and explicit merge authorization. Do not merge automatically.
+## Remaining work
 
-## Dependencies and blockers
+Run all validation, resolve failures, review actual sequence screenshots, record evidence, self-review and open PR against main. Inspect final GitHub CI. Do not merge automatically or start M4.
 
-M1 baseline is approved/merged. Existing toolchain versions stay pinned. Local Firefox may fail to launch with the known Windows spawn UNKNOWN error; CI is required supported-browser evidence. Scoped host approval may be needed for Git/cache/localhost. Performance on representative target hardware remains unverified from M1; no new FPS claim is made. No scheduler or automatic restart was configured.
+## Dependencies and limitations
 
-## Acceptance
+Known local Windows Firefox spawn UNKNOWN may block local verification; both browsers remain required in Linux CI. Scoped permissions are used for Git, caches and browser launches. Representative hardware performance and target-age usability remain unverified human tasks. No scheduler, production deployment or durable save is configured.
 
-Analytical Ohm/divider/series/parallel/polarity fixtures and KCL/power balance match declared tolerances. Invalid/unsupported/floating or underdetermined circuits return explicit errors. Input permutations produce identical results. Player reaches the terminal via actual M1 gameplay, measures both nodes, sees feedback, completes diagnosis and preserves it across panel reopening/language changes. Original browser/unit coverage stays green. Docs describe only implemented models.
-
-## Next milestone / continuation
-
-M3 The Dark Circuit is next in ROADMAP.md, and depends on an approved M2 baseline. Do not implement dependent episode/repair mechanics or expand the simulation subset while M2 is unapproved. Independent narrative/repair acceptance preparation is in M3_PREPARATION.md; no M3 code is implemented.
-
-Resume: read AGENTS.md, this file, DEVELOPMENT_STATUS.md and M2_SIMULATION_SCOPE.md; inspect current branch, main, M2 PR and CI; continue the first executable unfinished task without automatically merging.
+Resume by reading AGENTS.md and DEVELOPMENT_STATUS.md, inspecting branch/main/PR/CI, and continuing the first unfinished M3 task. After delivery, await review and further milestone authorization.

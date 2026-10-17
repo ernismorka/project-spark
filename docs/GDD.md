@@ -10,7 +10,7 @@ Curiosity, readable cause and effect, and creative engineering drive play. Circu
 
 ## First episode: The Dark Circuit
 
-Planned: enter a silent device, investigate its dark board, identify components and diagnose a fault to restore light. Narrative, traversal, repair and learning objectives need design validation in later milestones. M1 adds the First Contact introduction below; diagnosis and repair remain future work.
+Implemented in M3: explore the board through First Contact, diagnose the terminal training divider, reconnect its single open R1 branch, then prove the repair with fresh measurements. The terminal service beacon turns green after verification. This is an abstract circuit-status response, not simulated MCU or LED operation. See M3_PREPARATION.md for the exact behavior contract.
 
 ## MVP
 
@@ -22,7 +22,7 @@ After the first complete episode, co-op can support shared diagnosis and complem
 
 ## Non-goals
 
-M0 established rendering, UI, localization, domain boundaries, tests and documentation. M1 adds exploration and the introductory mission. Circuits, programming, multiplayer, database, paid services and telemetry remain outside the implemented scope. Mobile menus are responsive; mobile gameplay is outside M1.
+M0 established rendering, UI, localization, domain boundaries, tests and documentation. M1 adds exploration and the introductory mission. Programming, multiplayer, database, paid services and telemetry remain outside the implemented scope. Mobile menus are responsive; mobile gameplay is outside M1.
 
 ## M1: First Contact
 
@@ -37,3 +37,7 @@ M1 non-goals: solver, MCU execution, blocks/code editor, backend, multiplayer, i
 ## M2: electrical reasoning
 
 Authorized after M1 PR #2 merged. Scope is a bounded, ideal steady-state DC training network accessed from T1 after First Contact. Players measure VCC/SENSE against GND and identify an open resistor using evidence. The existing world scanner still identifies components only; capacitor, LED and MCU visuals are not simulated. Repairs and complete episode design remain M3 work. Supported circuit elements, units, topology/numerical failures and educational claims are specified in M2_SIMULATION_SCOPE.md.
+
+## M3: The Dark Circuit
+
+A complete episode now connects exploration, evidence-based diagnosis, one bounded repair and explicit verification. Before/after readings explain equal-resistor voltage division; an amber beacon marks repair pending verification and green marks the verified network. The terminal tool reconnects R1 without inventory or crafting. Replay restarts all exploration, fault and evidence state. No progress is stored across reloads or ended sessions. English/Lithuanian menus, units and explanations are maintained. Automated real-input playthrough covers the sequence; target-age pacing/usability still requires human evaluation. M4 remains unstarted.

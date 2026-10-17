@@ -115,7 +115,7 @@ test("plays First Contact using real movement and interaction inputs", async ({
     "Gedimas nustatytas: R1 nutrūkęs.",
   );
   await expect(
-    page.getByRole("button", { name: "Grįžti į pirmąjį kontaktą" }),
+    page.getByRole("button", { name: "Atkurti R1 jungtį" }),
   ).toBeFocused();
   await page.getByRole("combobox").selectOption("en");
   await page.setViewportSize({ width: 1280, height: 1200 });
@@ -135,6 +135,87 @@ test("plays First Contact using real movement and interaction inputs", async ({
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await page.setViewportSize({ width: 1280, height: 1200 });
+  await page
+    .getByRole("button", { name: "Restore R1 connection", exact: true })
+    .click();
+  await expect(page.locator("canvas")).toHaveAttribute(
+    "data-circuit-status",
+    "restored",
+  );
+  await expect(
+    page.getByRole("button", { name: "Verify repair", exact: true }),
+  ).toBeDisabled();
+  await page
+    .getByRole("button", { name: "Remeasure VCC", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Remeasure SENSE", exact: true })
+    .click();
+  await expect(page.getByLabel("SENSE after V", { exact: true })).toHaveText(
+    "2.50 V",
+  );
+  await expect(page.getByLabel("SENSE V", { exact: true })).toHaveText(
+    "0.00 V",
+  );
+  await page
+    .getByRole("button", { name: "Verify repair", exact: true })
+    .scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: testInfo.outputPath("m3-before-after-en.png"),
+  });
+  await page.getByRole("combobox").selectOption("lt");
+  await expect(page.getByLabel("SENSE after V", { exact: true })).toHaveText(
+    "2,50 V",
+  );
+  await expect(page.getByRole("dialog")).toContainText(
+    "Vienodos varžos padalija",
+  );
+  await page
+    .getByRole("button", { name: "Patvirtinti remontą", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "Tamsioji grandinė užbaigta",
+  );
+  await expect(page.locator("canvas")).toHaveAttribute(
+    "data-circuit-status",
+    "verified",
+  );
+  await page
+    .getByRole("heading", { name: "Tamsioji grandinė užbaigta", exact: true })
+    .scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath("m3-complete-lt.png") });
+  await page.getByRole("button", { name: "Grįžti į pirmąjį kontaktą" }).click();
+  await expect(
+    page.getByRole("heading", {
+      name: "Tamsioji grandinė užbaigta",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.getByRole("combobox").selectOption("en");
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.getByRole("button", { name: "View restored board" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.screenshot({ path: testInfo.outputPath("m3-world-verified.png") });
+  await page.getByRole("button", { name: "Return to terminal report" }).click();
+  await page.getByRole("button", { name: "Open terminal diagnostics" }).click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "The Dark Circuit complete",
+  );
+  await expect(page.getByLabel("SENSE after V", { exact: true })).toHaveText(
+    "2.50 V",
+  );
+  await page.getByRole("button", { name: "Back to First Contact" }).click();
+  await page.getByRole("button", { name: "Replay The Dark Circuit" }).click();
+  await expect(page.locator("canvas")).toHaveAttribute("data-phase", "playing");
+  await expect(page.locator("canvas")).toHaveAttribute(
+    "data-circuit-status",
+    "open",
+  );
+  await expect(page.locator("canvas")).toHaveAttribute(
+    "data-mission-step",
+    "0",
+  );
   expect(errors).toEqual([]);
 });
 test("walk/run/jump, solid collisions, pause, camera zoom and resume are functional", async ({
