@@ -1,7 +1,7 @@
 # Development status
 
-M4 Creative programming in progress on codex/m4-creative-programming. Approved merged M3 baseline main 9fb195b, PR #4 merged, main CI 39001642540 passed.
+M5 Cooperative pilot implemented on codex/m5-cooperative-pilot from approved merged M4 main 19bdba7. PR #5 merged; main CI 39036262488 passed.
 
-Implemented bounded circuit building and virtual controller with equivalent block/text instructions, deterministic 128-step interpreter, computed voltages, trace, EN/LT UI and challenge. 70 unit tests, lint/types/build and all 10 Chromium checks pass. Full local verify remains blocked by Windows Firefox spawn UNKNOWN. Three actual screenshots reviewed; code review fixes documented in VALIDATION-M4.md. No dependencies, host-code execution or M5.
+Implemented local private Colyseus rooms, server movement/identity authority, shared solver-backed repair, complementary roles, EN/LT board/status, live reconnection and room cleanup. Single-player and M4 modes remain unchanged. 78 domain/integration tests pass, including expiry, replacement, authority and resource guards. Full local verification passed lint/types/build and 11 Chromium flows; Firefox remains blocked by Windows spawn UNKNOWN. Actual EN/LT captures reviewed and benchmark documented in VALIDATION-M5.md.
 
-PR #5 is open and unmerged: https://github.com/ernismorka/project-spark/pull/5. Linux CI on 22a7c60 passed pnpm verify with 70 unit tests and 20 Chromium/Firefox checks (39018383237). Current-head checks are in the PR. Next: M4 review/explicit merge authorization. Do not merge. Human usability/performance validation deferred to consolidated playtest; see EXECUTION_PLAN.md and GDD.md.
+PR #6 is open and unmerged: https://github.com/ernismorka/project-spark/pull/6. Linux CI at 4eaff81 passed pnpm verify, all 78 unit/integration tests and 22 Chromium/Firefox checks (39059186735). Final HTTP-body guard passed the standalone real-browser flow too. Current-head checks are in the PR. Next: review/explicit merge authorization. No merge or M6. Human usability/performance checks deferred per owner request. See EXECUTION_PLAN.md and ARCHITECTURE.md.

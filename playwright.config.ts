@@ -18,9 +18,16 @@ export default defineConfig({
     },
     { name: "firefox", use: { ...devices["Desktop Firefox"] } },
   ],
-  webServer: {
-    command: "pnpm --filter @spark/web preview --host 127.0.0.1",
-    url: "http://127.0.0.1:4173",
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: [
+    {
+      command: "pnpm dev:server",
+      url: "http://127.0.0.1:2567/health",
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      command: "pnpm --filter @spark/web preview --host 127.0.0.1",
+      url: "http://127.0.0.1:4173",
+      reuseExistingServer: !process.env.CI,
+    },
+  ],
 });

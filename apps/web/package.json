@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@colyseus/sdk": "0.18.5",
     "@spark/game-core": "workspace:*",
     "@spark/shared": "workspace:*",
     "playcanvas": "2.23.2",

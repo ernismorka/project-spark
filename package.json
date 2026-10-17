@@ -7,6 +7,8 @@
     "node": ">=24.0.0"
   },
   "scripts": {
+    "bench:pilot": "tsx apps/server/src/benchmark.ts",
+    "dev:server": "pnpm --filter @spark/server dev",
     "dev": "pnpm --filter @spark/web dev",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
@@ -18,11 +20,14 @@
     "doctor:project": "node scripts/doctor.mjs"
   },
   "devDependencies": {
+    "@colyseus/sdk": "0.18.5",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.64.1",
+    "@types/express": "5.0.6",
     "@types/node": "26.6.5",
     "eslint": "10.12.0",
     "prettier": "3.9.10",
+    "tsx": "4.23.15",
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.2",
     "vitest": "5.0.4"

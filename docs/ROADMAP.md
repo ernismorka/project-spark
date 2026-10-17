@@ -16,3 +16,5 @@ M2 implementation uses a documented linear DC subset (positive resistors, explic
 M3 implements the full bounded repair/verify episode on merged M2. See M3_PREPARATION.md for local authority, electrical claims, completion and replay/save semantics, and VALIDATION-M3.md for measured evidence. No M4 implementation is authorized by this delivery.
 
 M4 implementation follows the existing Creative programming row: bounded resistor-network construction and equivalent block/text virtual controller execution. See GDD.md for grammar, numerical limits and persistence. M5 Cooperative pilot remains dependent on an approved M4 baseline; no M5 implementation is included.
+
+M5 implements the existing Cooperative pilot row with local private Colyseus rooms, two complementary contributors, shared solver-backed repair, authoritative movement and reconnect/cleanup. The 3D single-player and programming modes remain intact. See GDD.md and ARCHITECTURE.md for the bounded pilot contract. No M6 implementation.

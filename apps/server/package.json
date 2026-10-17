@@ -1,0 +1,14 @@
+{
+  "name": "@spark/server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@colyseus/core": "0.18.18",
+    "@colyseus/ws-transport": "0.18.4",
+    "@spark/game-core": "workspace:*",
+    "@spark/shared": "workspace:*"
+  }
+}
