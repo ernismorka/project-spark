@@ -14,6 +14,9 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
     .getByRole("button", { name: "Run controller", exact: true })
     .click();
   await expect(panel.getByLabel("Workbench SENSE")).toHaveText("2.50 V");
+  await panel.locator("summary").click();
+  await expect(panel.locator("details")).toContainText("Step 3");
+  await panel.locator("summary").click();
   await expect(panel.locator("[data-output]")).toHaveAttribute(
     "data-output",
     "true",

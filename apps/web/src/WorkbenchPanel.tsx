@@ -13,7 +13,7 @@ const copy = {
     title: "Creative programming",
     close: "Return to adventure",
     scope:
-      "Build an ideal DC resistor network and program a bounded virtual controller. OUT is an abstract logical indicator, not a simulated MCU pin or LED.",
+      "Build an ideal DC resistor network and program a bounded virtual controller. OUT is an abstract logical indicator, not a simulated MCU pin or LED. Closing resets this workbench.",
     circuit: "Circuit builder",
     part: "Resistor",
     from: "From node",
@@ -54,7 +54,7 @@ const copy = {
     title: "Kūrybinis programavimas",
     close: "Grįžti į nuotykį",
     scope:
-      "Konstruok idealią nuolatinės srovės rezistorių grandinę ir programuok ribotą virtualų valdiklį. OUT yra loginis indikatorius, o ne simuliuojamas mikrovaldiklio išvadas ar šviesos diodas.",
+      "Konstruok idealią nuolatinės srovės rezistorių grandinę ir programuok ribotą virtualų valdiklį. OUT yra loginis indikatorius, o ne simuliuojamas mikrovaldiklio išvadas ar šviesos diodas. Uždarius dirbtuvė atkuriama.",
     circuit: "Grandinės konstravimas",
     part: "Rezistorius",
     from: "Pradžios mazgas",
@@ -129,7 +129,7 @@ export function WorkbenchPanel({
         if (e.key === "Tab") {
           const items = Array.from(
             e.currentTarget.querySelectorAll<HTMLElement>(
-              "button:not(:disabled),input,select,textarea",
+              "button:not(:disabled),input,select,textarea,summary",
             ),
           );
           const first = items[0],
