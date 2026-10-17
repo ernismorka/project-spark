@@ -223,7 +223,10 @@ export function WorkbenchPanel({
           </h3>
           <button
             aria-pressed={mode === "blocks"}
-            onClick={() => setMode("blocks")}
+            onClick={() => {
+              setMode("blocks");
+              send({ type: "set-program", program: state.program });
+            }}
           >
             {t.blocks}
           </button>
