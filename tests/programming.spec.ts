@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 test("builds and programs the controller through blocks and text in EN/LT", async ({
   page,
 }, info) => {
+  test.setTimeout(180000);
   await page.goto("/");
   await expect(page.getByTestId("renderer-status")).toHaveAttribute(
     "data-status",

@@ -1,6 +1,7 @@
 import { expect, it } from "vitest";
 import {
   createWorkbench,
+  workbenchChallenge,
   commandWorkbench as send,
   parseProgram,
   printProgram,
@@ -96,4 +97,24 @@ it("uses strict thresholds, finite block parameters and clears stale results", (
       part: { id: "R3", a: "GND", b: "SENSE", ohms: 1000 },
     }).result,
   ).toBeNull();
+});
+
+it("awards the challenge only for its solved circuit and program, not a disconnected shortcut", () => {
+  let s = send(createWorkbench(), {
+    type: "part",
+    part: { id: "R3", a: "SENSE", b: "GND", ohms: 1000 },
+  });
+  expect(workbenchChallenge(s)).toBe(false);
+  s = send(s, { type: "run" });
+  expect(workbenchChallenge(s)).toBe(true);
+  s = send(send(s, { type: "remove", id: "R1" }), { type: "run" });
+  expect(workbenchChallenge(s)).toBe(false);
+});
+it("round trips finite small block thresholds without losing text equivalence", () => {
+  const program = [
+    { op: "read" as const },
+    { op: "above" as const, volts: 1e-7 },
+    { op: "write" as const },
+  ];
+  expect(parseProgram(printProgram(program))).toEqual(program);
 });

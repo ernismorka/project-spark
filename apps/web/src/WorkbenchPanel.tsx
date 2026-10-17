@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   createWorkbench,
+  workbenchChallenge,
   commandWorkbench,
   printProgram,
   type Instruction,
@@ -116,15 +117,7 @@ export function WorkbenchPanel({
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(n);
-  const challenge =
-    state.result?.ok &&
-    !state.error &&
-    !state.output &&
-    state.parts.some(
-      (p) =>
-        p.id === "R3" && p.a === "SENSE" && p.b === "GND" && p.ohms === 1000,
-    ) &&
-    printProgram(state.program) === printProgram(createWorkbench().program);
+  const challenge = workbenchChallenge(state);
   return (
     <section
       className="workbench"

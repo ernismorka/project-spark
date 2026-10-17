@@ -68,7 +68,7 @@ export function parseProgram(text: unknown): readonly Instruction[] | null {
     else if (
       tokens.length === 2 &&
       tokens[0] === "ABOVE" &&
-      /^\d+(\.\d+)?$/.test(tokens[1])
+      /^\d+(\.\d+)?(e[+-]?\d+)?$/i.test(tokens[1])
     )
       program.push({ op: "above", volts: Number(tokens[1]) });
     else if (
@@ -214,4 +214,26 @@ export function commandWorkbench(s: Workbench, c: unknown): Workbench {
   return pc < s.program.length
     ? { ...s, result, trace, output: false, error: "budget" }
     : { ...s, result, trace, output, error: null };
+}
+
+/** Learning objective is derived from the validated circuit and completed run. */
+export function workbenchChallenge(s: Workbench): boolean {
+  const expected = [
+    ...createWorkbench().parts,
+    { id: "R3", a: "SENSE", b: "GND", ohms: 1000 },
+  ];
+  return (
+    s.error === null &&
+    s.result?.ok === true &&
+    s.trace.length > 0 &&
+    !s.output &&
+    s.result.voltages.SENSE < 2 &&
+    s.parts.length === 3 &&
+    expected.every((p) =>
+      s.parts.some(
+        (q) => q.id === p.id && q.a === p.a && q.b === p.b && q.ohms === p.ohms,
+      ),
+    ) &&
+    printProgram(s.program) === printProgram(createWorkbench().program)
+  );
 }
