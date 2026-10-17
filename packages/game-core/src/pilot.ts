@@ -36,7 +36,7 @@ export function joinPilot(s: PilotState, id: string): PilotState {
   const explorer = {
     ...createSession().player,
     id,
-    position: { x: role === "analyst" ? -3 : 3, y: 0, z: -15 },
+    position: { x: role === "analyst" ? -2 : 2, y: 0, z: -16 },
   };
   return {
     ...s,

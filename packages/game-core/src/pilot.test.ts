@@ -64,7 +64,12 @@ it("rejects spoofing, malformed input, replayed ordering and client positions", 
   );
   let moved = next;
   for (let i = 0; i < 60; i++) moved = tickPilot(moved);
-  expect(moved.players[0].explorer.position.x).toBeLessThan(-1);
+  expect(
+    moved.players[0].explorer.position.x - s.players[0].explorer.position.x,
+  ).toBeGreaterThan(0);
+  expect(
+    moved.players[0].explorer.position.x - s.players[0].explorer.position.x,
+  ).toBeLessThan(1.1);
 });
 it("stops disconnected/idle movement and preserves shared state through reconnect", () => {
   let s = room();

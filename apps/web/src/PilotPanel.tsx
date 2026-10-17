@@ -1,3 +1,4 @@
+import { CloseCode } from "@colyseus/sdk";
 import { components } from "@spark/game-core";
 import { diagnosisCopy } from "./diagnosis-i18n";
 import { useEffect, useRef, useState } from "react";
@@ -22,6 +23,7 @@ const copy = {
     analyst: "Analyst",
     engineer: "Engineer",
     waiting: "Waiting for partner",
+    range: "Move inside the T1 ring to interact.",
     help: "Focus the board and move with WASD or arrow keys. Work within 5 m of T1. Both players must be connected. Analyst measures VCC, diagnoses and verifies; engineer measures SENSE and repairs. No single player can finish alone.",
     measure: "Measure",
     diagnose: "Diagnose R1 open",
@@ -59,6 +61,7 @@ const copy = {
     analyst: "Analitikas",
     engineer: "Inžinierius",
     waiting: "Laukiama partnerio",
+    range: "Prieš veikdamas įeik į T1 žiedą.",
     help: "Pasirink plokštę ir judėk WASD arba rodyklėmis. Dirbk ne toliau kaip 5 m nuo T1. Abu žaidėjai turi būti prisijungę. Analitikas matuoja VCC, nustato gedimą ir tikrina; inžinierius matuoja SENSE ir remontuoja. Vienas žaidėjas užbaigti negali.",
     measure: "Matuoti",
     diagnose: "Nustatyti R1 nutrūkimą",
@@ -210,18 +213,24 @@ export function PilotPanel({
   };
   const me = state?.players.find((p) => p.id === id),
     repaired = state?.mission.repair.r1 === "restored",
-    ready =
+    connectedReady =
       state?.players.length === 2 &&
       state.players.every((p) => p.connected) &&
       status === "connected";
+  const near =
+    !!me &&
+    Math.hypot(me.explorer.position.x, me.explorer.position.z + 18) <= 5 &&
+    Math.abs(me.explorer.position.y) <= 2;
+  const ready = connectedReady && near;
   const readings = repaired
     ? state?.mission.repair.readings
     : state?.mission.diagnosis?.readings;
-  const format = (n: number) =>
+  const coordinate = (n: number) =>
     new Intl.NumberFormat(language === "lt" ? "lt-LT" : "en-GB", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }).format(n) + " V";
+    }).format(n);
+  const format = (n: number) => coordinate(n) + " V";
   return (
     <section
       className="workbench pilot"
@@ -229,6 +238,11 @@ export function PilotPanel({
       aria-modal="true"
       aria-label={t.open}
       onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          onClose();
+          return;
+        }
         if (e.key === "Tab") {
           const items = Array.from(
             e.currentTarget.querySelectorAll<HTMLElement>(
@@ -287,12 +301,15 @@ export function PilotPanel({
           </p>
           <button
             disabled={status !== "connected"}
-            onClick={() => connection.current?.connection.close(4001)}
+            onClick={() =>
+              connection.current?.connection.close(CloseCode.MAY_TRY_RECONNECT)
+            }
           >
             {t.reconnect}
           </button>
           <button
             onClick={() => {
+              generation.current++;
               void connection.current?.leave();
               connection.current = null;
               keys.current.clear();
@@ -314,13 +331,17 @@ export function PilotPanel({
                 {p.id === id ? "(" + t.you + ")" : ""} ·{" "}
                 {p.connected ? t.online : t.offline} ·{" "}
                 <output aria-label={p.role + " position"}>
-                  {p.explorer.position.x.toFixed(2)},{" "}
-                  {p.explorer.position.z.toFixed(2)}
+                  {coordinate(p.explorer.position.x)};{" "}
+                  {coordinate(p.explorer.position.z)}
                 </output>
               </li>
             ))}
           </ul>
-          {!ready && <p>{t.waiting}</p>}
+          {!connectedReady ? (
+            <p>{t.waiting}</p>
+          ) : !near ? (
+            <p>{t.range}</p>
+          ) : null}
           <svg
             tabIndex={0}
             role="img"
@@ -377,13 +398,13 @@ export function PilotPanel({
                 <circle
                   cx={p.explorer.position.x}
                   cy={p.explorer.position.z}
-                  r="1"
+                  r="1.4"
                   fill={p.role === "analyst" ? "#f3c85c" : "#5cacc2"}
                 />
                 <text
                   x={p.explorer.position.x + 1.2}
                   y={p.explorer.position.z}
-                  fontSize="1.6"
+                  fontSize="2.2"
                   fill="white"
                 >
                   {p.role === "analyst" ? "A" : "E"}

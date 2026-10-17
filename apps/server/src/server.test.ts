@@ -85,6 +85,18 @@ it("rejects foreign browser origins", async () => {
     headers: { Origin: "https://untrusted.example" },
   });
   expect(r.status).toBe(403);
+  const denied = await fetch(
+    "http://127.0.0.1:" + address.port + "/matchmake/create/pilot",
+    {
+      method: "POST",
+      headers: {
+        Origin: "https://untrusted.example",
+        "Content-Type": "application/json",
+      },
+      body: "{}",
+    },
+  );
+  expect(denied.status).toBe(403);
 });
 
 it("expires abandoned seats, resets evidence, and admits a replacement", async () => {

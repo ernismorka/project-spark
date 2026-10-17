@@ -45,6 +45,7 @@ test("two private-room players move, diagnose, repair and reconnect in EN/LT", a
     await a.waitForTimeout(350);
     await a.keyboard.up("KeyA");
     await expect(pb.getByLabel("analyst position")).not.toHaveText(before);
+    await pa.getByRole("img", { name: "Cooperative board" }).focus();
     await a.keyboard.down("KeyD");
     await a.waitForTimeout(350);
     await a.keyboard.up("KeyD");
@@ -85,7 +86,7 @@ test("two private-room players move, diagnose, repair and reconnect in EN/LT", a
       .click();
     await expect(pa).toContainText("Cooperative circuit restored");
     await expect(pb).toContainText("Bendra grandinė atkurta");
-    await a.setViewportSize({ width: 1280, height: 1100 });
+    await a.setViewportSize({ width: 1280, height: 1400 });
     await pa
       .getByRole("heading", {
         name: "Cooperative circuit restored",
