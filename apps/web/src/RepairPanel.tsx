@@ -48,7 +48,7 @@ export function RepairPanel({
         </>
       ) : (
         <>
-          <p role="status">{t.repaired}</p>
+          {!session.repair.completed && <p role="status">{t.repaired}</p>}
           <p>{t.explanation}</p>
           <table>
             <caption>{diagnosisCopy[language].evidence}</caption>

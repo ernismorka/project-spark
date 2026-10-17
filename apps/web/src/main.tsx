@@ -140,7 +140,7 @@ function App() {
       <header>
         <a className="brand" href="./" aria-label="Project Spark">
           <span className="logo">ϟ</span> project<span>spark</span>
-          <small>M2</small>
+          <small>M3</small>
         </a>
         <div className="header-actions">
           {session.phase === "playing" && (
@@ -173,7 +173,7 @@ function App() {
       </header>
       {session.phase === "title" && (
         <section className="intro">
-          <p className="eyebrow">{g.mission} / M2</p>
+          <p className="eyebrow">{repairCopy[state.language].title} / M3</p>
           <h1>{t.title}</h1>
           <p>{g.brief}</p>
         </section>
@@ -181,11 +181,19 @@ function App() {
       <section className="scene gameplay" aria-label={t.scene}>
         <div className="scene-top">
           <div>
-            <p className="eyebrow">{g.mission}</p>
+            <p className="eyebrow">
+              {session.step === 5
+                ? repairCopy[state.language].title
+                : g.mission}
+            </p>
             <h2>
               {session.phase === "title"
                 ? g.welcome
-                : g.objectives[session.step]}
+                : session.repair.completed
+                  ? repairCopy[state.language].world
+                  : session.step === 5
+                    ? repairCopy[state.language].intro
+                    : g.objectives[session.step]}
             </h2>
           </div>
           <span
@@ -466,7 +474,7 @@ function App() {
       </section>
       <footer>
         <span>PROJECT SPARK © 2026</span>
-        <span>{session.phase === "diagnosing" ? d.scope : g.scanner}</span>
+        <span>{session.step === 5 ? d.scope : g.scanner}</span>
       </footer>
     </main>
   );

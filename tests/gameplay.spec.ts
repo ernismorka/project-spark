@@ -184,6 +184,9 @@ test("plays First Contact using real movement and interaction inputs", async ({
   await page
     .getByRole("heading", { name: "Tamsioji grandinė užbaigta", exact: true })
     .scrollIntoViewIfNeeded();
+  await page
+    .locator(".diagnostic-content")
+    .evaluate((el) => el.scrollTo(0, el.scrollHeight));
   await page.screenshot({ path: testInfo.outputPath("m3-complete-lt.png") });
   await expect(
     page.getByRole("heading", {
