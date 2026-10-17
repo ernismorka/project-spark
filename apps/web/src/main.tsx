@@ -1,3 +1,4 @@
+import { WorkbenchPanel, programmingCopy } from "./WorkbenchPanel";
 import { repairCopy } from "./repair-i18n";
 import { DiagnosticPanel } from "./DiagnosticPanel";
 import { diagnosisCopy } from "./diagnosis-i18n";
@@ -25,6 +26,7 @@ function App() {
   );
   const [attempt, setAttempt] = useState(0);
   const [mounted, setMounted] = useState(true);
+  const [workbench, setWorkbench] = useState(false);
   const [viewBoard, setViewBoard] = useState(false);
   const [selected, setSelected] = useState<string>();
   const selectedRef = useRef(selected);
@@ -137,12 +139,23 @@ function App() {
             : components[4];
   return (
     <main className={session.phase === "title" ? "" : "in-game"}>
+      {workbench && (
+        <WorkbenchPanel
+          language={state.language}
+          onClose={() => setWorkbench(false)}
+        />
+      )}
       <header>
         <a className="brand" href="./" aria-label="Project Spark">
           <span className="logo">ϟ</span> project<span>spark</span>
-          <small>M3</small>
+          <small>M4</small>
         </a>
         <div className="header-actions">
+          {(session.phase === "title" || session.phase === "complete") && (
+            <button onClick={() => setWorkbench(true)}>
+              {programmingCopy[state.language].open}
+            </button>
+          )}
           {session.phase === "playing" && (
             <button onClick={() => dispatch({ type: "pause" })}>
               {g.pause}

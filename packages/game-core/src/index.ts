@@ -36,3 +36,4 @@ export {
   diagnosticPoints,
   episodeCircuit,
 } from "./diagnosis";
+export * from "./programming";

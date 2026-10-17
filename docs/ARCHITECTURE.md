@@ -41,3 +41,9 @@ React DiagnosticPanel renders a schematic, test points, evidence and localized h
 Session.repair owns the R1 fault flag, fresh measurements and verified completion. episodeCircuit derives the fixed DC instance from that flag. repair-r1 is gated by terminal phase/proximity, completed exploration, identified diagnosis and original evidence. Only target R1 is repairable. It restores the nominal connection; no client circuit is accepted. measure-repair recalculates solver voltages; verify-repair checks fresh evidence against a new solution and the divider relationship. Duplicate/invalid commands preserve identity.
 
 React shows before/after readings and localized completion. The renderer consumes repair flags for an abstract amber/green terminal beacon and verified strip, with no electrical rules in PlayCanvas. restart-episode returns a fresh playing session with all exploration and electrical state reset. Closing diagnostics preserves state; reload/end resets it. No durable save or network authentication is introduced.
+
+## M4 workbench
+
+programming.ts in game-core owns the editable bounded netlist, closed instruction model, strict parser/printer and deterministic step-limited interpreter. It calls the existing electronics solver before running; circuit errors prevent execution. No browser or host APIs occur in the interpreter. The UI edits through commandWorkbench and renders its computed result/trace; text execution applies the visible source first. Invalid source clears outputs and cannot execute a stale program.
+
+WorkbenchPanel is a modal over the existing scene at title/completed terminal; movement is already frozen. It supports keyboard navigation and Escape, while preserving the scene lifecycle. Workbench lifetime is independent of M3 episode state. This is a virtual educational controller, not binary/firmware emulation. See GDD.md for grammar, limits, construction and persistence contract.

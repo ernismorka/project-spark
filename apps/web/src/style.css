@@ -681,3 +681,62 @@ footer {
   color: #83f2ad;
   margin: 0 0 8px;
 }
+
+.workbench {
+  position: fixed;
+  inset: 12px;
+  z-index: 100;
+  background: #132d39;
+  border: 1px solid #d7ee91;
+  border-radius: 12px;
+  padding: 24px;
+  overflow: auto;
+  color: #edf3ee;
+}
+.workbench header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.workbench-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+.workbench label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 10px 0;
+}
+.workbench input,
+.workbench select,
+.workbench textarea {
+  color: #edf3ee;
+  background: #17343e;
+  border: 1px solid #66818b;
+  padding: 8px;
+  border-radius: 5px;
+}
+.workbench textarea {
+  height: 180px;
+  font-family: monospace;
+}
+.workbench button {
+  margin: 5px;
+}
+.workbench li {
+  margin: 10px 0;
+}
+.workbench [data-output="true"] {
+  color: #83f2ad;
+}
+@media (max-width: 700px) {
+  .workbench-grid {
+    grid-template-columns: 1fr;
+  }
+  .workbench {
+    inset: 5px;
+    padding: 15px;
+  }
+}
