@@ -82,6 +82,59 @@ test("plays First Contact using real movement and interaction inputs", async ({
     "data-mission-step",
     "5",
   );
+  await page.getByRole("button", { name: "Open terminal diagnostics" }).click();
+  await expect(page.getByRole("dialog")).toContainText("Follow the voltage");
+  await expect(
+    page.getByRole("button", { name: "R1 is open", exact: true }),
+  ).toBeDisabled();
+  await page.getByRole("button", { name: "Measure VCC", exact: true }).click();
+  await expect(page.getByLabel("VCC V", { exact: true })).toHaveText("5.00 V");
+  await page
+    .getByRole("button", { name: "Measure SENSE", exact: true })
+    .click();
+  await expect(page.getByLabel("SENSE V", { exact: true })).toHaveText(
+    "0.00 V",
+  );
+  await page.getByRole("button", { name: "R2 is open", exact: true }).click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "does not explain both readings",
+  );
+  await page.getByRole("combobox").selectOption("lt");
+  await expect(page.getByRole("dialog")).toContainText("Sek įtampą");
+  await expect(page.getByLabel("VCC V", { exact: true })).toHaveText("5,00 V");
+  await page.getByRole("button", { name: "R1 nutrūkęs", exact: true }).click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "Gedimas nustatytas: R1 nutrūkęs.",
+  );
+  await page.screenshot({ path: testInfo.outputPath("m2-diagnosis-lt.png") });
+  await page.getByRole("button", { name: "Grįžti į pirmąjį kontaktą" }).click();
+  await page
+    .getByRole("button", { name: "Atverti terminalo diagnostiką" })
+    .click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "Gedimas nustatytas: R1 nutrūkęs.",
+  );
+  await expect(
+    page.getByRole("button", { name: "Grįžti į pirmąjį kontaktą" }),
+  ).toBeFocused();
+  await page.getByRole("combobox").selectOption("en");
+  await page.setViewportSize({ width: 1280, height: 1200 });
+  await page.screenshot({ path: testInfo.outputPath("m2-diagnosis-en.png") });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(
+    page.getByRole("heading", { name: "Follow the voltage" }),
+  ).toBeInViewport();
+  await expect(
+    page.getByRole("button", { name: "Back to First Contact" }),
+  ).toBeInViewport();
+  await expect(
+    page.getByRole("button", { name: "Back to First Contact" }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
   expect(errors).toEqual([]);
 });
 test("walk/run/jump, solid collisions, pause, camera zoom and resume are functional", async ({
@@ -95,10 +148,8 @@ test("walk/run/jump, solid collisions, pause, camera zoom and resume are functio
   const walked = await position(page);
   expect(start.z - walked.z).toBeGreaterThan(0.5);
   await page.keyboard.press("Space");
-  await page.waitForTimeout(150);
-  expect((await position(page)).y).toBeGreaterThan(0.3);
-  await page.waitForTimeout(900);
-  expect((await position(page)).y).toBe(0);
+  await expect.poll(async () => (await position(page)).y).toBeGreaterThan(0.3);
+  await expect.poll(async () => (await position(page)).y).toBe(0);
   await page.keyboard.press("Escape");
   await expect(
     page.getByRole("button", { name: "Resume exploration" }),

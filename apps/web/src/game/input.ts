@@ -41,7 +41,9 @@ export function bindInput(
   };
   const keydown = (e: KeyboardEvent) => {
     if (e.code === controls.pause) {
-      if (get().phase === "inspecting") dispatch({ type: "close-inspection" });
+      if (get().phase === "diagnosing") dispatch({ type: "close-diagnostics" });
+      else if (get().phase === "inspecting")
+        dispatch({ type: "close-inspection" });
       else if (get().phase === "playing") dispatch({ type: "pause" });
       release();
       return;

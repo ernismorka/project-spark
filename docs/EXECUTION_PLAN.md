@@ -1,39 +1,34 @@
 # Execution plan
 
-## Current milestone
+## Current milestone and baseline
 
-M1 First Contact, branch codex/m1-first-contact, based on merged M0 main cdb99c2. Reviewable PR: https://github.com/ernismorka/project-spark/pull/2. Awaiting human review/merge authorization after final verification. Autonomous workflow setup is included as a separate focused commit per the subsequent approved setup brief.
+M2 Electrical reasoning, branch codex/m2-electrical-reasoning, from main 5c84a1a. GitHub confirms M1 PR #2 merged at 2026-10-16 19:07:55 UTC. The user requested autonomous execution of the next authorized milestone; no merge was performed by this session. The bounded implementation contract is M2_SIMULATION_SCOPE.md. Reviewable PR: https://github.com/ernismorka/project-spark/pull/3 (unmerged).
 
-## Completed work
+## Completed implementation
 
-M0 baseline/merge and CI verified. Implemented procedural PCB and engineer; fixed-step walk/run/jump, static collision and fall recovery; orbit/follow/zoom with clipping prevention; ID-based nearby selection and inspect/identify; strictly ordered First Contact mission; localized HUD, menus, explanations, pause/resume and completion; context-loss retry and teardown; domain/camera tests and real-input browser traversal. No dependencies upgraded. Added standing autonomy instructions, project doctor, fail-fast verifier, CI isolation/artifact improvements, environment audit and durable tracking.
+- Serializable DC circuit/result contracts and a real electronics workspace package; no external dependency additions/upgrades.
+- Deterministic modified nodal analysis for resistors/open resistors/ideal voltage sources; explicit invalid/unsupported/floating/singular/numerical outcomes with bounded input.
+- Core terminal access, computed node readings, evidence validation, incorrect/correct diagnosis and duplicate/persistence behavior.
+- Localized terminal panel with schematic, healthy reference, measurement units and EN/LT decimal formatting. No repair/editor/MCU/nonlinear simulation.
+- 57 unit tests pass, including all M0/M1 tests; lint/typecheck/build pass. CI at 8480cb4 passes the common verifier and all 18 Chromium/Firefox browser checks: https://github.com/ernismorka/project-spark/actions/runs/38965501728. Actual terminal captures are reviewed; the interrupted local route was rerun successfully. See VALIDATION-M2.md for exact local limitations.
 
-## Acceptance and evidence
+## Remaining acceptance tasks
 
-- Visible controllable engineer and explorable world: real keyboard browser traversal and inspected gameplay screenshots.
-- Four educational component categories with valid inspection metadata: core fixtures and localized descriptions; no measurements or solver.
-- Mission completes without direct state injection: browser route and ordered core tests.
-- Pause, jump, collision, zoom/orbit, pointer release and localization: browser checks plus camera/domain tests.
-- Cleanup: observed game input listeners removed on session unmount (known Playwright hit-test callbacks excluded); retry retains progress and remount starts clean.
-- Architecture/security: no React, engine or browser imports in domain packages; serializable commands validated at core boundary; no backend, credentials, telemetry, player code execution or networking added.
-- 17 unit tests passed. Original M0 tests retained. Implementation/setup CI on 7a715f9: project doctor and the common verifier passed, including lint/types/17 unit tests/build and 18/18 Chromium/Firefox browser checks at https://github.com/ernismorka/project-spark/actions/runs/38917152835. This evidence update changes documentation only; consult PR checks for the latest documentation commit.
-- Local Windows full run: 8 Chromium checks passed, 8 Firefox launch failures with spawn UNKNOWN. Added keyboard language-focus test passed separately. See docs/VALIDATION-M1.md for exact outcomes and performance caveats.
-
-## Remaining tasks
-
-1. Completed: common verifier and all 18 browser checks confirmed green; evidence recorded.
-2. Completed: self-review and reviewable PR with gameplay screenshots, actual results and limitations.
-3. Human review and explicit merge authorization for PR #2. No automatic merge.
-4. Representative midrange laptop performance and new-player pacing playtest remain unverified product targets; do not invent certification.
+1. Completed: local checks, actual terminal capture review and UI/test fixes.
+2. Completed: common verifier and 18/18 browser checks passed in CI. Latest documentation/copy commit has its own PR checks.
+3. Completed: self-review, scope, evidence and screenshots recorded.
+4. PR #3 is open against main; await human review and explicit merge authorization. Do not merge automatically.
 
 ## Dependencies and blockers
 
-No new dependency needed. Browser downloads/localhost/Git mutation may need scoped host approval in this environment. Windows Firefox launch is locally blocked; Linux Firefox CI is required evidence. M2 implementation depends on an approved M1 baseline. No background runner has been configured; scheduled execution is optional and documented in AUTONOMOUS_WORKFLOW.md.
+M1 baseline is approved/merged. Existing toolchain versions stay pinned. Local Firefox may fail to launch with the known Windows spawn UNKNOWN error; CI is required supported-browser evidence. Scoped host approval may be needed for Git/cache/localhost. Performance on representative target hardware remains unverified from M1; no new FPS claim is made. No scheduler or automatic restart was configured.
 
-## Next milestone
+## Acceptance
 
-M2 Electrical reasoning, as already defined in ROADMAP.md. Independent planning only is authorized now: see M2_PREPARATION.md. Do not implement the solver, repairs or UI measurement claims while PR #2 remains unapproved. After approval, fetch latest main, confirm merge, create codex/m2-electrical-reasoning and implement the approved deterministic subset in focused steps.
+Analytical Ohm/divider/series/parallel/polarity fixtures and KCL/power balance match declared tolerances. Invalid/unsupported/floating or underdetermined circuits return explicit errors. Input permutations produce identical results. Player reaches the terminal via actual M1 gameplay, measures both nodes, sees feedback, completes diagnosis and preserves it across panel reopening/language changes. Original browser/unit coverage stays green. Docs describe only implemented models.
 
-## Resume prompt
+## Next milestone / continuation
 
-Read AGENTS.md, docs/EXECUTION_PLAN.md, docs/DEVELOPMENT_STATUS.md and docs/VALIDATION-M1.md. Inspect origin/main, PR #2 and its latest CI. Continue the first executable remaining item, preserve unrelated changes, do not merge automatically and do not implement dependent M2 work until its baseline and scope are approved.
+M3 The Dark Circuit is next in ROADMAP.md, and depends on an approved M2 baseline. Do not implement dependent episode/repair mechanics or expand the simulation subset while M2 is unapproved. Independent narrative/repair acceptance preparation is in M3_PREPARATION.md; no M3 code is implemented.
+
+Resume: read AGENTS.md, this file, DEVELOPMENT_STATUS.md and M2_SIMULATION_SCOPE.md; inspect current branch, main, M2 PR and CI; continue the first executable unfinished task without automatically merging.

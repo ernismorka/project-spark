@@ -1,3 +1,4 @@
+import { diagnosticCommand } from "./diagnosis";
 import type {
   BoardComponent,
   ExplorationCommand,
@@ -20,6 +21,7 @@ export function createSession(): Session {
     scanned: [],
     inspection: null,
     recoveries: 0,
+    diagnosis: null,
   };
 }
 export function canInteract(
@@ -76,6 +78,8 @@ function isCommand(value: unknown): value is ExplorationCommand {
   );
 }
 export function commandSession(state: Session, command: unknown): Session {
+  const diagnostic = diagnosticCommand(state, command);
+  if (diagnostic !== undefined) return diagnostic;
   if (!isCommand(command)) return state;
   if (command.type === "start")
     return state.phase === "title" ? { ...state, phase: "playing" } : state;

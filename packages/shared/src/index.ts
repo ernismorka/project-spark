@@ -37,7 +37,8 @@ export interface Explorer {
   readonly grounded: boolean;
   readonly facing: number;
 }
-export type Phase = "title" | "playing" | "paused" | "inspecting" | "complete";
+export type Phase =
+  "title" | "playing" | "paused" | "inspecting" | "complete" | "diagnosing";
 export interface Session {
   readonly phase: Phase;
   readonly player: Explorer;
@@ -46,8 +47,58 @@ export interface Session {
   readonly scanned: readonly string[];
   readonly inspection: { id: string; scan: boolean } | null;
   readonly recoveries: number;
+  readonly diagnosis: DiagnosisState | null;
 }
 export type ExplorationCommand =
-  | { type: "start" | "pause" | "resume" | "close-inspection" }
+  | {
+      type:
+        | "start"
+        | "pause"
+        | "resume"
+        | "close-inspection"
+        | "open-diagnostics"
+        | "close-diagnostics";
+    }
   | { type: "step"; x: number; z: number; run: boolean; jump: boolean }
-  | { type: "interact" | "scan"; target: string };
+  | { type: "interact" | "scan" | "measure-node"; target: string }
+  | { type: "submit-diagnosis"; fault: DiagnosisFault };
+export interface DCResistor {
+  readonly id: string;
+  readonly kind: "resistor";
+  readonly a: string;
+  readonly b: string;
+  readonly ohms: number;
+  readonly open?: boolean;
+}
+export interface DCVoltageSource {
+  readonly id: string;
+  readonly kind: "voltage-source";
+  readonly a: string;
+  readonly b: string;
+  readonly volts: number;
+}
+export type DCComponent = DCResistor | DCVoltageSource;
+export interface DCCircuit {
+  readonly ground: string;
+  readonly nodes: readonly string[];
+  readonly components: readonly DCComponent[];
+}
+export type DCFailure =
+  | "invalid-circuit"
+  | "unsupported-component"
+  | "floating-node"
+  | "singular-system"
+  | "numerical-failure";
+export type DCResult =
+  | {
+      readonly ok: true;
+      readonly voltages: Readonly<Record<string, number>>;
+      readonly currents: Readonly<Record<string, number>>;
+    }
+  | { readonly ok: false; readonly error: DCFailure };
+export type DiagnosisFault = "r1-open" | "r2-open" | "source-off";
+export interface DiagnosisState {
+  readonly readings: Readonly<Record<string, number>>;
+  readonly outcome: "collect-evidence" | "incorrect" | "identified";
+  readonly attempts: number;
+}
