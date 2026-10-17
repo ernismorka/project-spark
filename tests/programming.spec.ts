@@ -32,7 +32,7 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
   await page.screenshot({ path: info.outputPath("m4-built-en.png") });
   await panel.getByRole("button", { name: "Text", exact: true }).click();
   await panel
-    .getByLabel("Text", { exact: true })
+    .getByRole("textbox", { name: "Text", exact: true })
     .fill("READ SENSE\nABOVE 1\nWRITE OUT");
   await panel.getByRole("button", { name: "Apply text", exact: true }).click();
   await panel
@@ -53,17 +53,19 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
     "false",
   );
   await panel.getByRole("button", { name: "Text", exact: true }).click();
-  await expect(panel.getByLabel("Text", { exact: true })).toHaveValue(
-    "READ SENSE\nABOVE 2\nWRITE OUT",
-  );
-  await panel.getByLabel("Text", { exact: true }).fill("while(true) {}");
+  await expect(
+    panel.getByRole("textbox", { name: "Text", exact: true }),
+  ).toHaveValue("READ SENSE\nABOVE 2\nWRITE OUT");
+  await panel
+    .getByRole("textbox", { name: "Text", exact: true })
+    .fill("while(true) {}");
   await panel.getByRole("button", { name: "Apply text", exact: true }).click();
   await expect(panel.getByRole("alert")).toContainText("Invalid program");
   await panel
     .getByRole("button", { name: "Reset workbench", exact: true })
     .click();
   await panel
-    .getByLabel("Text", { exact: true })
+    .getByRole("textbox", { name: "Text", exact: true })
     .fill("READ SENSE\nWRITE OUT\nREPEAT 128");
   await panel.getByRole("button", { name: "Apply text", exact: true }).click();
   await panel
