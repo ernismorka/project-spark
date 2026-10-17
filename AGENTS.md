@@ -4,7 +4,7 @@
 
 Read README.md, docs/GDD.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, docs/EXECUTION_PLAN.md and docs/DEVELOPMENT_STATUS.md before continuing. GDD and roadmap are the product source of truth. Do not expand them without authorization.
 
-Current implementation is M2 electrical reasoning on merged M1. Preserve M0 APIs and tests. Keep commands and state serializable. game-core and future electronics code must not import browser APIs, React or PlayCanvas. Input becomes validated commands, core updates state, presentation consumes it. The authorized M2 subset is defined in docs/M2_SIMULATION_SCOPE.md. Keep nonlinear/transient simulation, repair mechanics and MCU execution out of this milestone.
+Current implementation is M3 The Dark Circuit on merged M2 PR #3. Preserve M0 APIs, M1 movement and the M2 deterministic solver. Keep commands and state serializable; domain packages must not import browser APIs, React or PlayCanvas. Input becomes validated commands, core updates state, presentation consumes it. M3 repairs only the diagnosed R1 connection and requires solver-backed verification. See docs/M3_PREPARATION.md and docs/M2_SIMULATION_SCOPE.md. No generalized editor, nonlinear/transient simulation, MCU execution or M4 work.
 
 ## Autonomous workflow
 
@@ -30,4 +30,4 @@ Preserve sandbox and security restrictions. Never modify machine-wide Codex appr
 
 ## Session continuity
 
-On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. If M2 awaits approval, limit work to its fixes/review and independent M3 planning. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.
+On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M2 is merged; M3 is authorized. After its PR is submitted, limit work to M3 fixes/review until further authorization. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.

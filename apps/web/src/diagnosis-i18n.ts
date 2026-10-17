@@ -17,7 +17,7 @@ const en = {
     "That fault does not explain both readings. Compare VCC and SENSE with the healthy reference, then try another explanation.",
   identified: "Fault identified: R1 is open.",
   explanation:
-    "VCC is still 5 V, but SENSE is pulled to 0 V through R2 because R1 no longer connects it to the supply. In this ideal model, both resistor currents are zero. Diagnosis is complete; no repair has been performed.",
+    "VCC is still 5 V, but SENSE is pulled to 0 V through R2 because R1 no longer connects it to the supply. In this ideal model, both resistor currents are zero. Diagnosis is complete. Restore R1, then verify with fresh measurements.",
   limits:
     "Steady-state ideal DC only. No LED/capacitor behavior or MCU execution.",
   faults: {
@@ -44,7 +44,7 @@ const lt: typeof en = {
     "Šis gedimas nepaaiškina abiejų rodmenų. Palygink VCC ir SENSE su tvarkingos grandinės etalonu ir bandyk kitą paaiškinimą.",
   identified: "Gedimas nustatytas: R1 nutrūkęs.",
   explanation:
-    "VCC tebėra 5 V, bet R2 palaiko SENSE ties 0 V, nes R1 nebesujungia šio taško su maitinimu. Šiame idealiame modelyje srovė per abu rezistorius lygi nuliui. Diagnostika baigta; remontas neatliktas.",
+    "VCC tebėra 5 V, bet R2 palaiko SENSE ties 0 V, nes R1 nebesujungia šio taško su maitinimu. Šiame idealiame modelyje srovė per abu rezistorius lygi nuliui. Diagnostika baigta. Atkurk R1 jungtį ir patvirtink remontą naujais matavimais.",
   limits:
     "Tik idealus nuolatinės srovės režimas. Be šviesos diodų, kondensatorių ar mikrovaldiklio veikimo.",
   faults: {

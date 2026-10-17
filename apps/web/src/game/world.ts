@@ -88,7 +88,21 @@ export function buildWorld(g: Geometry) {
   shape("cylinder", [world.spawn.x, 0.03, world.spawn.z], [4, 0.04, 4], p.ink);
   const marker = shape("cone", [0, 4, 26], [0.6, 0.9, 0.6], p.suit);
   marker.setEulerAngles(180, 0, 0);
-  return { marker };
+  // Abstract terminal status beacon, not a simulated LED.
+  const beacon = shape("box", [0, 2.5, -18], [2.2, 0.5, 0.5], p.chip);
+  const restoredTrace = shape("box", [0, 0.08, -14], [0.6, 0.08, 7], p.healthy);
+  restoredTrace.enabled = false;
+  return {
+    marker,
+    status: (repaired: boolean, verified: boolean) => {
+      beacon.render!.material = verified
+        ? p.healthy
+        : repaired
+          ? p.suit
+          : p.chip;
+      restoredTrace.enabled = verified;
+    },
+  };
 }
 export function buildEngineer(g: Geometry, root: pc.Entity) {
   const player = new pc.Entity("engineer");

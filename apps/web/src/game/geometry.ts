@@ -14,6 +14,7 @@ export function createGeometry(root: pc.Entity) {
     return m;
   };
   const palette = {
+    healthy: material("#83f2ad", true),
     board: material("#17665c"),
     edge: material("#113d40"),
     copper: material("#dfb96d"),

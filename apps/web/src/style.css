@@ -646,3 +646,38 @@ footer {
     max-height: 95%;
   }
 }
+
+.repair-panel {
+  border-top: 2px solid #d7ee91;
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+}
+.repair-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+.repair-panel th,
+.repair-panel td {
+  padding: 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #53706b;
+}
+.repair-panel caption {
+  text-align: left;
+  margin-bottom: 0.5rem;
+}
+
+.board-report {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  padding: 10px 16px;
+  border: 1px solid #83f2ad;
+  background: #132d39ed;
+  max-width: calc(100% - 30px);
+}
+.board-report p {
+  color: #83f2ad;
+  margin: 0 0 8px;
+}

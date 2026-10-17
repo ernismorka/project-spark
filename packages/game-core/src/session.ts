@@ -22,6 +22,7 @@ export function createSession(): Session {
     inspection: null,
     recoveries: 0,
     diagnosis: null,
+    repair: { r1: "open", readings: {}, completed: false },
   };
 }
 export function canInteract(
@@ -51,9 +52,13 @@ export function nearbyComponents(state: Session): readonly BoardComponent[] {
 function isCommand(value: unknown): value is ExplorationCommand {
   if (!value || typeof value !== "object" || !("type" in value)) return false;
   if (
-    ["start", "pause", "resume", "close-inspection"].includes(
-      String(value.type),
-    )
+    [
+      "start",
+      "pause",
+      "resume",
+      "close-inspection",
+      "restart-episode",
+    ].includes(String(value.type))
   )
     return true;
   if (value.type === "step")
@@ -81,6 +86,10 @@ export function commandSession(state: Session, command: unknown): Session {
   const diagnostic = diagnosticCommand(state, command);
   if (diagnostic !== undefined) return diagnostic;
   if (!isCommand(command)) return state;
+  if (command.type === "restart-episode")
+    return state.phase === "complete" || state.phase === "diagnosing"
+      ? { ...createSession(), phase: "playing" }
+      : state;
   if (command.type === "start")
     return state.phase === "title" ? { ...state, phase: "playing" } : state;
   if (command.type === "pause")
