@@ -1,9 +1,9 @@
 # Execution plan
 
-M4 Creative programming on codex/m4-creative-programming from main 9fb195b. PR #4 is merged; main CI run 39001642540 succeeded before implementation. M4 explicitly authorized by owner; no milestone renumbering.
+M5 Cooperative pilot, branch codex/m5-cooperative-pilot, from merged M4 main 19bdba7. PR #5 merged and main CI 39036262488 passed before implementation. The owner explicitly authorized the local Colyseus pilot; milestones retain their existing numbering.
 
-Implemented: bounded resistor circuit builder, shared block/text instructions, strict parser/printer, deterministic isolated interpreter, limits/errors, solved input/output, trace, EN/LT workbench and learning challenge. Existing episode/solver remain intact. No new dependencies or M5 work.
+Implemented: private two-seat rooms, authoritative input integration using existing movement, shared M3 diagnosis/repair/solver state, complementary role/evidence objectives, snapshots/HUD, EN/LT top-down pilot, bounded messages/rates and reconnect/cleanup. No public deployment, persistence, chat/accounts or M6.
 
-Completed: implementation, code review/defect fixes, 70 unit tests, lint/types/build, full real-input Chromium flow including M3 return, three reviewed EN/LT captures and validation documentation. Full local verify passes 10 Chromium checks but Windows Firefox fails to launch. Linux CI at 22a7c60 passes pnpm verify, all 70 unit tests and 20 Chromium/Firefox checks (run 39018383237). PR #5: https://github.com/ernismorka/project-spark/pull/5. Await review and explicit merge authorization; check current-head CI in the PR. See VALIDATION-M4.md. Do not merge automatically.
+In progress: full pnpm verify, two-client browser flow, expiry/rate/security regression tests, screenshot inspection, performance observation and final code review. Initial 75 domain/integration tests passed before the expiry fixture. Update VALIDATION-M5.md with actual final evidence, then commit/push and open M5 PR against main. Verify final CI. Do not merge.
 
-Human target-age usability, pacing, accessibility assistive-technology evaluation and representative hardware frame/memory measurements are deferred for a later consolidated playtest at owner request. No performance certification. Session-only workbench resets on close/reopen; existing adventure persistence unchanged.
+Deferred consolidated human playtest: target-age understanding/pacing, assistive technology, network-latency feel, and representative hardware client FPS/server CPU/memory. These do not block routine implementation.

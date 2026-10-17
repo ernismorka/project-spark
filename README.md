@@ -74,3 +74,21 @@ Manual M3 QA: try repair only after evidence-based R1 diagnosis, compare 0.00 V 
 Open creative workbench from title or the completed terminal. Run the initial divider/controller, connect default R3 between SENSE and GND, then run again: observe the changed solver voltage and virtual output. Edit instruction blocks or switch to the equivalent text; apply/run, inspect the bounded execution trace, remove branches and reset. Source keywords are stable English identifiers; explanations and controls are EN/LT. Closing/reopening resets workbench edits. It does not change the M3 repaired circuit.
 
 See docs/GDD.md for the exact bounded language and circuit model. No arbitrary JavaScript, MCU firmware emulation, LED physics, backend or M5 functionality. Human usability/performance testing is recorded for later consolidated playtesting.
+
+## M5: open two local clients
+
+Run in separate terminals:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm dev:server
+pnpm dev
+```
+
+Open http://127.0.0.1:5173 in two tabs/windows. Select Cooperative pilot in each. Create private room in the first; copy its room code into the second and join. Role assignment is server-owned: first analyst, second engineer. Focus/click the top-down board and use WASD/arrows to move; T1's dashed ring marks the 5 m service range.
+
+Analyst measures VCC; engineer measures SENSE; analyst diagnoses R1; engineer repairs; both remeasure; analyst verifies. Both players see shared readings, progress and each other's movement. English/Lithuanian can be chosen at title before entering the room. This optional pilot preserves the 3D single-player experience.
+
+Reconnect transport exercises a live temporary drop. The server holds the seat for 20 seconds, pauses shared actions and preserves mission state on reconnection. Leave room releases the seat and resets the shared task; expiry does the same. Empty rooms clean themselves up. Reloaded tabs cannot recover an in-memory SDK token through the UI; wait for seat expiry and rejoin. No accounts or durable state. Room codes are private invitations, not passwords.
+
+The server binds only 127.0.0.1:2567; this delivery is for two clients on the same computer and is not publicly deployed. Supported browser origins are localhost/127.0.0.1 ports 5173/4173. Playwright automatically starts the server and production preview. pnpm verify also runs independent Colyseus integration tests on an ephemeral loopback port. pnpm bench:pilot records a small domain tick/snapshot observation; it is not a scalability or target-hardware FPS claim. See docs/VALIDATION-M5.md for actual evidence and deferred consolidated playtesting.

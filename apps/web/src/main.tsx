@@ -1,3 +1,4 @@
+import { PilotPanel, pilotCopy } from "./PilotPanel";
 import { WorkbenchPanel, programmingCopy } from "./WorkbenchPanel";
 import { repairCopy } from "./repair-i18n";
 import { DiagnosticPanel } from "./DiagnosticPanel";
@@ -26,6 +27,7 @@ function App() {
   );
   const [attempt, setAttempt] = useState(0);
   const [mounted, setMounted] = useState(true);
+  const [pilot, setPilot] = useState(false);
   const [workbench, setWorkbench] = useState(false);
   const [viewBoard, setViewBoard] = useState(false);
   const [selected, setSelected] = useState<string>();
@@ -139,6 +141,19 @@ function App() {
             : components[4];
   return (
     <>
+      {pilot && (
+        <PilotPanel
+          language={state.language}
+          onClose={() => {
+            setPilot(false);
+            requestAnimationFrame(() =>
+              document
+                .querySelector<HTMLButtonElement>(".header-actions button")
+                ?.focus(),
+            );
+          }}
+        />
+      )}
       {workbench && (
         <WorkbenchPanel
           language={state.language}
@@ -153,15 +168,20 @@ function App() {
         />
       )}
       <main
-        inert={workbench}
+        inert={workbench || pilot}
         className={session.phase === "title" ? "" : "in-game"}
       >
         <header>
           <a className="brand" href="./" aria-label="Project Spark">
             <span className="logo">ϟ</span> project<span>spark</span>
-            <small>M4</small>
+            <small>M5</small>
           </a>
           <div className="header-actions">
+            {session.phase === "title" && (
+              <button onClick={() => setPilot(true)}>
+                {pilotCopy[state.language].open}
+              </button>
+            )}
             {(session.phase === "title" || session.phase === "complete") && (
               <button onClick={() => setWorkbench(true)}>
                 {programmingCopy[state.language].open}

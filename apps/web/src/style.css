@@ -773,3 +773,17 @@ footer {
 .workbench header {
   flex-wrap: wrap;
 }
+
+.pilot-board {
+  display: block;
+  width: 100%;
+  height: 280px;
+  outline: 2px solid #66818b;
+  margin: 15px 0;
+}
+.pilot-board:focus {
+  outline: 3px solid #d7ee91;
+}
+.pilot output {
+  font-variant-numeric: tabular-nums;
+}

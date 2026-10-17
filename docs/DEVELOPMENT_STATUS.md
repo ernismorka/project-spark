@@ -1,7 +1,7 @@
 # Development status
 
-M4 Creative programming in progress on codex/m4-creative-programming. Approved merged M3 baseline main 9fb195b, PR #4 merged, main CI 39001642540 passed.
+M5 Cooperative pilot in progress on codex/m5-cooperative-pilot from approved merged M4 main 19bdba7. PR #5 merged; main CI 39036262488 passed.
 
-Implemented bounded circuit building and virtual controller with equivalent block/text instructions, deterministic 128-step interpreter, computed voltages, trace, EN/LT UI and challenge. 70 unit tests, lint/types/build and all 10 Chromium checks pass. Full local verify remains blocked by Windows Firefox spawn UNKNOWN. Three actual screenshots reviewed; code review fixes documented in VALIDATION-M4.md. No dependencies, host-code execution or M5.
+Implemented local private Colyseus rooms, server movement/identity authority, shared solver-backed repair, complementary roles, EN/LT board/status, live reconnection and room cleanup. Single-player and M4 modes remain unchanged. Initial 75 tests passed; further expiry/browser validation is running.
 
-PR #5 is open and unmerged: https://github.com/ernismorka/project-spark/pull/5. Linux CI on 22a7c60 passed pnpm verify with 70 unit tests and 20 Chromium/Firefox checks (39018383237). Current-head checks are in the PR. Next: M4 review/explicit merge authorization. Do not merge. Human usability/performance validation deferred to consolidated playtest; see EXECUTION_PLAN.md and GDD.md.
+Next: complete verification/capture review, fix defects, record actual evidence, push and open M5 PR, then inspect final CI. No merge or M6. Human usability/performance checks deferred per owner request. See EXECUTION_PLAN.md and ARCHITECTURE.md.
