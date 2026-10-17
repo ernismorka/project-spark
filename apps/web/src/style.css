@@ -740,3 +740,36 @@ footer {
     padding: 15px;
   }
 }
+
+.workbench label {
+  align-items: stretch;
+  text-align: left;
+  font-size: 14px;
+}
+.workbench-grid > section {
+  min-width: 0;
+}
+.workbench ol > li {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #66818b60;
+  border-radius: 8px;
+}
+.workbench ol > li label {
+  margin: 0;
+  flex: 1;
+  min-width: 100px;
+}
+.workbench header {
+  position: sticky;
+  top: -24px;
+  background: #132d39;
+  z-index: 1;
+  padding: 8px 0;
+}
+.workbench header {
+  flex-wrap: wrap;
+}

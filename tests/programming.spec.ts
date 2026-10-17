@@ -3,6 +3,7 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
   page,
 }, info) => {
   test.setTimeout(180000);
+  await page.setViewportSize({ width: 1280, height: 1200 });
   await page.goto("/");
   await expect(page.getByTestId("renderer-status")).toHaveAttribute(
     "data-status",
@@ -29,6 +30,7 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
     .click();
   await expect(panel.getByLabel("Workbench SENSE")).toHaveText("1.67 V");
   await expect(panel).toContainText("Challenge complete");
+  await panel.evaluate((el) => el.scrollTo(0, 0));
   await page.screenshot({ path: info.outputPath("m4-built-en.png") });
   await panel.getByRole("button", { name: "Text", exact: true }).click();
   await panel
@@ -42,6 +44,8 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
     "data-output",
     "true",
   );
+  await panel.evaluate((el) => el.scrollTo(0, 0));
+  await page.screenshot({ path: info.outputPath("m4-text-en.png") });
   await panel.getByRole("button", { name: "Blocks", exact: true }).click();
   await expect(panel.getByLabel("Parameter 2")).toHaveValue("1");
   await panel.getByLabel("Parameter 2").fill("2");
@@ -98,6 +102,9 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  expect(await lt.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(
+    true,
+  );
   await page.screenshot({ path: info.outputPath("m4-controller-lt.png") });
   await lt
     .getByRole("button", { name: "Grįžti į nuotykį", exact: true })
