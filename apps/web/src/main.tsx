@@ -106,7 +106,7 @@ function App() {
     if (document.activeElement?.tagName !== "SELECT")
       menu.current
         ?.querySelector<HTMLButtonElement>("button:not(:disabled)")
-        ?.focus({ preventScroll: true });
+        ?.focus();
   }, [session.phase, viewBoard]);
   const showingBoard =
     viewBoard && session.phase === "complete" && session.repair.completed;

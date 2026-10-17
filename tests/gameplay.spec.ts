@@ -185,6 +185,25 @@ test("plays First Contact using real movement and interaction inputs", async ({
     .getByRole("heading", { name: "Tamsioji grandinė užbaigta", exact: true })
     .scrollIntoViewIfNeeded();
   await page.screenshot({ path: testInfo.outputPath("m3-complete-lt.png") });
+  await expect(
+    page.getByRole("heading", {
+      name: "Tamsioji grandinė užbaigta",
+      exact: true,
+    }),
+  ).toBeFocused();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(
+    page.getByRole("heading", { name: "Sek įtampą", exact: true }),
+  ).toBeInViewport();
+  await expect(
+    page.getByRole("button", { name: "Grįžti į pirmąjį kontaktą" }),
+  ).toBeInViewport();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.setViewportSize({ width: 1280, height: 1200 });
   await page.getByRole("button", { name: "Grįžti į pirmąjį kontaktą" }).click();
   await expect(
     page.getByRole("heading", {

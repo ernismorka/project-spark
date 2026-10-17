@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { diagnosticPoints } from "@spark/game-core";
 import type { ExplorationCommand, Language, Session } from "@spark/shared";
 import { repairCopy } from "./repair-i18n";
@@ -11,6 +12,16 @@ export function RepairPanel({
   language: Language;
   dispatch: (c: ExplorationCommand) => void;
 }) {
+  const panel = useRef<HTMLElement>(null);
+  useEffect(() => {
+    panel.current
+      ?.querySelector<HTMLElement>(
+        session.repair.completed
+          ? "[data-completion]"
+          : "button:not(:disabled)",
+      )
+      ?.focus();
+  }, [session.repair.r1, session.repair.completed, session.repair.readings]);
   const t = repairCopy[language];
   const repaired = session.repair.r1 === "restored";
   const ready = diagnosticPoints.every((p) =>
@@ -22,7 +33,7 @@ export function RepairPanel({
       maximumFractionDigits: 2,
     }).format(v) + " V";
   return (
-    <section className="repair-panel" aria-label={t.title}>
+    <section ref={panel} className="repair-panel" aria-label={t.title}>
       <h3>{t.title}</h3>
       <p>{t.intro}</p>
       {!repaired ? (
@@ -92,7 +103,9 @@ export function RepairPanel({
           )}
           {session.repair.completed && (
             <div className="diagnosis-feedback success" role="status">
-              <h3>{t.complete}</h3>
+              <h3 tabIndex={-1} data-completion>
+                {t.complete}
+              </h3>
               <p>{t.success}</p>
               <p>{t.world}</p>
             </div>
