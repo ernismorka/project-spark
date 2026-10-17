@@ -14,3 +14,5 @@ M1 implements First Contact: third-person walk/run/jump, orbit camera, static co
 M2 implementation uses a documented linear DC subset (positive resistors, explicit open resistors, independent ideal voltage sources). Terminal diagnosis follows M1; repair remains outside M2. See M2_SIMULATION_SCOPE.md and current execution/status files for evidence and remaining review gates.
 
 M3 implements the full bounded repair/verify episode on merged M2. See M3_PREPARATION.md for local authority, electrical claims, completion and replay/save semantics, and VALIDATION-M3.md for measured evidence. No M4 implementation is authorized by this delivery.
+
+M4 implementation follows the existing Creative programming row: bounded resistor-network construction and equivalent block/text virtual controller execution. See GDD.md for grammar, numerical limits and persistence. M5 Cooperative pilot remains dependent on an approved M4 baseline; no M5 implementation is included.
