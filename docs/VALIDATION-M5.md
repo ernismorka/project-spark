@@ -25,3 +25,7 @@ Initial actual EN/LT captures confirmed consistent final readings and peer roles
 The pilot is a separate top-down cooperative service-board view using existing world coordinates/collision; the existing 3D adventure and M4 editor are preserved. It is loopback-only for two clients on the same computer, without public deployment, durable state, prediction, chat/accounts, public matchmaking or arbitrary player code. Reconnect tokens stay in memory; page reload recovery is not exposed. The room code is a bearer invitation. Live drops reserve identity for 20 seconds; expiry or intentional leave resets the shared task so new players cannot inherit contribution credit.
 
 Outstanding consolidated human playtest: target-age learning/pacing, assistive-technology accessibility, two-human coordination, perceived latency and representative hardware client FPS/server CPU/memory. These remain documented follow-ups, not a fabricated completed playtest or an implementation approval blocker. No M6 or automatic merge.
+
+## CI and delivery
+
+Linux CI at 4eaff81 passed pnpm verify, all 78 unit/integration tests and all 22 Chromium/Firefox browser checks: https://github.com/ernismorka/project-spark/actions/runs/39059186735. The final HTTP-body guard also passed the actual standalone Chromium cooperative flow (1/1, 5.6-second test). PR #6: https://github.com/ernismorka/project-spark/pull/6. Current-head push/PR checks are linked there; no checks were disabled. The PR remains unmerged.
