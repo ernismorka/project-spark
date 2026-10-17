@@ -1,6 +1,6 @@
 # Project Spark
 
-Browser-first educational 3D engineering adventure. M3 adds a complete DC diagnosis, repair and verification episode to the single-player First Contact circuit-board exploration slice. No accounts, telemetry, backend or external assets. PR #1 (M0) was merged before M1 began.
+Browser-first educational 3D engineering adventure. M3 adds a complete DC diagnosis, repair and verification episode to the single-player First Contact circuit-board exploration slice. No accounts, telemetry or external assets; M5 adds an optional loopback-only Colyseus server. PR #1 (M0) was merged before M1 began.
 
 ## Run
 

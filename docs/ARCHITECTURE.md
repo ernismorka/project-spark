@@ -4,7 +4,7 @@
 
 apps/web owns React UI, browser lifecycle, input translation and PlayCanvas rendering. packages/shared exports serializable contracts, entity IDs and state types. packages/game-core owns the board metadata, collision dimensions, fixed-step movement, checkpoint recovery, interaction eligibility and First Contact progression. packages/electronics provides the bounded deterministic DC solver. No dependencies were added or upgraded for M1.
 
-Input -> validated command -> game-core -> state -> presentation. The existing M0 createGame/execute language API and its tests are preserved. M1 adds a separate createSession/commandSession API. Unknown/malformed gameplay commands and invalid actions return the identical state. Domain code uses no browser globals, engine, wall clock or randomness. Commands do not accept client-reported positions or mission events. The local client executes authoritative rules; a future server could use the same functions, but ownership, transport and synchronization are not implemented. Player IDs and optional future device references are serializable.
+Input -> validated command -> game-core -> state -> presentation. The existing M0 createGame/execute language API and its tests are preserved. M1 adds a separate createSession/commandSession API. Unknown/malformed gameplay commands and invalid actions return the identical state. Domain code uses no browser globals, engine, wall clock or randomness. Commands do not accept client-reported positions or mission events. Single-player executes core rules locally. M5 executes pilot authority on its Colyseus server and publishes shared snapshots, as described below. Player IDs and optional future device references are serializable.
 
 ## Motion and interactions
 

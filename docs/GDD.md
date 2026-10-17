@@ -18,7 +18,7 @@ A complete single-player browser episode, no account, installation or backend. E
 
 ## Future cooperation
 
-After the first complete episode, co-op can support shared diagnosis and complementary engineering roles. Server authority and session design remain future work.
+After the first complete episode, co-op can support shared diagnosis and complementary engineering roles. M5 now implements a local private-room pilot with server authority and complementary roles; see the M5 contract below.
 
 ## Non-goals
 
