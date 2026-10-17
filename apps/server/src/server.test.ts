@@ -1,3 +1,4 @@
+import { request } from "node:http";
 import { beforeAll, afterAll, it, expect } from "vitest";
 import { Client, type Room as ClientRoom } from "@colyseus/sdk";
 import { matchMaker } from "@colyseus/core";
@@ -132,6 +133,20 @@ it("bounds HTTP payloads and local request bursts", async () => {
     body: JSON.stringify({ junk: "x".repeat(3000) }),
   });
   expect(huge.status).toBe(413);
+  const chunked = await new Promise<number | undefined>((resolve, reject) => {
+    const req = request(
+      url + "/matchmake/create/pilot",
+      { method: "POST", headers: { "Content-Type": "application/json" } },
+      (res) => {
+        res.resume();
+        resolve(res.statusCode);
+      },
+    );
+    req.on("error", reject);
+    req.write("{");
+    req.end("}");
+  });
+  expect(chunked).toBe(411);
   let rejected = 0;
   for (let i = 0; i < 125; i++) {
     const r = await fetch(url + "/health", {

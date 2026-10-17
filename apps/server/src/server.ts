@@ -15,6 +15,8 @@ export function createPilotServer(reconnectSeconds = 20) {
     length: number,
   ) => {
     if (!allowed(origin)) return new Response(null, { status: 403 });
+    if (method === "POST" && (!Number.isSafeInteger(length) || length < 1))
+      return new Response(null, { status: 411 });
     if (length > 2048) return new Response(null, { status: 413 });
     if (Date.now() - windowStart > 60000) {
       windowStart = Date.now();

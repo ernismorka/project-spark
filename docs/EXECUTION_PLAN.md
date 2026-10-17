@@ -4,6 +4,6 @@ M5 Cooperative pilot, branch codex/m5-cooperative-pilot, from merged M4 main 19b
 
 Implemented: private two-seat rooms, authoritative input integration using existing movement, shared M3 diagnosis/repair/solver state, complementary role/evidence objectives, snapshots/HUD, EN/LT top-down pilot, bounded messages/rates and reconnect/cleanup. No public deployment, persistence, chat/accounts or M6.
 
-In progress: full pnpm verify, two-client browser flow, expiry/rate/security regression tests, screenshot inspection, performance observation and final code review. Initial 75 domain/integration tests passed before the expiry fixture. Update VALIDATION-M5.md with actual final evidence, then commit/push and open M5 PR against main. Verify final CI. Do not merge.
+Completed: implementation, review/defect fixes, 78 domain/integration tests, lint/types/build, 11 Chromium browser flows, reviewed EN/LT multiplayer captures and benchmark observation. Windows Firefox still fails at launch; both browsers remain enabled in Linux CI. See VALIDATION-M5.md for exact evidence. Remaining: open the PR and inspect final two-browser CI. Do not merge.
 
 Deferred consolidated human playtest: target-age understanding/pacing, assistive technology, network-latency feel, and representative hardware client FPS/server CPU/memory. These do not block routine implementation.
