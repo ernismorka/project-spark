@@ -44,3 +44,40 @@ test("renders a real WebGL scene", async ({ page }, testInfo) => {
     fullPage: true,
   });
 });
+
+test("context loss during lazy scene loading cannot publish a stale ready state", async ({
+  page,
+}) => {
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/assets/scene-*.js", async (route) => {
+    await held;
+    await route.continue();
+  });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("canvas")).toBeAttached();
+  await page.locator("canvas").evaluate((c) => {
+    c.dispatchEvent(new Event("webglcontextlost", { cancelable: true }));
+  });
+  await expect(page.getByTestId("renderer-status")).toHaveAttribute(
+    "data-status",
+    "error",
+  );
+  const response = page.waitForResponse(/\/assets\/scene-.*\.js/);
+  release();
+  await response;
+  // Allow the cancelled async bootstrap to settle; it must never mark this canvas ready.
+  await page.waitForTimeout(1000);
+  await expect(page.getByTestId("renderer-status")).toHaveAttribute(
+    "data-status",
+    "error",
+  );
+  await expect(page.locator("canvas")).not.toHaveAttribute("data-phase", /.+/);
+  await page.getByRole("button", { name: "Try again" }).click();
+  await expect(page.getByTestId("renderer-status")).toHaveAttribute(
+    "data-status",
+    "ready",
+  );
+});

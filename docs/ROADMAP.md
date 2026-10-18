@@ -13,8 +13,10 @@ M1 implements First Contact: third-person walk/run/jump, orbit camera, static co
 
 M2 implementation uses a documented linear DC subset (positive resistors, explicit open resistors, independent ideal voltage sources). Terminal diagnosis follows M1; repair remains outside M2. See M2_SIMULATION_SCOPE.md and current execution/status files for evidence and remaining review gates.
 
-M3 implements the full bounded repair/verify episode on merged M2. See M3_PREPARATION.md for local authority, electrical claims, completion and replay/save semantics, and VALIDATION-M3.md for measured evidence. No M4 implementation is authorized by this delivery.
+M3 implements the full bounded repair/verify episode on merged M2. See M3_PREPARATION.md for local authority, electrical claims, completion and replay/save semantics, and VALIDATION-M3.md for measured evidence. This row records the M3 scope; M4 and M5 have since been approved and merged.
 
-M4 implementation follows the existing Creative programming row: bounded resistor-network construction and equivalent block/text virtual controller execution. See GDD.md for grammar, numerical limits and persistence. M5 Cooperative pilot remains dependent on an approved M4 baseline; no M5 implementation is included.
+M4 implementation follows the existing Creative programming row: bounded resistor-network construction and equivalent block/text virtual controller execution. See GDD.md for grammar, numerical limits and persistence. M4 and its dependent M5 pilot are now implemented and merged.
 
 M5 implements the existing Cooperative pilot row with local private Colyseus rooms, two complementary contributors, shared solver-backed repair, authoritative movement and reconnect/cleanup. The 3D single-player and programming modes remain intact. See GDD.md and ARCHITECTURE.md for the bounded pilot contract. No M6 implementation.
+
+All originally approved milestones M0–M5 are complete. Current work is scope-preserving post-M5 consolidation; see VALIDATION-CONSOLIDATION.md and PLAYTEST.md. Human acceptance observations remain outstanding even where technical gates pass. NEXT_STAGE_PROPOSAL.md compares future options; none is authorized and no milestone is renumbered.

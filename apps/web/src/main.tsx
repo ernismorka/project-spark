@@ -35,6 +35,10 @@ function App() {
   selectedRef.current = selected;
   const canvas = useRef<HTMLCanvasElement>(null);
   const menu = useRef<HTMLDivElement>(null);
+  const modalOpener = useRef<HTMLButtonElement | null>(null);
+  const restoreModalFocus = () => {
+    requestAnimationFrame(() => modalOpener.current?.focus());
+  };
   const t = messages[state.language],
     g = gameplay[state.language],
     d = diagnosisCopy[state.language];
@@ -59,6 +63,7 @@ function App() {
       event.preventDefault();
       dispatch({ type: "pause" });
       setStatus("error");
+      controller.abort();
       queueMicrotask(() => dispose?.());
     };
     element.addEventListener("webglcontextlost", lost);
@@ -117,6 +122,11 @@ function App() {
   const nearby = nearbyComponents(session);
   const target = nearby.find((c) => c.id === selected) ?? nearby[0];
   const inspected = components.find((c) => c.id === session.inspection?.id);
+  const coordinate = (n: number) =>
+    new Intl.NumberFormat(state.language === "lt" ? "lt-LT" : "en-GB", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }).format(n);
   const start = () => {
     if (!mounted) {
       setMounted(true);
@@ -146,11 +156,7 @@ function App() {
           language={state.language}
           onClose={() => {
             setPilot(false);
-            requestAnimationFrame(() =>
-              document
-                .querySelector<HTMLButtonElement>(".header-actions button")
-                ?.focus(),
-            );
+            restoreModalFocus();
           }}
         />
       )}
@@ -159,11 +165,7 @@ function App() {
           language={state.language}
           onClose={() => {
             setWorkbench(false);
-            requestAnimationFrame(() =>
-              document
-                .querySelector<HTMLButtonElement>(".header-actions button")
-                ?.focus(),
-            );
+            restoreModalFocus();
           }}
         />
       )}
@@ -178,12 +180,22 @@ function App() {
           </a>
           <div className="header-actions">
             {session.phase === "title" && (
-              <button onClick={() => setPilot(true)}>
+              <button
+                onClick={(e) => {
+                  modalOpener.current = e.currentTarget;
+                  setPilot(true);
+                }}
+              >
                 {pilotCopy[state.language].open}
               </button>
             )}
             {(session.phase === "title" || session.phase === "complete") && (
-              <button onClick={() => setWorkbench(true)}>
+              <button
+                onClick={(e) => {
+                  modalOpener.current = e.currentTarget;
+                  setWorkbench(true);
+                }}
+              >
                 {programmingCopy[state.language].open}
               </button>
             )}
@@ -291,8 +303,8 @@ function App() {
                       ·
                     </div>
                     <div className="position" aria-label={g.coordinates}>
-                      {session.player.position.x.toFixed(1)},{" "}
-                      {session.player.position.z.toFixed(1)}
+                      {coordinate(session.player.position.x)};{" "}
+                      {coordinate(session.player.position.z)}
                       {session.recoveries > 0 && (
                         <p>
                           {g.checkpoint} · {session.recoveries}

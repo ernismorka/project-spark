@@ -44,6 +44,7 @@ const copy = {
     you: "you",
     before: "Before repair",
     after: "After repair",
+    cooldown: "Preparing the next action…",
   },
   lt: {
     open: "Bendradarbiavimo bandymas",
@@ -82,6 +83,7 @@ const copy = {
     you: "tu",
     before: "Prieš remontą",
     after: "Po remonto",
+    cooldown: "Ruošiamas kitas veiksmas…",
   },
 };
 export const pilotCopy = copy;
@@ -99,21 +101,39 @@ export function PilotPanel({
     alive = useRef(true),
     generation = useRef(0),
     revision = useRef(-1);
+  const actionTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  const actionPending = useRef(false);
+  const [cooldown, setCooldown] = useState(false);
   const [state, setState] = useState<PilotState | null>(null),
     [id, setId] = useState(""),
     [code, setCode] = useState(""),
     [status, setStatus] = useState("closed"),
     [error, setError] = useState(false),
     [busy, setBusy] = useState(false);
-  const send = (c: object) => {
-    if (connection.current?.connection.isOpen)
+  const send = (c: { type: string } & Record<string, unknown>) => {
+    const action = c.type !== "move";
+    if (action && actionPending.current) return;
+    if (connection.current?.connection.isOpen) {
       connection.current.send("command", { ...c, sequence: ++seq.current });
+      if (action) {
+        // Keep ordinary UI actions outside the authority's 120 ms rate window.
+        actionPending.current = true;
+        setCooldown(true);
+        actionTimer.current = setTimeout(() => {
+          actionPending.current = false;
+          setCooldown(false);
+        }, 200);
+      }
+    }
   };
   useEffect(() => {
     alive.current = true;
     return () => {
       alive.current = false;
       generation.current++;
+      clearTimeout(actionTimer.current);
       void connection.current?.leave();
     };
   }, []);
@@ -221,7 +241,7 @@ export function PilotPanel({
     !!me &&
     Math.hypot(me.explorer.position.x, me.explorer.position.z + 18) <= 5 &&
     Math.abs(me.explorer.position.y) <= 2;
-  const ready = connectedReady && near;
+  const ready = connectedReady && near && !cooldown;
   const readings = repaired
     ? state?.mission.repair.readings
     : state?.mission.diagnosis?.readings;
@@ -421,6 +441,9 @@ export function PilotPanel({
                   ? t.identified
                   : t.fault}
           </h3>
+          <p role="status">
+            {cooldown && !state.mission.repair.completed ? t.cooldown : ""}
+          </p>
           <h4>
             {t.evidence} · {repaired ? t.after : t.before}
           </h4>

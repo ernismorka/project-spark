@@ -55,7 +55,8 @@ test("two private-room players move, diagnose, repair and reconnect in EN/LT", a
       .getByRole("button", { name: "Matuoti SENSE", exact: true })
       .click();
     await expect(pa.getByLabel("Shared SENSE")).toHaveText("0.00 V");
-    await a.waitForTimeout(160);
+    await pa.getByRole("button", { name: "R2 is open", exact: true }).click();
+    await expect(pa).toContainText("does not explain both readings");
     await pa
       .getByRole("button", { name: "Diagnose R1 open", exact: true })
       .click();
@@ -64,7 +65,6 @@ test("two private-room players move, diagnose, repair and reconnect in EN/LT", a
       .getByRole("button", { name: "Restore R1", exact: true })
       .count()
       .then((n) => expect(n).toBe(0));
-    await b.waitForTimeout(160);
     await pb.getByRole("button", { name: "Atkurti R1", exact: true }).click();
     await expect(pa).toContainText("R1 restored");
     await pa
@@ -80,7 +80,6 @@ test("two private-room players move, diagnose, repair and reconnect in EN/LT", a
       .getByRole("button", { name: "Matuoti SENSE", exact: true })
       .click();
     await expect(pa.getByLabel("Shared SENSE")).toHaveText("2.50 V");
-    await a.waitForTimeout(160);
     await pa
       .getByRole("button", { name: "Verify shared repair", exact: true })
       .click();
@@ -109,6 +108,12 @@ test("two private-room players move, diagnose, repair and reconnect in EN/LT", a
     await expect(
       pa.getByRole("heading", { name: "R1 open", exact: true }),
     ).toBeVisible();
+    await pb
+      .getByRole("button", { name: "Grįžti į nuotykį", exact: true })
+      .click();
+    await expect(
+      b.getByRole("button", { name: "Bendradarbiavimo bandymas", exact: true }),
+    ).toBeFocused();
     expect(errors).toEqual([]);
   } finally {
     await ca.close();

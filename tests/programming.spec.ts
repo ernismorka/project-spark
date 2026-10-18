@@ -88,6 +88,9 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
   await panel
     .getByRole("button", { name: "Return to adventure", exact: true })
     .click();
+  await expect(
+    page.getByRole("button", { name: "Open creative workbench" }),
+  ).toBeFocused();
   await page.getByRole("combobox").selectOption("lt");
   await page.getByRole("button", { name: "Atverti kūrybinę dirbtuvę" }).click();
   const lt = page.getByRole("dialog", { name: "Kūrybinis programavimas" });
@@ -109,6 +112,9 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
   await lt
     .getByRole("button", { name: "Grįžti į nuotykį", exact: true })
     .click();
+  await expect(
+    page.getByRole("button", { name: "Atverti kūrybinę dirbtuvę" }),
+  ).toBeFocused();
   await expect(
     page.getByRole("button", { name: "Pradėti tyrinėjimą", exact: true }),
   ).toBeVisible();
