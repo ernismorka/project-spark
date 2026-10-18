@@ -1,15 +1,11 @@
 import * as pc from "playcanvas";
-import {
-  components,
-  nearbyComponents,
-  movement,
-  world,
-} from "@spark/game-core";
+import { nearbyComponents, movement, world } from "@spark/game-core";
 import type { ExplorationCommand, Session } from "@spark/shared";
 import { createGeometry } from "./game/geometry";
 import { buildEngineer, buildWorld } from "./game/world";
 import { FollowCamera } from "./game/camera";
 import { bindInput } from "./game/input";
+import { objectiveTarget } from "./game/navigation";
 export interface SceneBridge {
   get: () => Session;
   dispatch: (command: ExplorationCommand, publish?: boolean) => void;
@@ -36,12 +32,14 @@ export async function mountScene(
   let observer: ResizeObserver | undefined;
   let update: ((dt: number) => void) | undefined;
   let disposed = false;
+  let batchGroupId: number | undefined;
   const dispose = () => {
     if (disposed) return;
     disposed = true;
     input?.dispose();
     observer?.disconnect();
     if (update) app?.off("update", update);
+    if (batchGroupId !== undefined) app?.batcher?.removeGroup(batchGroupId);
     geometry?.dispose();
     app?.destroy();
     if (!app) device.destroy();
@@ -49,6 +47,7 @@ export async function mountScene(
   try {
     const options = new pc.AppOptions();
     options.graphicsDevice = device;
+    options.batchManager = pc.BatchManager;
     options.componentSystems = [
       pc.RenderComponentSystem,
       pc.CameraComponentSystem,
@@ -58,8 +57,10 @@ export async function mountScene(
     app.init(options);
     app.graphicsDevice.maxPixelRatio = Math.min(window.devicePixelRatio, 1.5);
     app.scene.ambientLight = new pc.Color(0.7, 0.8, 0.85);
-    geometry = createGeometry(app.root);
+    batchGroupId = app.batcher!.addGroup("static-board", false, 32)!.id;
+    geometry = createGeometry(app.root, batchGroupId);
     const pcb = buildWorld(geometry);
+    app.batcher!.generate([batchGroupId]);
     const player = buildEngineer(geometry, app.root);
     const cameraEntity = new pc.Entity("follow-camera");
     cameraEntity.addComponent("camera", {
@@ -89,12 +90,25 @@ export async function mountScene(
       time = 0,
       publishTime = 0,
       lastPhase = bridge.get().phase;
+    let lastState: Session | undefined;
+    let renderDirty = true;
     update = (delta: number) => {
-      // The opaque workbench covers the scene; retain the last frame while inert.
-      app!.autoRender = !canvas.closest("main[inert]");
+      const state = bridge.get();
+      const visible = !canvas.closest("main[inert]") && !document.hidden;
+      app!.autoRender =
+        visible &&
+        (state.phase === "playing" || state !== lastState || renderDirty);
+      if (!visible) {
+        renderDirty = true;
+        accumulator = 0;
+        input!.release();
+        return;
+      }
+      if (!app!.autoRender) return;
+      renderDirty = false;
+      lastState = state;
       const dt = Math.min(delta, 0.1);
       time += dt;
-      const state = bridge.get();
       if (state.phase !== lastPhase) {
         input!.release();
         lastPhase = state.phase;
@@ -119,16 +133,7 @@ export async function mountScene(
         next.player.grounded,
       );
       camera.update(next.player.position, dt);
-      const destination =
-        next.step === 0
-          ? { x: 0, z: 27 }
-          : next.step === 1
-            ? components[0]
-            : next.step === 2
-              ? components[1]
-              : next.step === 3
-                ? { x: 0, z: -17 }
-                : components[4];
+      const destination = objectiveTarget(next.step);
       pcb.marker.enabled = next.phase !== "complete";
       pcb.marker.setPosition(
         destination.x,
@@ -140,6 +145,12 @@ export async function mountScene(
       canvas.dataset.playerZ = next.player.position.z.toFixed(3);
       canvas.dataset.cameraYaw = camera.yaw.toFixed(3);
       canvas.dataset.cameraZoom = camera.zoom.toFixed(2);
+      const cameraPosition = cameraEntity.getPosition();
+      canvas.dataset.cameraDistance = Math.hypot(
+        cameraPosition.x - next.player.position.x,
+        cameraPosition.y - next.player.position.y - 1.25,
+        cameraPosition.z - next.player.position.z,
+      ).toFixed(3);
       pcb.status(next.repair.r1 === "restored", next.repair.completed);
       canvas.dataset.circuitStatus = next.repair.completed
         ? "verified"
@@ -153,6 +164,7 @@ export async function mountScene(
       }
     };
     const resize = () => {
+      renderDirty = true;
       const parent = canvas.parentElement!;
       app!.resizeCanvas(
         Math.max(1, parent.clientWidth),

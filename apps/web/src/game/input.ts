@@ -11,6 +11,13 @@ export const controls = {
   scan: "KeyF",
   pause: "Escape",
 };
+export function cameraDirection(x: number, z: number, yaw: number) {
+  if (x === 0 && z === 0) return { x: 0, z: 0 };
+  const length = Math.max(1, Math.hypot(x, z));
+  const c = Math.cos(yaw),
+    s = Math.sin(yaw);
+  return { x: (x * c + z * s) / length, z: (-x * s + z * c) / length };
+}
 export function bindInput(
   canvas: HTMLCanvasElement,
   camera: FollowCamera,
@@ -50,6 +57,7 @@ export function bindInput(
     }
     if (
       get().phase !== "playing" ||
+      document.activeElement !== canvas ||
       (e.target instanceof HTMLElement &&
         ["BUTTON", "SELECT", "INPUT"].includes(e.target.tagName))
     )
@@ -110,6 +118,7 @@ export function bindInput(
   window.addEventListener("blur", blur);
   document.addEventListener("pointerlockchange", change);
   canvas.addEventListener("mousedown", down);
+  canvas.addEventListener("blur", clear);
   window.addEventListener("mouseup", up);
   window.addEventListener("mousemove", mouse);
   canvas.addEventListener("wheel", wheel, { passive: false });
@@ -121,12 +130,9 @@ export function bindInput(
           Number(keys.has(controls.right)) - Number(keys.has(controls.left)),
         z =
           Number(keys.has(controls.back)) - Number(keys.has(controls.forward));
-      const c = Math.cos(camera.yaw),
-        s = Math.sin(camera.yaw);
       const result: ExplorationCommand = {
         type: "step",
-        x: Math.max(-1, Math.min(1, x * c + z * s)),
-        z: Math.max(-1, Math.min(1, -x * s + z * c)),
+        ...cameraDirection(x, z, camera.yaw),
         run: keys.has(controls.run) || keys.has("ShiftRight"),
         jump,
       };
@@ -141,6 +147,7 @@ export function bindInput(
       window.removeEventListener("blur", blur);
       document.removeEventListener("pointerlockchange", change);
       canvas.removeEventListener("mousedown", down);
+      canvas.removeEventListener("blur", clear);
       window.removeEventListener("mouseup", up);
       window.removeEventListener("mousemove", mouse);
       canvas.removeEventListener("wheel", wheel);

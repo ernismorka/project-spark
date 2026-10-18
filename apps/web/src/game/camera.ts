@@ -10,6 +10,7 @@ export const cameraSettings = {
   smoothing: 10,
 };
 export function clipDistance(from: Vec3, to: Vec3): number {
+  const distance = Math.hypot(to.x - from.x, to.y - from.y, to.z - from.z);
   let fraction = 1;
   for (const s of solids) {
     let near = 0,
@@ -39,7 +40,10 @@ export function clipDistance(from: Vec3, to: Vec3): number {
       }
     }
     if (near <= far && near >= 0 && near <= 1)
-      fraction = Math.min(fraction, Math.max(0, near - 0.03));
+      fraction = Math.min(
+        fraction,
+        Math.max(0, near - 0.05 / Math.max(distance, 0.05)),
+      );
   }
   return fraction;
 }
@@ -49,6 +53,10 @@ export class FollowCamera {
   zoom = 8;
   private target = new pc.Vec3();
   private initialized = false;
+  private readonly desiredTarget = new pc.Vec3();
+  private readonly offset = new pc.Vec3();
+  private readonly desired = new pc.Vec3();
+  private readonly overheadUp = new pc.Vec3();
   constructor(readonly entity: pc.Entity) {}
   orbit(x: number, y: number) {
     this.yaw -= x * cameraSettings.sensitivity;
@@ -67,7 +75,7 @@ export class FollowCamera {
     );
   }
   update(position: Vec3, dt: number) {
-    const desiredTarget = new pc.Vec3(
+    const desiredTarget = this.desiredTarget.set(
       position.x,
       position.y + 1.25,
       position.z,
@@ -81,16 +89,33 @@ export class FollowCamera {
       desiredTarget,
       1 - Math.exp(-cameraSettings.smoothing * dt),
     );
-    const offset = new pc.Vec3(
+    // Do not let smoothed tracking cut through a component at corners.
+    if (clipDistance(desiredTarget, this.target) < 1)
+      this.target.copy(desiredTarget);
+    const offset = this.offset.set(
       Math.sin(this.yaw) * Math.cos(this.pitch) * this.zoom,
       Math.sin(this.pitch) * this.zoom,
       Math.cos(this.yaw) * Math.cos(this.pitch) * this.zoom,
     );
-    const desired = this.target.clone().add(offset);
+    const desired = this.desired.copy(this.target).add(offset);
     const fraction = clipDistance(this.target, desired);
-    this.entity.setPosition(
-      this.target.clone().add(offset.mulScalar(fraction)),
-    );
-    this.entity.lookAt(this.target);
+    if (this.zoom * fraction < 0.5) {
+      // A nearby wall can leave no usable rear view. Use clear space overhead,
+      // with a nonparallel up axis, rather than placing the camera at its target.
+      desired
+        .copy(this.target)
+        .add(this.offset.set(0, Math.min(this.zoom, 3), 0));
+      this.offset.mulScalar(clipDistance(this.target, desired));
+      this.entity.setPosition(desired.copy(this.target).add(this.offset));
+      this.entity.lookAt(
+        this.target,
+        this.overheadUp.set(-Math.sin(this.yaw), 0, -Math.cos(this.yaw)),
+      );
+    } else {
+      this.entity.setPosition(
+        desired.copy(this.target).add(offset.mulScalar(fraction)),
+      );
+      this.entity.lookAt(this.target);
+    }
   }
 }

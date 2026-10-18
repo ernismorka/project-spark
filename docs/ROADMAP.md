@@ -17,6 +17,12 @@ M3 implements the full bounded repair/verify episode on merged M2. See M3_PREPAR
 
 M4 implementation follows the existing Creative programming row: bounded resistor-network construction and equivalent block/text virtual controller execution. See GDD.md for grammar, numerical limits and persistence. M4 and its dependent M5 pilot are now implemented and merged.
 
-M5 implements the existing Cooperative pilot row with local private Colyseus rooms, two complementary contributors, shared solver-backed repair, authoritative movement and reconnect/cleanup. The 3D single-player and programming modes remain intact. See GDD.md and ARCHITECTURE.md for the bounded pilot contract. No M6 implementation.
+M5 implements the existing Cooperative pilot row with local private Colyseus rooms, two complementary contributors, shared solver-backed repair, authoritative movement and reconnect/cleanup. The 3D single-player and programming modes remain intact. See GDD.md and ARCHITECTURE.md for the bounded pilot contract. M6 is now separately authorized as the narrow quality scope below.
 
-All originally approved milestones M0–M5 are complete. Current work is scope-preserving post-M5 consolidation; see VALIDATION-CONSOLIDATION.md and PLAYTEST.md. Human acceptance observations remain outstanding even where technical gates pass. NEXT_STAGE_PROPOSAL.md compares future options; none is authorized and no milestone is renumbered.
+All originally approved milestones M0–M5 are complete. Consolidation is merged in PR #7; see VALIDATION-CONSOLIDATION.md and PLAYTEST.md. Human acceptance observations remain outstanding even where technical gates pass. NEXT_STAGE_PROPOSAL.md compares future options; option A is now narrowly authorized as M6; options B/C remain unapproved and earlier milestones are not renumbered.
+
+| Milestone             | Scope                                                                                                        | Acceptance                                                                                                                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M6 3D Gameplay Polish | Existing single-player movement/camera/orientation/readability and rendering/lifecycle; no new major systems | M6_SCOPE.md acceptance, preserved M0–M5 tests, new meaningful regressions, inspected before/after captures, measured workload/performance with explicit limits and an unmerged PR |
+
+M6 starts from merged PR #7 b7ba063. No M7 or dependent feature work is authorized.

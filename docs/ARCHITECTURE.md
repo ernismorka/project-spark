@@ -63,3 +63,9 @@ Dependencies are pinned: Colyseus core 0.18.18, ws transport 0.18.4, SDK 0.18.5,
 ## Post-M5 quality pass
 
 Modal closure restores the actual opener after the background becomes interactive. Pilot domain actions have a 200 ms UI cooldown with EN/LT feedback, preventing normal rapid clicks from entering the unchanged server's 120 ms rejection window; movement continues independently. This UI guard is not a security boundary. Pending action timers dispose on modal unmount. WebGL context loss aborts in-flight scene initialization so a late bootstrap cannot overwrite the error state; retry creates a new canvas/device. No solver, interpreter, movement or networking authority changes.
+
+## M6 single-player polish
+
+Input normalizes local direction before camera rotation; canvas blur clears keys, and movement requires canvas focus. Shared web objectiveTarget selection drives both the existing marker and localized HUD target. HUD bearings use the published camera yaw, not domain state. Camera clips with world-unit clearance, rejects smoothing paths through geometry and uses a finite yaw-aligned overhead fallback for extremely tight rear clearance. Scratch vectors are reused.
+
+PlayCanvas BatchManager combines immutable board renderers in 32-unit groups; dynamic engineer/marker/beacon/status strip are excluded. Explicit batch group removal precedes material/application disposal. Paused/title/inspection/diagnosis/completed frames redraw on state/resize/visibility invalidation instead of continuously; active play remains fixed-step and continuously rendered. Covered/hidden scenes clear input and discard catch-up time. Existing domain and multiplayer architecture are unchanged. See VALIDATION-M6.md for actual workload and hardware observations.

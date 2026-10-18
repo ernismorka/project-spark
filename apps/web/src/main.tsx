@@ -18,6 +18,7 @@ import { languages, type ExplorationCommand } from "@spark/shared";
 import { messages } from "./i18n";
 import { gameplay } from "./gameplay-i18n";
 import "./style.css";
+import { objectiveTarget, targetBearing } from "./game/navigation";
 function App() {
   const [state, setState] = useState(createGame);
   const [session, setSession] = useState(createSession);
@@ -30,6 +31,7 @@ function App() {
   const [pilot, setPilot] = useState(false);
   const [workbench, setWorkbench] = useState(false);
   const [viewBoard, setViewBoard] = useState(false);
+  const [cameraYaw, setCameraYaw] = useState(0);
   const [selected, setSelected] = useState<string>();
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
@@ -42,7 +44,10 @@ function App() {
   const t = messages[state.language],
     g = gameplay[state.language],
     d = diagnosisCopy[state.language];
-  const publish = useCallback(() => setSession(current.current), []);
+  const publish = useCallback(() => {
+    setSession(current.current);
+    setCameraYaw(Number(canvas.current?.dataset.cameraYaw ?? 0));
+  }, []);
   const dispatch = useCallback(
     (command: ExplorationCommand, notify = true) => {
       current.current = commandSession(current.current, command);
@@ -139,16 +144,12 @@ function App() {
     publish();
     setMounted(false);
   };
-  const destination =
-    session.step === 0
-      ? { x: 0, z: 27 }
-      : session.step === 1
-        ? components[0]
-        : session.step === 2
-          ? components[1]
-          : session.step === 3
-            ? { x: 0, z: -17 }
-            : components[4];
+  const destination = objectiveTarget(session.step);
+  const bearing = targetBearing(
+    destination.x - session.player.position.x,
+    destination.z - session.player.position.z,
+    cameraYaw,
+  );
   return (
     <>
       {pilot && (
@@ -176,7 +177,7 @@ function App() {
         <header>
           <a className="brand" href="./" aria-label="Project Spark">
             <span className="logo">ϟ</span> project<span>spark</span>
-            <small>M5</small>
+            <small>M6</small>
           </a>
           <div className="header-actions">
             {session.phase === "title" && (
@@ -242,7 +243,7 @@ function App() {
                   ? repairCopy[state.language].title
                   : g.mission}
               </p>
-              <h2>
+              <h2 aria-live="polite" aria-atomic="true">
                 {session.phase === "title"
                   ? g.welcome
                   : session.repair.completed
@@ -287,9 +288,28 @@ function App() {
                 {session.phase === "playing" && (
                   <>
                     <div className="compass">
-                      <span>{g.north} ↑</span>
                       <span>
+                        {g.north}{" "}
+                        <b
+                          aria-hidden="true"
+                          data-testid="north-arrow"
+                          style={{ transform: `rotate(${cameraYaw}rad)` }}
+                        >
+                          ↑
+                        </b>
+                      </span>
+                      <span>
+                        <b
+                          aria-hidden="true"
+                          style={{ transform: `rotate(${bearing}rad)` }}
+                        >
+                          ↑
+                        </b>{" "}
                         {g.distance} ·{" "}
+                        {destination.id === "START"
+                          ? g.startPad
+                          : destination.id}{" "}
+                        ·{" "}
                         {Math.round(
                           horizontalDistance(
                             session.player.position,
@@ -299,6 +319,9 @@ function App() {
                         m
                       </span>
                     </div>
+                    {!target && (
+                      <p className="exploration-hint">{g.approach}</p>
+                    )}
                     <div className="crosshair" aria-hidden="true">
                       ·
                     </div>
@@ -331,6 +354,9 @@ function App() {
                         <strong>
                           {target.id} · {g.componentNames[target.kind]}
                         </strong>
+                        {session.scanned.includes(target.id) && (
+                          <p>{g.identified}</p>
+                        )}
                         <div className="interaction-actions">
                           <button
                             onClick={() =>

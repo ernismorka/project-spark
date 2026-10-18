@@ -26,6 +26,9 @@ type Copy = {
   restart: string;
   distance: string;
   coordinates: string;
+  startPad: string;
+  approach: string;
+  identified: string;
   componentNames: Record<ComponentKind, string>;
   descriptions: Record<ComponentKind, string>;
 };
@@ -68,6 +71,10 @@ const en: Copy = {
   restart: "Explore again",
   distance: "Beacon",
   coordinates: "Board position",
+  startPad: "Pad exit",
+  approach:
+    "Approach a component for E · Inspect or F · Identify. Follow the beacon arrow to your objective.",
+  identified: "Already identified · explanation available with E",
   componentNames: {
     resistor: "Resistor",
     capacitor: "Electrolytic capacitor",
@@ -126,6 +133,10 @@ const lt: Copy = {
   restart: "Tyrinėti dar kartą",
   distance: "Švyturys",
   coordinates: "Vieta plokštėje",
+  startPad: "Aikštelės išėjimas",
+  approach:
+    "Prieik prie komponento: E · Apžiūrėti, F · Atpažinti. Užduotį rodo švyturio rodyklė.",
+  identified: "Jau atpažintas · paaiškinimas paspaudus E",
   componentNames: {
     resistor: "Rezistorius",
     capacitor: "Elektrolitinis kondensatorius",

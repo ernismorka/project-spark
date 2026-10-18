@@ -11,3 +11,5 @@ The approved roadmap ends at M5. All M0–M5 are merged. These alternatives are 
 Recommended order: A → C → B. First use the consolidated playtest to prioritize focused improvements to the common 3D experience. Next consider a small, explicitly approved engineering challenge if learning clarity supports it; the deterministic local workbench provides a lower-risk foundation than full-world networking. Integrate 3D cooperation after role value and performance are established, because it combines rendering, mission and networking risks. If the playtest establishes cooperation as the main source of engagement, the owner may reprioritize B ahead of C after a design review.
 
 No option starts automatically after the quality PR. The owner must approve a concrete scope, acceptance criteria and milestone naming before any next feature work.
+
+Decision after this proposal: the owner authorized narrowly scoped option A as M6 3D Gameplay Polish after PR #7 merged. See M6_SCOPE.md and VALIDATION-M6.md. Options B/C and any M7 remain unapproved; the recommendation above is historical proposal context.
