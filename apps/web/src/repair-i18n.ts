@@ -17,7 +17,7 @@ export const repairCopy = {
     need: "Measure both points again before verifying.",
     explanation:
       "Reconnecting R1 closes the current path through R1 and R2. Equal resistances divide the supply equally: SENSE returns to half of VCC. These readings are recalculated by the DC solver.",
-    complete: "The Dark Circuit complete",
+    complete: "DC repair verified",
     success:
       "You diagnosed R1 using evidence, restored its connection and verified the divider. The green terminal beacon confirms this DC training network is healthy. It does not prove MCU firmware or LED operation.",
     pending:
@@ -44,7 +44,7 @@ export const repairCopy = {
     need: "Prieš patvirtindamas iš naujo išmatuok abu taškus.",
     explanation:
       "Atkūrus R1 jungtį, srovės kelias per R1 ir R2 užsidaro. Vienodos varžos padalija maitinimo įtampą pusiau: SENSE įtampa lygi pusei VCC. Šiuos rodmenis iš naujo apskaičiuoja nuolatinės srovės sprendiklis.",
-    complete: "Tamsioji grandinė užbaigta",
+    complete: "Grandinės remontas patvirtintas",
     success:
       "Remdamasis matavimais nustatei R1 gedimą, atkūrei jungtį ir patikrinai daliklį. Žalias terminalo švyturys patvirtina, kad ši mokomoji grandinė tvarkinga. Tai nepatvirtina mikrovaldiklio programos ar šviesos diodo veikimo.",
     pending:

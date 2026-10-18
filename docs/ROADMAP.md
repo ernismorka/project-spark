@@ -25,4 +25,10 @@ All originally approved milestones M0–M5 are complete. Consolidation is merged
 | --------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M6 3D Gameplay Polish | Existing single-player movement/camera/orientation/readability and rendering/lifecycle; no new major systems | M6_SCOPE.md acceptance, preserved M0–M5 tests, new meaningful regressions, inspected before/after captures, measured workload/performance with explicit limits and an unmerged PR |
 
-M6 starts from merged PR #7 b7ba063. No M7 or dependent feature work is authorized.
+M6 is merged as PR #8, main 870b195. M7 is now explicitly authorized below; no M8.
+
+| Milestone                         | Scope                                                                                                                                         | Acceptance                                                                                                                                                                                                   |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M7 Integrated Gameplay Experience | Compose existing single-player exploration, evidence-based repair, unlocked construction/controller commissioning and final device activation | Guarded deterministic progression, real solver/interpreter results, isolated practice, persistent terminal edits, visible active-device feedback, EN/LT completion/replay, preserved regressions and full CI |
+
+M7_SCOPE.md defines the bounded activation contract. No new multiplayer, model categories, language features, database/deployment or unnecessary dependencies. Proposed broader engineering/co-op expansion remains unapproved. Do not merge M7 automatically or begin M8.

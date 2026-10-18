@@ -65,13 +65,13 @@ M2 manual QA: verify hypotheses are disabled until both points are measured; obt
 
 After identifying R1, choose Restore R1 connection. Remeasure both VCC and SENSE, compare Before repair and After repair, then choose Verify repair. The solver computes the restored divider voltage. The terminal beacon changes to amber after repair and green after verification; a green strip appears on the board. These are abstract DC status cues, not MCU/LED simulation.
 
-Close diagnostics to see episode completion and replay. Replay resets the entire exploration, fault, measurements and completion; reload/end session also resets progress. No persistent save. Both languages support the full flow. M2's solver is unchanged; see docs/M3_PREPARATION.md and docs/VALIDATION-M3.md.
+Close diagnostics to review verified repair and replay; M7 continues to commissioning and final episode activation. Replay resets the entire exploration, fault, measurements and completion; reload/end session also resets progress. No persistent save. Both languages support the full flow. M2's solver is unchanged; see docs/M3_PREPARATION.md and docs/VALIDATION-M3.md.
 
 Manual M3 QA: try repair only after evidence-based R1 diagnosis, compare 0.00 V before and 2.50 V after at SENSE, verify, close/reopen and switch languages. Confirm green world response, then replay and confirm the fault and exploration reset. Repeat keyboard focus and narrow-screen menu checks. M0–M2 checks remain applicable.
 
 ## M4 Creative programming
 
-Open creative workbench from title or the completed terminal. Run the initial divider/controller, connect default R3 between SENSE and GND, then run again: observe the changed solver voltage and virtual output. Edit instruction blocks or switch to the equivalent text; apply/run, inspect the bounded execution trace, remove branches and reset. Source keywords are stable English identifiers; explanations and controls are EN/LT. Closing/reopening resets workbench edits. It does not change the M3 repaired circuit.
+Open independent practice from title, or the episode workbench from the verified-repair terminal. Run the initial divider/controller, connect default R3 between SENSE and GND, then run again: observe the changed solver voltage and virtual output. Edit instruction blocks or switch to the equivalent text; apply/run, inspect the bounded execution trace, remove branches and reset. Source keywords are stable English identifiers; explanations and controls are EN/LT. Closing/reopening resets title practice; accepted M7 terminal edits persist within the episode. Neither edits the M3 repaired diagnostic circuit.
 
 See docs/GDD.md for the exact bounded language and circuit model. The workbench uses no arbitrary JavaScript, MCU firmware emulation, LED physics or networking. M5 networking is a separate optional pilot. Human usability/performance testing is recorded for later consolidated playtesting.
 
@@ -100,3 +100,9 @@ M0–M5 are merged; main baseline f800be4 includes PR #6. The scope-preserving q
 ## M6 single-player polish
 
 The compass and beacon arrows follow camera orbit and name the current objective. Approach a component to reveal inspect/identify controls; movement requires board focus. Leaving board focus clears held controls. Existing keyboard/mouse controls, episode, circuit model, programming and cooperative pilot remain. Paused/covered views retain their last frame and resume when needed. See [M6_SCOPE.md](docs/M6_SCOPE.md) and [VALIDATION-M6.md](docs/VALIDATION-M6.md) for scope, measured draw reduction, the limited AMD hardware sample and outstanding human validation.
+
+## M7 integrated episode
+
+Begin exploration and follow the existing beacon/component route to T1. Measure, diagnose R1, repair and verify both fresh readings. The terminal report then unlocks construction: add R3 = 1 kΩ SENSE–GND and run the default threshold-2 controller to record OFF. Programming then unlocks; use blocks or text to run READ SENSE / ABOVE 1 / WRITE OUT. Return to the report and Activate device. The green service display and final report mark episode completion; they do not simulate MCU firmware or LED physics.
+
+Accepted terminal edits persist when closed/reopened. Circuit/program edits invalidate affected proof; replay/end/reload reset the whole episode. Title workbench is independent practice, resets on close and grants no mission credit. The cooperative pilot remains separate. See [M7_SCOPE.md](docs/M7_SCOPE.md) and [VALIDATION-M7.md](docs/VALIDATION-M7.md). Manual usability, learning and sustained hardware/heap evaluation remain deferred in PLAYTEST.md.

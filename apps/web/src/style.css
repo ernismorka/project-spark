@@ -847,3 +847,35 @@ footer {
     max-width: calc(100% - 20px);
   }
 }
+.episode-stage {
+  color: #cde79c;
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+.episode-next {
+  border-left: 3px solid #d7ee91;
+  padding-left: 12px;
+  margin: 14px 0;
+}
+.game-menu button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.game-menu:not(.diagnostic-menu) {
+  max-height: 95%;
+  overflow-y: auto;
+}
+.program-editor {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.program-editor:disabled {
+  opacity: 0.6;
+}
+.commission-task {
+  border-left: 3px solid #d7ee91;
+  padding: 10px 12px;
+  background: #d7ee910a;
+}

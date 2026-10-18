@@ -10,7 +10,7 @@ Curiosity, readable cause and effect, and creative engineering drive play. Circu
 
 ## First episode: The Dark Circuit
 
-Implemented in M3: explore the board through First Contact, diagnose the terminal training divider, reconnect its single open R1 branch, then prove the repair with fresh measurements. The terminal service beacon turns green after verification. This is an abstract circuit-status response, not simulated MCU or LED operation. See M3_PREPARATION.md for the exact behavior contract.
+Implemented in M3: explore the board through First Contact, diagnose the terminal training divider, reconnect its single open R1 branch, then prove the repair with fresh measurements. The terminal service beacon turns green after verification. M7 now continues that repair into terminal construction, controller commissioning and final device activation. World responses are abstract service status, not simulated MCU or LED operation. See M3_PREPARATION.md for the exact behavior contract.
 
 ## MVP
 
@@ -48,7 +48,7 @@ M4 retains the approved Creative programming milestone: circuit building and con
 
 Blocks and text compile to one closed serializable instruction array. Grammar: READ SENSE loads the solved voltage into a register; ABOVE n replaces it with 1 if strictly greater than n (0–5), otherwise 0; WRITE OUT sets an abstract boolean output from the register; REPEAT n repeats the preceding whole prefix n times (1–128). Each repeat instruction has its own counter, reset per run. Registers/output start at zero/false; at most 32 instructions, 2048 source characters and 128 executed steps. Budget exhaustion clears committed output and reports an error. Trace length is bounded. No eval, Function, JavaScript, timers, network, hardware pin emulation or host access.
 
-The challenge adds a parallel SENSE-to-ground branch and observes the controller threshold response. Trace and results expose cause/effect. Workbench edits invalidate previous results. Workbench state is session-local and resets when closed/reopened; episode repair state is unaffected. English/Lithuanian controls and number formatting are supported. M4 and dependent M5 are now approved and merged. Consolidated human usability and representative hardware performance testing is deferred at owner request.
+The challenge adds a parallel SENSE-to-ground branch and observes the controller threshold response. Trace and results expose cause/effect. Workbench edits invalidate previous results. Title practice is session-local and resets when closed/reopened; M7 terminal workbench state persists within its episode, as specified below. Both reuse the unchanged bounded Workbench API. English/Lithuanian controls and number formatting are supported. M4 and dependent M5 are now approved and merged. Consolidated human usability and representative hardware performance testing is deferred at owner request.
 
 ## M5 cooperative pilot
 
@@ -60,4 +60,12 @@ Transient disconnects reserve the same identity/role for 20 seconds, stop its mo
 
 ## M6: 3D Gameplay Polish
 
-Authorized on merged consolidation PR #7. Preserve the existing board/mission and procedural style. Normalize camera-relative input before rotation, clear held movement when canvas focus leaves, keep close obstruction views nondegenerate, align compass/target arrows with orbit and show localized approach/identified cues. Static geometry can be batched without changing its educational meaning; paused/covered views retain their frame until state or size changes. No new multiplayer, solver categories, language instructions, backend or major redesign. See M6_SCOPE.md for acceptance and VALIDATION-M6.md for actual evidence. No M7 authorization.
+Authorized on merged consolidation PR #7. Preserve the existing board/mission and procedural style. Normalize camera-relative input before rotation, clear held movement when canvas focus leaves, keep close obstruction views nondegenerate, align compass/target arrows with orbit and show localized approach/identified cues. Static geometry can be batched without changing its educational meaning; paused/covered views retain their frame until state or size changes. No new multiplayer, solver categories, language instructions, backend or major redesign. See M6_SCOPE.md for acceptance and VALIDATION-M6.md for actual evidence. M7 is subsequently authorized below.
+
+## M7: Integrated Gameplay Experience
+
+Authorized on merged M6 PR #8 main 870b195. The single-player episode now composes the existing systems: explore the board and reach T1; gather measurements and diagnose R1; reconnect and verify its divider; unlock terminal construction; add the M4 parallel R3 branch and run the default threshold-2 program to prove the computed OFF response; unlock/edit the same controller in blocks or text to threshold 1 and run to prove ON; return to the terminal report and explicitly activate the device. This is one guided episode, not a new electronics category or MCU emulator.
+
+The canonical commissioning network is separate from the repaired diagnostic network. It uses nominal R1/R2/R3 = 1 kΩ, R3 between SENSE and GND, with the existing ideal 5 V source. SENSE is solved as 5/3 V (shown 1.67 V EN, 1,67 V LT). READ SENSE / ABOVE 2 / WRITE OUT gives OFF; ABOVE 1 gives ON. Activation rechecks the actual topology/program with the existing solver/interpreter; no client success flag or literal UI voltage is authoritative. The final green service display on U1 is an abstract response, not physical MCU/LED execution.
+
+Title workbench remains optional independent practice and cannot grant episode credit. Verified repair unlocks the terminal workbench, whose accepted edits/proofs persist on close. Programming unlocks after the first construction proof; later circuit edits invalidate construction/commissioning evidence while leaving the editor usable for recovery. Reset relocks programming; replay/end/reload clear the complete episode. No durable save. Repair verification is labeled as repair completion, while only final activation completes the episode. Existing cooperative pilot stays independent. No M8 authorization. See M7_SCOPE.md and VALIDATION-M7.md.

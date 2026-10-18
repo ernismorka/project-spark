@@ -4,11 +4,11 @@
 
 Read README.md, docs/GDD.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, docs/EXECUTION_PLAN.md and docs/DEVELOPMENT_STATUS.md before continuing. GDD and roadmap are the product source of truth. Do not expand them without authorization.
 
-M0–M5 and consolidation are merged; PR #7 merged as b7ba063. M6 3D Gameplay Polish is explicitly authorized. Follow docs/M6_SCOPE.md: improve existing single-player input, camera, navigation, readability and rendering/lifecycle without new major systems. Preserve M0–M4 single-player APIs and the deterministic solver. Use a local-only Colyseus authority with private two-player rooms, validated inputs, bounded rates and reconnect handling. No database, public matchmaking, accounts/chat/payments or public deployment. Do not start M7. Domain code remains serializable and browser-independent.
+M6 PR #8 is merged as 870b195. M7 Integrated Gameplay Experience is explicitly authorized; follow docs/M7_SCOPE.md. Integrate existing exploration, diagnosis/repair, unlocked construction/programming and final activation without new multiplayer, solver categories, language features, backend or dependencies. Preserve existing Session/solver/interpreter/pilot APIs and all regression coverage. Do not start M8. Domain code remains serializable and browser-independent.
 
 ## Autonomous workflow
 
-Independently inspect, plan, implement, test, self-review and document assigned work. Make routine coding decisions within authorized scope without requesting approval. Fix errors caused by your changes without asking whether to proceed. Prefer simple maintainable solutions, existing dependencies, architecture and naming conventions. Keep changes within the authorized quality scope. Automated testing is part of implementation.
+Independently inspect, plan, implement, test, self-review and document assigned work. Make routine coding decisions within authorized scope without requesting approval. Fix errors caused by your changes without asking whether to proceed. Prefer simple maintainable solutions, existing dependencies, architecture and naming conventions. Keep changes within the authorized milestone scope. Automated testing is part of implementation.
 
 Maintain docs/EXECUTION_PLAN.md with current milestone, completed/remaining tasks, acceptance criteria, dependencies, blockers, evidence, PR links and next milestone. Update docs/DEVELOPMENT_STATUS.md at meaningful changes and handoff so another session can resume without chat history. Record actual outcomes and unresolved limitations; never fabricate results.
 
@@ -30,4 +30,4 @@ Preserve sandbox and security restrictions. Never modify machine-wide Codex appr
 
 ## Session continuity
 
-On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M6 is authorized on merged PR #7. After submitting M6, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.
+On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M7 is authorized on merged PR #8. After submitting M7, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.
