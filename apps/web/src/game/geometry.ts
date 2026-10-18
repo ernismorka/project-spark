@@ -1,5 +1,5 @@
 import * as pc from "playcanvas";
-export function createGeometry(root: pc.Entity) {
+export function createGeometry(root: pc.Entity, batchGroupId?: number) {
   const materials: pc.StandardMaterial[] = [];
   const material = (color: string, glow = false) => {
     const m = new pc.StandardMaterial();
@@ -37,6 +37,8 @@ export function createGeometry(root: pc.Entity) {
   ) => {
     const e = new pc.Entity();
     e.addComponent("render", { type, material: m });
+    if (parent === root && batchGroupId !== undefined)
+      e.render!.batchGroupId = batchGroupId;
     e.setLocalPosition(...p);
     e.setLocalScale(...s);
     parent.addChild(e);

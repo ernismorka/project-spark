@@ -92,6 +92,9 @@ export function buildWorld(g: Geometry) {
   const beacon = shape("box", [0, 2.5, -18], [2.2, 0.5, 0.5], p.chip);
   const restoredTrace = shape("box", [0, 0.08, -14], [0.6, 0.08, 7], p.healthy);
   restoredTrace.enabled = false;
+  // Animated/changed status geometry must remain outside immutable board batches.
+  for (const entity of [marker, beacon, restoredTrace])
+    entity.render!.batchGroupId = -1;
   return {
     marker,
     status: (repaired: boolean, verified: boolean) => {

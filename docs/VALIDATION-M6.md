@@ -1,0 +1,36 @@
+# M6 validation and review
+
+## Baseline and scope
+
+PR #7 merged as b7ba063; main CI 39146560357 passed. M6_SCOPE.md recorded scope/acceptance before implementation on codex/m6-gameplay-polish. Node 24.19.0, pnpm 11.25.0, Git 2.56.0 on Windows. No dependency, lockfile, solver, server or programming-language changes. No M7.
+
+## Findings and corrections
+
+- Input: clamping each rotated diagonal component skewed its heading (for example at π/8 yaw). Normalize local direction before rotation; unit fixtures check magnitude and exact rotated direction at multiple yaws. Canvas blur clears held keys and movement keys require canvas focus, preventing motion while navigating UI. Movement physics and speed constants remain unchanged, including the pilot domain.
+- Camera: subtracting 0.03 of the whole segment could collapse a close-wall camera onto its look target. Use 0.05 world-unit clearance instead. Reject smoothed target paths through solids, and use clear overhead space with yaw-aligned up when less than 0.5 units of rear clearance remains. Reuse vector scratch storage. Camera tests cover pitch/zoom clamps, ordinary follow/recovery and finite nondegenerate close-R1 views. Tight-camera transition feel still needs human evaluation.
+- Orientation/readability: fixed north arrow incorrectly implied screen-up after orbit. Rotate north/target arrows with camera yaw, name the current beacon target, share destination selection between scene/HUD, show EN/LT approach/identified guidance and retain visible canvas keyboard focus. Mission heading announces changes politely; no new progression rule.
+- Rendering/lifecycle: batch immutable board geometry in bounded 32-unit groups; keep engineer, beacon, moving marker and restored status strip outside static batches. Destroy batch groups before material/device teardown. Frozen/covered views render only on state/size/visibility changes, preserving the frame; gameplay continues to render. Browser instrumentation checks paused draws stop and resume, and owned WebGL buffers are released at end-session. Existing context-loss/retry/remount/listener tests remain.
+
+## Measured observations
+
+Comparable baseline/after: same 1280×720 viewport, fresh page at spawn after Begin exploration, 20 animation-frame callbacks; instrumented WebGL2 drawElements/drawArrays and instanced variants, without altering game rules. Baseline 110 draw submissions per callback frame; after 72, a 34.5% reduction for this view. Both reported ANGLE/Google Vulkan SwiftShader (Subzero). This counts submitted graphics work, not hardware FPS or a promise of improvement at every camera position. Static batching trades a small amount of combined mesh storage/coarser culling for fewer submissions. Existing visual geometry/materials are preserved.
+
+Actual hardware availability was independently tested with the installed Playwright Chromium launched with --use-angle=d3d11 --enable-gpu against the production build, 1920×1080. WebGL reported ANGLE AMD Radeon(TM) Graphics (0x00001638), Direct3D11 vs_5_0 ps_5_0. A 90-frame post-start sample measured median 16.7 ms / p95 16.7 ms requestAnimationFrame intervals. This is an actual host-GPU observation at spawn, not software CI, a GPU-time profiler, full-route 60 FPS certification, or representative-device coverage. The normal automated projects retain their existing graphics configuration.
+
+Before/after captures: screenshots/m6-before.png and m6-after.png, same spawn/viewport. Visually inspected: geometry/materials/landmarks match; after adds bounded contextual guidance and target-bearing UI. Additional real-input EN/LT interaction captures and final full-gate outcomes are recorded before delivery.
+
+## Validation status
+
+Doctor finds both browser binaries; presence does not establish launch. Targeted unit run: 81 tests pass (all 78 previous domain/server fixtures plus three camera/input/navigation fixtures). Targeted Chromium polish run before the GPU-buffer assertion: 2/2 passed, including real-keyboard movement, focus loss, real drag orbit, compass alignment, R1 inspection, EN/LT and narrow layout; draw/pause/resume check passed. Initial type-check errors in test-only Vec3 comparisons and a signed-zero assertion were corrected. A temporary profiling script caused the first verifier to stop at lint; moving that ignored script out of the source scan fixes it. Final full verifier is running. Windows Firefox's known spawn UNKNOWN limitation remains; both browser projects stay enabled in Linux CI.
+
+## Review and limitations
+
+Self-review checks static versus dynamic ownership, batch destruction, abort/context loss, resize invalidation, UI focus and authority boundaries. Rendering decisions remain in apps/web, educational/gameplay rules in the existing domain. No arbitrary code, service or security-policy change. GPU buffer deletion is bounded lifecycle evidence, not a long-session heap leak certification. Human camera comfort/controls/wayfinding and target-age pacing, assistive technology, sustained representative hardware frame/memory profiling remain in PLAYTEST.md. No new feature scope is inferred from those pending checks.
+
+Completed full local pnpm verify: lint/types, 81 unit/domain/server integration tests, build and all 14 Chromium checks passed. This includes the entire exploration → diagnosis → repair → verification → replay route, workbench block/text safety/building, two-client shared repair/reconnect/departure and existing context-loss/retry/unmount tests. All 14 Firefox cases failed at launch with Windows spawn UNKNOWN; full local verify is not passing. New WebGL instrumentation passed zero paused draws, resumed rendering and zero tracked live buffers after End session. The final targeted rerun adds the real-input close-wall capture and clarified localized pad-exit label.
+
+Full-run software-rendered 1920×1080 sample: ready 1183 ms, median callback interval 200.1 ms / p95 233.3 ms. This is slower than earlier consolidation observations and is not presented as a frame-time improvement. Different backend/host load and the culling/storage tradeoff prevent an FPS conclusion from draw counts. The independent D3D11 16.7 ms sample is a short hardware observation only. The original engine chunk advisory remains (~1.085 MB / 283.5 KB gzip after batching support; UI ~445.7 KB / 141.7 KB gzip).
+
+Final targeted Chromium rerun: 2/2 passed after rebuild, including the real drag/keyboard close-R1 obstruction view and final localized pad-exit label. Captures m6-navigation-en.png, m6-navigation-lt.png and m6-camera-close.png are inspected alongside the comparable m6-before/m6-after pair. The close view remains finite/readable overhead and allows ordinary E inspection; LT narrow view retains objective/component controls without horizontal overflow. This rerun also repeats the paused/resume/buffer cleanup assertions.
+
+Delivery: PR #8 https://github.com/ernismorka/project-spark/pull/8, implementation/evidence commit 85ab25b. Full diff self-review and final static checks passed; no unresolved implementation blocker identified. Latest final-head Linux CI is recorded in the PR to avoid treating an earlier code run as final-head validation. PR remains unmerged; no M7.

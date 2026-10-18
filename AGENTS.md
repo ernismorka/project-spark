@@ -4,7 +4,7 @@
 
 Read README.md, docs/GDD.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, docs/EXECUTION_PLAN.md and docs/DEVELOPMENT_STATUS.md before continuing. GDD and roadmap are the product source of truth. Do not expand them without authorization.
 
-M0–M5 are complete; M5 PR #6 merged as f800be4. Current authorized work is post-M5 MVP consolidation: audit, scope-preserving quality fixes, automated validation and consolidated human playtest preparation. No new feature milestone is authorized. Preserve M0–M4 single-player APIs and the deterministic solver. Use a local-only Colyseus authority with private two-player rooms, validated inputs, bounded rates and reconnect handling. No database, public matchmaking, accounts/chat/payments or public deployment. Do not start M6. Domain code remains serializable and browser-independent.
+M0–M5 and consolidation are merged; PR #7 merged as b7ba063. M6 3D Gameplay Polish is explicitly authorized. Follow docs/M6_SCOPE.md: improve existing single-player input, camera, navigation, readability and rendering/lifecycle without new major systems. Preserve M0–M4 single-player APIs and the deterministic solver. Use a local-only Colyseus authority with private two-player rooms, validated inputs, bounded rates and reconnect handling. No database, public matchmaking, accounts/chat/payments or public deployment. Do not start M7. Domain code remains serializable and browser-independent.
 
 ## Autonomous workflow
 
@@ -30,4 +30,4 @@ Preserve sandbox and security restrictions. Never modify machine-wide Codex appr
 
 ## Session continuity
 
-On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M5 is merged. After submitting the consolidation PR, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.
+On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M6 is authorized on merged PR #7. After submitting M6, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.

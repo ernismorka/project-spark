@@ -26,3 +26,30 @@ it("clamps pitch/zoom, smooths follow and snaps after checkpoint recovery", () =
   camera.update({ x: 0, y: 0, z: 32 }, 1 / 60);
   expect(Math.abs(entity.getPosition().x)).toBeLessThan(4);
 });
+it("keeps close obstruction views nondegenerate and preserves orbit orientation", () => {
+  const from = { x: -7, y: 1.25, z: 21.38 };
+  const fraction = clipDistance(from, { ...from, z: 7.38 });
+  expect(fraction).toBeGreaterThan(0);
+  expect(fraction * 14).toBeLessThan(0.1);
+  const entity = new Entity();
+  const camera = new FollowCamera(entity);
+  camera.yaw = Math.PI;
+  camera.pitch = cameraSettings.minPitch;
+  camera.update({ x: -7, y: 0, z: 21.38 }, 1 / 60);
+  expect(
+    Math.hypot(
+      entity.getPosition().x - from.x,
+      entity.getPosition().y - from.y,
+      entity.getPosition().z - from.z,
+    ),
+  ).toBeGreaterThan(2);
+  expect(entity.getPosition().y).toBeGreaterThan(3);
+  const q = entity.getRotation();
+  expect([q.x, q.y, q.z, q.w].every(Number.isFinite)).toBe(true);
+  camera.update({ x: -4.62, y: 0, z: 20 }, 1 / 60);
+  const next = entity.getPosition();
+  expect([next.x, next.y, next.z].every(Number.isFinite)).toBe(true);
+  expect(Math.hypot(next.x + 4.62, next.y - 1.25, next.z - 20)).toBeGreaterThan(
+    0.1,
+  );
+});

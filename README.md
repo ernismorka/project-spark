@@ -96,3 +96,7 @@ The server binds only 127.0.0.1:2567; this delivery is for two clients on the sa
 ## Consolidated MVP evaluation
 
 M0–M5 are merged; main baseline f800be4 includes PR #6. The scope-preserving quality audit, actual gate results and limitations are in [VALIDATION-CONSOLIDATION.md](docs/VALIDATION-CONSOLIDATION.md). Use [PLAYTEST.md](docs/PLAYTEST.md) for one consolidated human session covering adventure, engineering and cooperation. Target-age usability, assistive technology and representative hardware measurements remain outstanding. [NEXT_STAGE_PROPOSAL.md](docs/NEXT_STAGE_PROPOSAL.md) compares future options without authorizing implementation.
+
+## M6 single-player polish
+
+The compass and beacon arrows follow camera orbit and name the current objective. Approach a component to reveal inspect/identify controls; movement requires board focus. Leaving board focus clears held controls. Existing keyboard/mouse controls, episode, circuit model, programming and cooperative pilot remain. Paused/covered views retain their last frame and resume when needed. See [M6_SCOPE.md](docs/M6_SCOPE.md) and [VALIDATION-M6.md](docs/VALIDATION-M6.md) for scope, measured draw reduction, the limited AMD hardware sample and outstanding human validation.

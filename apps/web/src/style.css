@@ -814,3 +814,36 @@ footer {
     height: 320px;
   }
 }
+/* M6 orientation and keyboard readability preserve the existing visual language. */
+.compass b {
+  display: inline-block;
+  color: #d7ee91;
+  min-width: 12px;
+  text-align: center;
+}
+.exploration-hint {
+  position: absolute;
+  bottom: 48px;
+  left: 24px;
+  max-width: min(380px, calc(100% - 48px));
+  padding: 10px 12px;
+  background: #112a37ed;
+  border-radius: 8px;
+  color: #d0e0df;
+  font-size: 12px;
+  line-height: 1.5;
+  pointer-events: none;
+}
+.game-viewport canvas:focus-visible {
+  box-shadow: inset 0 0 0 3px #d7ee91;
+}
+@media (max-width: 600px) {
+  .compass {
+    flex-wrap: wrap;
+    max-width: calc(100% - 20px);
+  }
+  .exploration-hint {
+    left: 10px;
+    max-width: calc(100% - 20px);
+  }
+}
