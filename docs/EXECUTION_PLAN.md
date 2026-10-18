@@ -1,9 +1,13 @@
 # Execution plan
 
-M5 Cooperative pilot, branch codex/m5-cooperative-pilot, from merged M4 main 19bdba7. PR #5 merged and main CI 39036262488 passed before implementation. The owner explicitly authorized the local Colyseus pilot; milestones retain their existing numbering.
+Current work: post-M5 MVP consolidation on codex/post-m5-mvp-consolidation, from main f800be4 (merged M5 PR #6). GitHub confirms the merge; baseline main CI 39060046862 passed. M0–M5 retain their approved scope and numbering. No new feature milestone is authorized.
 
-Implemented: private two-seat rooms, authoritative input integration using existing movement, shared M3 diagnosis/repair/solver state, complementary role/evidence objectives, snapshots/HUD, EN/LT top-down pilot, bounded messages/rates and reconnect/cleanup. No public deployment, persistence, chat/accounts or M6.
+Acceptance: audit correctness, architecture, security, lifecycle, performance, EN/LT and accessibility; fix reproducible scope-preserving defects; run pnpm verify and server integrations; inspect real browser flow captures; record remaining human-only evaluation; submit an unmerged quality PR.
 
-Completed: implementation, review/defect fixes, 78 domain/integration tests, lint/types/build, 11 Chromium browser flows, reviewed EN/LT multiplayer captures and benchmark observation. Windows Firefox still fails at launch; both browsers remain enabled in Linux CI. See VALIDATION-M5.md for exact evidence. Linux CI at 4eaff81 passes the common verifier, 78 unit/integration tests and all 22 Chromium/Firefox checks (run 39059186735). PR #6 is open: https://github.com/ernismorka/project-spark/pull/6. Current-head checks are in the PR. Await human review and explicit merge authorization. Do not merge.
+Completed implementation: modal focus returns to the actual opener; cooperative UI spaces actions beyond the unchanged server rate limit; scene context loss cancels an in-flight initialization. Regression checks cover focus, rapid cooperative progression without test-only action sleeps, and delayed-bootstrap cancellation. Reviewed domain/solver/interpreter and transport boundaries remain unchanged.
 
-Deferred consolidated human playtest: target-age understanding/pacing, assistive technology, network-latency feel, and representative hardware client FPS/server CPU/memory. These do not block routine implementation.
+Product preparation: PLAYTEST.md consolidates tasks and human-only observations. NEXT_STAGE_PROPOSAL.md compares A/B/C and recommends A → C → B subject to playtest evidence and explicit owner approval. No new feature work or automatic merge.
+
+Local validation and self-review are complete: lint/types/build, 78 unit/integration tests and all 12 Chromium browser checks pass. All 12 Windows Firefox cases fail at launch with the existing environment error. Actual results, reviewed captures and classified findings are in VALIDATION-CONSOLIDATION.md. Known environment limitation: local Windows Firefox spawn UNKNOWN; both browser projects remain mandatory in Linux CI. Next executable work: submit this branch as a PR against main and verify final-head Linux CI before handoff; then await owner review. Do not merge.
+
+Delivery: PR #7 is open against main: https://github.com/ernismorka/project-spark/pull/7. Code/evidence commit 9c47475. Implementation, local gates, visual review and product preparation are complete; final-head CI is linked in the PR. Await owner review; no merge or new feature implementation.

@@ -73,7 +73,7 @@ Manual M3 QA: try repair only after evidence-based R1 diagnosis, compare 0.00 V 
 
 Open creative workbench from title or the completed terminal. Run the initial divider/controller, connect default R3 between SENSE and GND, then run again: observe the changed solver voltage and virtual output. Edit instruction blocks or switch to the equivalent text; apply/run, inspect the bounded execution trace, remove branches and reset. Source keywords are stable English identifiers; explanations and controls are EN/LT. Closing/reopening resets workbench edits. It does not change the M3 repaired circuit.
 
-See docs/GDD.md for the exact bounded language and circuit model. No arbitrary JavaScript, MCU firmware emulation, LED physics, backend or M5 functionality. Human usability/performance testing is recorded for later consolidated playtesting.
+See docs/GDD.md for the exact bounded language and circuit model. The workbench uses no arbitrary JavaScript, MCU firmware emulation, LED physics or networking. M5 networking is a separate optional pilot. Human usability/performance testing is recorded for later consolidated playtesting.
 
 ## M5: open two local clients
 
@@ -92,3 +92,7 @@ Analyst measures VCC; engineer measures SENSE; analyst diagnoses R1; engineer re
 Reconnect transport exercises a live temporary drop. The server holds the seat for 20 seconds, pauses shared actions and preserves mission state on reconnection. Leave room releases the seat and resets the shared task; expiry does the same. Empty rooms clean themselves up. Reloaded tabs cannot recover an in-memory SDK token through the UI; wait for seat expiry and rejoin. No accounts or durable state. Room codes are private invitations, not passwords.
 
 The server binds only 127.0.0.1:2567; this delivery is for two clients on the same computer and is not publicly deployed. Supported browser origins are localhost/127.0.0.1 ports 5173/4173. Playwright automatically starts the server and production preview. pnpm verify also runs independent Colyseus integration tests on an ephemeral loopback port. pnpm bench:pilot records a small domain tick/snapshot observation; it is not a scalability or target-hardware FPS claim. See docs/VALIDATION-M5.md for actual evidence and deferred consolidated playtesting.
+
+## Consolidated MVP evaluation
+
+M0–M5 are merged; main baseline f800be4 includes PR #6. The scope-preserving quality audit, actual gate results and limitations are in [VALIDATION-CONSOLIDATION.md](docs/VALIDATION-CONSOLIDATION.md). Use [PLAYTEST.md](docs/PLAYTEST.md) for one consolidated human session covering adventure, engineering and cooperation. Target-age usability, assistive technology and representative hardware measurements remain outstanding. [NEXT_STAGE_PROPOSAL.md](docs/NEXT_STAGE_PROPOSAL.md) compares future options without authorizing implementation.

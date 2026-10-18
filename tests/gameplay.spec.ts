@@ -464,4 +464,7 @@ test("keyboard language selection pauses gameplay without stealing selector focu
   ).toBeVisible();
   await page.getByRole("button", { name: "Tęsti tyrinėjimą" }).click();
   await expect(page.locator("canvas")).toHaveAttribute("data-phase", "playing");
+  await expect(page.getByLabel("Vieta plokštėje")).toContainText(
+    /-?\d+,\d; -?\d+,\d/,
+  );
 });

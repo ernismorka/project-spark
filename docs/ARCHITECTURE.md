@@ -59,3 +59,7 @@ pilot-network.ts owns the client SDK and reconnection events. PilotPanel renders
 Server limits active rooms to 16, rate-limits HTTP POSTs globally to 120/minute, checks browser origins on HTTP/WS boundaries and binds only loopback. No security guarantee for a public service is claimed. Colyseus supplies the room lifecycle and reconnect protocol; see https://docs.colyseus.io/room/reconnection and https://docs.colyseus.io/matchmaker/visibility. Snapshot broadcasts intentionally use bounded plain serializable messages instead of introducing a second schema-domain representation.
 
 Dependencies are pinned: Colyseus core 0.18.18, ws transport 0.18.4, SDK 0.18.5, tsx runner and Express types. Existing dependencies are not upgraded. Optional esbuild/msgpackr native build scripts remain disabled via project allowBuilds=false; installed platform binaries/pure JS fallbacks work in verification. No release-age exemption or global security policy change is retained.
+
+## Post-M5 quality pass
+
+Modal closure restores the actual opener after the background becomes interactive. Pilot domain actions have a 200 ms UI cooldown with EN/LT feedback, preventing normal rapid clicks from entering the unchanged server's 120 ms rejection window; movement continues independently. This UI guard is not a security boundary. Pending action timers dispose on modal unmount. WebGL context loss aborts in-flight scene initialization so a late bootstrap cannot overwrite the error state; retry creates a new canvas/device. No solver, interpreter, movement or networking authority changes.

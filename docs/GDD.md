@@ -14,7 +14,7 @@ Implemented in M3: explore the board through First Contact, diagnose the termina
 
 ## MVP
 
-A complete single-player browser episode, no account, installation or backend. English and Lithuanian. Future scope includes component identification, circuit construction and constrained microcontroller programming through blocks and text. Never execute arbitrary player JavaScript.
+A complete single-player browser episode, no account, installation or backend. English and Lithuanian. The implemented MVP includes component identification, bounded resistor circuit construction and constrained virtual controller programming through blocks and text. Never execute arbitrary player JavaScript.
 
 ## Future cooperation
 
@@ -22,7 +22,7 @@ After the first complete episode, co-op can support shared diagnosis and complem
 
 ## Non-goals
 
-M0 established rendering, UI, localization, domain boundaries, tests and documentation. M1 adds exploration and the introductory mission. Programming, multiplayer, database, paid services and telemetry remain outside the implemented scope. Mobile menus are responsive; mobile gameplay is outside M1.
+M0 established rendering, UI, localization, domain boundaries, tests and documentation. M1 adds exploration and the introductory mission. M4 adds the bounded programming workbench and M5 adds the separate local cooperative pilot. Database, paid services, accounts, telemetry, public multiplayer deployment and arbitrary player code remain outside scope. Mobile menus are responsive; mobile gameplay is outside M1.
 
 ## M1: First Contact
 
@@ -40,7 +40,7 @@ Authorized after M1 PR #2 merged. Scope is a bounded, ideal steady-state DC trai
 
 ## M3: The Dark Circuit
 
-A complete episode now connects exploration, evidence-based diagnosis, one bounded repair and explicit verification. Before/after readings explain equal-resistor voltage division; an amber beacon marks repair pending verification and green marks the verified network. The terminal tool reconnects R1 without inventory or crafting. Replay restarts all exploration, fault and evidence state. No progress is stored across reloads or ended sessions. English/Lithuanian menus, units and explanations are maintained. Automated real-input playthrough covers the sequence; target-age pacing/usability still requires human evaluation. M4 remains unstarted.
+A complete episode now connects exploration, evidence-based diagnosis, one bounded repair and explicit verification. Before/after readings explain equal-resistor voltage division; an amber beacon marks repair pending verification and green marks the verified network. The terminal tool reconnects R1 without inventory or crafting. Replay restarts all exploration, fault and evidence state. No progress is stored across reloads or ended sessions. English/Lithuanian menus, units and explanations are maintained. Automated real-input playthrough covers the sequence; target-age pacing/usability still requires human evaluation. M4 and M5 are now implemented and merged.
 
 ## M4 implementation contract
 
@@ -48,7 +48,7 @@ M4 retains the approved Creative programming milestone: circuit building and con
 
 Blocks and text compile to one closed serializable instruction array. Grammar: READ SENSE loads the solved voltage into a register; ABOVE n replaces it with 1 if strictly greater than n (0–5), otherwise 0; WRITE OUT sets an abstract boolean output from the register; REPEAT n repeats the preceding whole prefix n times (1–128). Each repeat instruction has its own counter, reset per run. Registers/output start at zero/false; at most 32 instructions, 2048 source characters and 128 executed steps. Budget exhaustion clears committed output and reports an error. Trace length is bounded. No eval, Function, JavaScript, timers, network, hardware pin emulation or host access.
 
-The challenge adds a parallel SENSE-to-ground branch and observes the controller threshold response. Trace and results expose cause/effect. Workbench edits invalidate previous results. Workbench state is session-local and resets when closed/reopened; episode repair state is unaffected. English/Lithuanian controls and number formatting are supported. M5 remains blocked until M4 is approved. Consolidated human usability and representative hardware performance testing is deferred at owner request.
+The challenge adds a parallel SENSE-to-ground branch and observes the controller threshold response. Trace and results expose cause/effect. Workbench edits invalidate previous results. Workbench state is session-local and resets when closed/reopened; episode repair state is unaffected. English/Lithuanian controls and number formatting are supported. M4 and dependent M5 are now approved and merged. Consolidated human usability and representative hardware performance testing is deferred at owner request.
 
 ## M5 cooperative pilot
 
