@@ -20,7 +20,17 @@ export default defineConfig({
           : {},
       },
     },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    {
+      name: "firefox",
+      use: {
+        ...devices["Desktop Firefox"],
+        // GPU-less CI can reject WebGL2 during Firefox's first adapter probe.
+        // Scope Mozilla's software-WebGL opt-in to this disposable CI profile.
+        launchOptions: process.env.CI
+          ? { firefoxUserPrefs: { "webgl.force-enabled": true } }
+          : {},
+      },
+    },
   ],
   webServer: [
     {
