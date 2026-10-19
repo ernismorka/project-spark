@@ -18,7 +18,7 @@ Implemented in M3: explore the board through First Contact, diagnose the termina
 
 ## MVP
 
-A complete single-player browser episode, no account, installation or backend. English and Lithuanian. The implemented MVP includes component identification, bounded resistor circuit construction and constrained virtual controller programming through blocks and text. Never execute arbitrary player JavaScript.
+A complete single-player browser episode, no account or game installer. The local M8 demo folder requires Node.js 24+ to serve static assets, without an application backend. English and Lithuanian. The implemented MVP includes component identification, bounded resistor circuit construction and constrained virtual controller programming through blocks and text. Never execute arbitrary player JavaScript.
 
 ## Future cooperation
 

@@ -448,7 +448,7 @@ function App() {
                           : "game-menu"
                       }
                       ref={menu}
-                      role={session.phase === "title" ? undefined : "dialog"}
+                      role={session.phase === "title" ? "region" : "dialog"}
                       aria-modal={session.phase === "title" ? undefined : true}
                       aria-label={
                         session.phase === "title"

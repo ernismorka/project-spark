@@ -6,7 +6,7 @@ Use the versioned `dist/project-spark-0.8.0-demo.1` folder (or the reviewed CI b
 
 To reproduce the folder from source: `pnpm install --frozen-lockfile`, then `pnpm demo:package`. To smoke-test it: `pnpm test:release`. The full `pnpm verify` packages the production build, checks reproducibility/startup/server boundaries and runs both browser projects against that package. Repackage after source edits before running e2e alone. See [DEMO_START.md](docs/DEMO_START.md), [DEMO_LIMITATIONS.md](docs/DEMO_LIMITATIONS.md), [M8_SCOPE.md](docs/M8_SCOPE.md) and [PLAYTEST.md](docs/PLAYTEST.md). No public release is published automatically. The optional cooperative pilot below still needs its separate local developer server.
 
-Browser-first educational 3D engineering adventure. M3 adds a complete DC diagnosis, repair and verification episode to the single-player First Contact circuit-board exploration slice. No accounts, telemetry or external assets; M5 adds an optional loopback-only Colyseus server. PR #1 (M0) was merged before M1 began.
+Browser-first educational 3D engineering adventure. The Dark Circuit combines exploration, solver-backed diagnosis/repair, bounded circuit construction and controller programming, then final activation and replay. English/Lithuanian; no accounts, telemetry or external assets. The cooperative pilot uses a separate optional loopback-only Colyseus server.
 
 ## Run
 

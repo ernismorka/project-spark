@@ -21,7 +21,7 @@ Presentation review found duplicated title copy pushed Start below the 720p fold
 - doctor:project: Node 24.19.0, pnpm 11.25.0, Git and both browser binaries found. Binary presence does not prove launch.
 - First pnpm verify: lint, typecheck, 90 unit/domain/server tests, production packaging and 3 release integration tests passed. All 15 Chromium checks passed, including new EN/LT 1280×720/1366×768 title/controls/no-external-request flow, full real-input episode through activation/replay, programming, two-client repair/reconnect, context loss and lifecycle cleanup. All 15 Windows Firefox launches failed with the existing spawn UNKNOWN limitation; full local verification is not green.
 - Existing 390×844 responsive menus, 1280×720 gameplay and 1920×1080 frame observation remain covered. Tests never inject progression or teleport the player.
-- Final local rerun and GitHub final-head CI results: pending delivery; update this report/status and PR with actual outcomes.
+- A final rerun was stopped after full trace screenshots/DOM snapshots delayed held-key commands enough to cause oscillation approaching R1. The real movement assertions remain unchanged; failure tracing now records actions/errors without those expensive captures. A fresh full verifier and GitHub final-head CI are pending delivery; update actual outcomes below.
 
 ## Practical observations, not sustained performance certification
 
