@@ -1,5 +1,9 @@
 # Game design document
 
+## M8 demo delivery
+
+M8 packages the existing M7 episode as demo 0.8.0-demo.1; it adds no gameplay systems. A concise EN/LT title offers visible Start, controls and reset semantics. The independent practice and local cooperative pilot retain their boundaries. The versioned local folder starts with a Windows command launcher and Node.js 24+, without player-side project tooling. No public deployment or release is authorized. See M8_SCOPE.md for measurable acceptance and DEMO_START.md for startup/smoke instructions.
+
 ## Vision and audience
 
 Project Spark is a colorful, stylized 3D adventure for ages 12–18: a miniature engineer explores giant electronic devices. Accessible explanations support younger players; later optional challenges support advanced learners. Adventure must be fun before electronics expertise is required.
@@ -68,4 +72,4 @@ Authorized on merged M6 PR #8 main 870b195. The single-player episode now compos
 
 The canonical commissioning network is separate from the repaired diagnostic network. It uses nominal R1/R2/R3 = 1 kΩ, R3 between SENSE and GND, with the existing ideal 5 V source. SENSE is solved as 5/3 V (shown 1.67 V EN, 1,67 V LT). READ SENSE / ABOVE 2 / WRITE OUT gives OFF; ABOVE 1 gives ON. Activation rechecks the actual topology/program with the existing solver/interpreter; no client success flag or literal UI voltage is authoritative. The final green service display on U1 is an abstract response, not physical MCU/LED execution.
 
-Title workbench remains optional independent practice and cannot grant episode credit. Verified repair unlocks the terminal workbench, whose accepted edits/proofs persist on close. Programming unlocks after the first construction proof; later circuit edits invalidate construction/commissioning evidence while leaving the editor usable for recovery. Reset relocks programming; replay/end/reload clear the complete episode. No durable save. Repair verification is labeled as repair completion, while only final activation completes the episode. Existing cooperative pilot stays independent. No M8 authorization. See M7_SCOPE.md and VALIDATION-M7.md.
+Title workbench remains optional independent practice and cannot grant episode credit. Verified repair unlocks the terminal workbench, whose accepted edits/proofs persist on close. Programming unlocks after the first construction proof; later circuit edits invalidate construction/commissioning evidence while leaving the editor usable for recovery. Reset relocks programming; replay/end/reload clear the complete episode. No durable save. Repair verification is labeled as repair completion, while only final activation completes the episode. Existing cooperative pilot stays independent. M8 is now explicitly authorized in the demo delivery section above. See M7_SCOPE.md and VALIDATION-M7.md.

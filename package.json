@@ -15,6 +15,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build": "pnpm --filter @spark/web build",
+    "demo:package": "node scripts/package-demo.mjs",
+    "demo:start": "node dist/project-spark-0.8.0-demo.1/server.mjs",
+    "test:release": "node --test scripts/demo.test.mjs",
     "test:e2e": "playwright test",
     "verify": "node scripts/verify.mjs",
     "doctor:project": "node scripts/doctor.mjs"

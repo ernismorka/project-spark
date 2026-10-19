@@ -7,7 +7,14 @@ if (!pnpm) {
   console.error("Run this entry point with pnpm verify.");
   process.exit(1);
 }
-for (const stage of ["lint", "typecheck", "test", "build", "test:e2e"]) {
+for (const stage of [
+  "lint",
+  "typecheck",
+  "test",
+  "demo:package",
+  "test:release",
+  "test:e2e",
+]) {
   console.log(`\nProject Spark validation: ${stage}`);
   const result = spawnSync(
     process.execPath,

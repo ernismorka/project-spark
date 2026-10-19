@@ -1,5 +1,7 @@
 # Consolidated MVP playtest
 
+M8 distribution check: use the versioned demo folder and DEMO_START.md rather than development tooling for the single-player session. Have a new player launch by double-click, find Start/controls/language, complete the whole episode, recognize final activation, replay and stop the console. Record any need for coaching. Test alternate port/error instructions only when relevant. Cooperative evaluation remains a separate source-server session. Human checks remain deferred; automated startup/episode completion does not establish engagement or ease of use.
+
 M0–M5 are implemented. This checklist evaluates the existing MVP; it authorizes no new milestone. Automated evidence and technical findings are in VALIDATION-CONSOLIDATION.md. No owner playtest is required to finish the quality PR.
 
 Use a desktop keyboard/mouse and a representative midrange laptop with hardware acceleration. Record OS, browser/version, CPU/GPU/RAM, screen size, language, experience level and session duration. Run the README local web/server commands. Use two windows on the same machine for the loopback-only pilot; two people should take turns controlling their own window. This is not a remote-network test. Avoid collecting personal data.

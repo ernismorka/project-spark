@@ -5,7 +5,11 @@ export default defineConfig({
   workers: 1,
   expect: { timeout: 15000 },
   timeout: 60000,
-  use: { baseURL: "http://127.0.0.1:4173", screenshot: "only-on-failure" },
+  use: {
+    baseURL: "http://127.0.0.1:4173",
+    screenshot: "only-on-failure",
+    trace: "retain-on-failure",
+  },
   projects: [
     {
       name: "chromium",
@@ -25,7 +29,7 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
     },
     {
-      command: "pnpm --filter @spark/web preview --host 127.0.0.1",
+      command: "pnpm demo:start",
       url: "http://127.0.0.1:4173",
       reuseExistingServer: !process.env.CI,
     },
