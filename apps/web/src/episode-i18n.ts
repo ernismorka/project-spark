@@ -1,6 +1,8 @@
 import type { Language } from "@spark/shared";
 import type { EpisodeStage } from "@spark/game-core";
 type Copy = {
+  demo: string;
+  reset: string;
   intro: string;
   practice: string;
   missionScope: string;
@@ -13,6 +15,8 @@ type Copy = {
   tasks: Record<EpisodeStage, string>;
 };
 const en: Copy = {
+  demo: "Playable demo",
+  reset: "Desktop keyboard + mouse · No saved progress · Replay starts fresh",
   intro:
     "Restore this device in one episode: explore, diagnose and verify its DC repair, then build and program the terminal controller before activation.",
   practice:
@@ -48,6 +52,9 @@ const en: Copy = {
   },
 };
 const lt: Copy = {
+  demo: "Žaidžiama demonstracija",
+  reset:
+    "Klaviatūra ir pelė · Pažanga neišsaugoma · Pakartojimas pradeda iš naujo",
   intro:
     "Atkurk įrenginį viename epizode: tyrinėk, nustatyk gedimą ir patvirtink nuolatinės srovės grandinės remontą, tada sukonstruok ir suprogramuok terminalo valdiklį prieš aktyvindamas.",
   practice:

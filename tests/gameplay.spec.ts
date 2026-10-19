@@ -381,6 +381,7 @@ test("plays First Contact using real movement and interaction inputs", async ({
   await expect(page.locator(".board-report")).toContainText(
     "Device active · controller commissioning verified",
   );
+  await expect(page.locator(".scene-bottom")).toContainText("Episode complete");
   await page.screenshot({ path: testInfo.outputPath("m7-active-world.png") });
   await page.getByRole("button", { name: "Return to terminal report" }).click();
   await page.getByRole("button", { name: "Replay The Dark Circuit" }).click();

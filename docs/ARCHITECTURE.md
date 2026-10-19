@@ -1,5 +1,11 @@
 # Architecture
 
+## M8 local demo distribution
+
+scripts/package-demo.mjs builds the unchanged Vite application and stages a versioned folder with SHA-256 inventory/provenance, launcher/server, startup/limitations/playtest documents and available production dependency notices. No dependencies are installed in the player folder. File contents are reproducible for the same source/runtime/lockfile; archive timestamps are outside that claim.
+
+The dependency-free Node HTTP server binds 127.0.0.1, validates Host/Origin, permits GET/HEAD only, confines real paths to web/, uses explicit MIME/no-store/nosniff, bounds connections/timeouts and provides clear startup errors. It never starts Colyseus or executes player code. Windows launcher opens the validated local URL only after listen; Ctrl+C closes serving. Existing cooperative source workflow is separate. Production browser tests now run this same packaged server. Release integration checks exercise provenance/inventory, repeat packaging, boundaries, standalone CLI startup/error/stop and occupied ports. No public-service security claim or backend expansion.
+
 ## Modules and authority
 
 apps/web owns React UI, browser lifecycle, input translation and PlayCanvas rendering. packages/shared exports serializable contracts, entity IDs and state types. packages/game-core owns the board metadata, collision dimensions, fixed-step movement, checkpoint recovery, interaction eligibility and First Contact progression. packages/electronics provides the bounded deterministic DC solver. No dependencies were added or upgraded for M1.

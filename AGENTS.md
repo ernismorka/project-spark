@@ -4,7 +4,7 @@
 
 Read README.md, docs/GDD.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, docs/EXECUTION_PLAN.md and docs/DEVELOPMENT_STATUS.md before continuing. GDD and roadmap are the product source of truth. Do not expand them without authorization.
 
-M6 PR #8 is merged as 870b195. M7 Integrated Gameplay Experience is explicitly authorized; follow docs/M7_SCOPE.md. Integrate existing exploration, diagnosis/repair, unlocked construction/programming and final activation without new multiplayer, solver categories, language features, backend or dependencies. Preserve existing Session/solver/interpreter/pilot APIs and all regression coverage. Do not start M8. Domain code remains serializable and browser-independent.
+M7 PR #9 is merged as 791220e. M8 Playable Demo Release is explicitly authorized; follow docs/M8_SCOPE.md. Package the existing episode with a Windows-friendly local launcher, clear EN/LT presentation and release validation. No new gameplay systems, multiplayer, solver categories, language features, dependencies or public deployment/release. Preserve existing APIs and all regression coverage. Do not start M9. Domain code remains serializable and browser-independent.
 
 ## Autonomous workflow
 
@@ -18,7 +18,7 @@ Inspect the working tree and remote state first; preserve unrelated work. Use de
 
 ## Quality gate
 
-Run pnpm doctor:project for environment/binary availability; it does not prove browser launch. Run pnpm verify for sequential fail-fast lint, typecheck, unit tests, build and browser checks. Equivalent individual commands are pnpm lint, pnpm typecheck, pnpm test, pnpm build and pnpm test:e2e. Rebuild before testing the production preview. Linux CI validates Chromium/Firefox with Xvfb and explicit software graphics. Keep both browsers enabled. Report the known Windows Firefox spawn UNKNOWN limitation separately from gameplay regressions; never describe the full local suite as passing if it cannot launch.
+Run pnpm doctor:project for environment/binary availability; it does not prove browser launch. Run pnpm verify for sequential fail-fast lint, typecheck, unit tests, production demo packaging, release integration and browser checks. Equivalent individual commands are pnpm lint, pnpm typecheck, pnpm test, pnpm demo:package, pnpm test:release and pnpm test:e2e. pnpm build remains app-only; package before browser tests, which use the shipped production server. Linux CI validates Chromium/Firefox with Xvfb and explicit software graphics. Keep both browsers enabled. Report the known Windows Firefox spawn UNKNOWN limitation separately from gameplay regressions; never describe the full local suite as passing if it cannot launch.
 
 Test domain behavior and meaningful UI/lifecycle changes. Self-review correctness, architecture, security, performance and regressions before submission. Use actual GitHub CI results as additional evidence. No fabricated FPS, screenshots or successful checks. Revalidate after fixes with checks appropriate to the change.
 
@@ -30,4 +30,4 @@ Preserve sandbox and security restrictions. Never modify machine-wide Codex appr
 
 ## Session continuity
 
-On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M7 is authorized on merged PR #8. After submitting M7, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.
+On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M8 is authorized on merged PR #9. After submitting M8, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.

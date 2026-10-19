@@ -1,6 +1,12 @@
 # Project Spark
 
-Browser-first educational 3D engineering adventure. M3 adds a complete DC diagnosis, repair and verification episode to the single-player First Contact circuit-board exploration slice. No accounts, telemetry or external assets; M5 adds an optional loopback-only Colyseus server. PR #1 (M0) was merged before M1 began.
+## Play the M8 local demo
+
+Use the versioned `dist/project-spark-0.8.0-demo.1` folder (or the reviewed CI build artifact). Install Node.js 24+ once, then double-click **Start Spark Demo.cmd**. It opens the local production demo in your browser; keep the console open and stop with Ctrl+C. No Git, pnpm, dependency installation or cooperative server is needed by players. Desktop keyboard/mouse and WebGL 2 hardware acceleration required. EN/LT, no saved progress, no public deployment.
+
+To reproduce the folder from source: `pnpm install --frozen-lockfile`, then `pnpm demo:package`. To smoke-test it: `pnpm test:release`. The full `pnpm verify` packages the production build, checks reproducibility/startup/server boundaries and runs both browser projects against that package. Repackage after source edits before running e2e alone. See [DEMO_START.md](docs/DEMO_START.md), [DEMO_LIMITATIONS.md](docs/DEMO_LIMITATIONS.md), [M8_SCOPE.md](docs/M8_SCOPE.md) and [PLAYTEST.md](docs/PLAYTEST.md). No public release is published automatically. The optional cooperative pilot below still needs its separate local developer server.
+
+Browser-first educational 3D engineering adventure. The Dark Circuit combines exploration, solver-backed diagnosis/repair, bounded circuit construction and controller programming, then final activation and replay. English/Lithuanian; no accounts, telemetry or external assets. The cooperative pilot uses a separate optional loopback-only Colyseus server.
 
 ## Run
 
@@ -34,12 +40,13 @@ Buttons support keyboard focus. Pause offers Resume and End session. Inspection 
 pnpm lint
 pnpm typecheck
 pnpm test
-pnpm build
+pnpm demo:package
+pnpm test:release
 pnpm exec playwright install chromium firefox
 pnpm test:e2e
 ```
 
-Linux CI installs browsers with `--with-deps` and runs headed tests under Xvfb/software GL. Browser tests use production preview port 4173. After editing source, rebuild before e2e. `pnpm format` applies formatting. Known local Windows Firefox `spawn UNKNOWN` may prevent launch; Chromium can be run with `pnpm test:e2e --project=chromium`. Firefox remains enabled in CI.
+Linux CI installs browsers with `--with-deps` and runs headed tests under Xvfb/software GL. Browser tests use the packaged production server on port 4173. After editing source, run pnpm demo:package before e2e. `pnpm format` applies formatting. Known local Windows Firefox `spawn UNKNOWN` may prevent launch; Chromium can be run with `pnpm test:e2e --project=chromium`. Firefox remains enabled in CI.
 
 ## Manual QA
 

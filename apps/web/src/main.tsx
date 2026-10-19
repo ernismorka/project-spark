@@ -198,7 +198,7 @@ function App() {
         <header>
           <a className="brand" href="./" aria-label="Project Spark">
             <span className="logo">ϟ</span> project<span>spark</span>
-            <small>M7</small>
+            <small>0.8 DEMO</small>
           </a>
           <div className="header-actions">
             {session.phase === "title" && (
@@ -254,11 +254,19 @@ function App() {
         </header>
         {session.phase === "title" && (
           <section className="intro">
-            <p className="eyebrow">{repairCopy[state.language].title} / M7</p>
+            <p className="eyebrow">
+              {repairCopy[state.language].title} / {e.demo}
+            </p>
             <h1>{t.title}</h1>
-            <p>{g.brief}</p>
             <p>{e.intro}</p>
-            <p>{e.practice}</p>
+            <button
+              className="primary demo-start"
+              onClick={start}
+              disabled={mounted && status !== "ready"}
+            >
+              {g.play}
+            </button>
+            <p className="demo-note">{e.reset}</p>
           </section>
         )}
         <section className="scene gameplay" aria-label={t.scene}>
@@ -440,8 +448,8 @@ function App() {
                           : "game-menu"
                       }
                       ref={menu}
-                      role="dialog"
-                      aria-modal="true"
+                      role={session.phase === "title" ? "region" : "dialog"}
+                      aria-modal={session.phase === "title" ? undefined : true}
                       aria-label={
                         session.phase === "title"
                           ? g.welcome
@@ -507,10 +515,7 @@ function App() {
                       {session.phase === "title" && (
                         <>
                           <p>{g.brief}</p>
-                          <p>{e.intro}</p>
-                          <button className="primary" onClick={start}>
-                            {g.play}
-                          </button>
+                          <p>{e.practice}</p>
                         </>
                       )}
                       {session.phase === "paused" && (
@@ -593,7 +598,9 @@ function App() {
                             </p>
                           )}
                           <button
-                            className="primary"
+                            className={
+                              episode.activated ? undefined : "primary"
+                            }
                             onClick={() =>
                               dispatch({ type: "open-diagnostics" })
                             }
@@ -639,7 +646,9 @@ function App() {
           <div className="scene-bottom">
             <span>{g.controls}</span>
             <span>
-              {g.mission} · {session.step + 1}/6
+              {session.step === 5
+                ? e.stages[stage]
+                : `${g.mission} · ${session.step + 1}/6`}
             </span>
           </div>
         </section>

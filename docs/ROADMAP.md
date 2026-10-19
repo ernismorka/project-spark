@@ -1,5 +1,11 @@
 # Roadmap
 
+| Milestone                | Scope                                                                                                                     | Acceptance                                                                                                                                                                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M8 Playable Demo Release | Package and stabilize the existing integrated episode, Windows local launcher, EN/LT demo guidance, release documentation | M8_SCOPE.md: reproducible versioned folder/inventory, standalone startup/error/security checks, full episode/replay and preserved Chromium/Firefox coverage, inspected captures, documented performance limits, unmerged PR |
+
+M8 is explicitly authorized on merged M7 PR #9 (791220e). No M9, major new systems or public release/deployment is authorized.
+
 | Milestone               | Scope                                                                                     | Acceptance                                                                                                      |
 | ----------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | M0 Foundation           | Workspaces, static PlayCanvas scene, React, EN/LT, command boundary, tests, CI, docs      | Fresh install and all checks pass; supported browser renders; fallback explicit; no gameplay                    |
@@ -25,10 +31,10 @@ All originally approved milestones M0–M5 are complete. Consolidation is merged
 | --------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M6 3D Gameplay Polish | Existing single-player movement/camera/orientation/readability and rendering/lifecycle; no new major systems | M6_SCOPE.md acceptance, preserved M0–M5 tests, new meaningful regressions, inspected before/after captures, measured workload/performance with explicit limits and an unmerged PR |
 
-M6 is merged as PR #8, main 870b195. M7 is now explicitly authorized below; no M8.
+M6 is merged as PR #8, main 870b195. M7 is merged in PR #9 as 791220e; M8 is authorized below.
 
 | Milestone                         | Scope                                                                                                                                         | Acceptance                                                                                                                                                                                                   |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | M7 Integrated Gameplay Experience | Compose existing single-player exploration, evidence-based repair, unlocked construction/controller commissioning and final device activation | Guarded deterministic progression, real solver/interpreter results, isolated practice, persistent terminal edits, visible active-device feedback, EN/LT completion/replay, preserved regressions and full CI |
 
-M7_SCOPE.md defines the bounded activation contract. No new multiplayer, model categories, language features, database/deployment or unnecessary dependencies. Proposed broader engineering/co-op expansion remains unapproved. Do not merge M7 automatically or begin M8.
+M7_SCOPE.md defines the bounded activation contract. No new multiplayer, model categories, language features, database/deployment or unnecessary dependencies. Proposed broader engineering/co-op expansion remains unapproved. M7 is merged; M8 is now explicitly authorized below.
