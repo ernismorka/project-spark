@@ -17,6 +17,9 @@ test("demo title gives visible start, controls and honest practice/server guidan
     "ready",
   );
   await expect(
+    page.getByRole("region", { name: "Welcome, engineer.", exact: true }),
+  ).toContainText("WASD");
+  await expect(
     page.getByRole("button", { name: "Begin exploration", exact: true }),
   ).toBeInViewport();
   await expect(page.locator(".intro")).toContainText("No saved progress");
