@@ -38,3 +38,4 @@ export {
 } from "./diagnosis";
 export * from "./programming";
 export * from "./pilot";
+export * from "./episode";

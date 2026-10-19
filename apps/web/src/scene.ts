@@ -11,6 +11,7 @@ export interface SceneBridge {
   dispatch: (command: ExplorationCommand, publish?: boolean) => void;
   publish: () => void;
   target: () => string | undefined;
+  activated?: () => boolean;
 }
 export async function mountScene(
   canvas: HTMLCanvasElement,
@@ -92,12 +93,17 @@ export async function mountScene(
       lastPhase = bridge.get().phase;
     let lastState: Session | undefined;
     let renderDirty = true;
+    let lastActivated = false;
     update = (delta: number) => {
       const state = bridge.get();
+      const activated = bridge.activated?.() ?? false;
       const visible = !canvas.closest("main[inert]") && !document.hidden;
       app!.autoRender =
         visible &&
-        (state.phase === "playing" || state !== lastState || renderDirty);
+        (state.phase === "playing" ||
+          state !== lastState ||
+          activated !== lastActivated ||
+          renderDirty);
       if (!visible) {
         renderDirty = true;
         accumulator = 0;
@@ -107,6 +113,7 @@ export async function mountScene(
       if (!app!.autoRender) return;
       renderDirty = false;
       lastState = state;
+      lastActivated = activated;
       const dt = Math.min(delta, 0.1);
       time += dt;
       if (state.phase !== lastPhase) {
@@ -151,7 +158,12 @@ export async function mountScene(
         cameraPosition.y - next.player.position.y - 1.25,
         cameraPosition.z - next.player.position.z,
       ).toFixed(3);
-      pcb.status(next.repair.r1 === "restored", next.repair.completed);
+      pcb.status(
+        next.repair.r1 === "restored",
+        next.repair.completed,
+        activated,
+      );
+      canvas.dataset.deviceStatus = activated ? "active" : "offline";
       canvas.dataset.circuitStatus = next.repair.completed
         ? "verified"
         : next.repair.r1;

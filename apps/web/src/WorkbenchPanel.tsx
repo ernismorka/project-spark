@@ -5,6 +5,7 @@ import {
   commandWorkbench,
   printProgram,
   type Instruction,
+  type Workbench,
 } from "@spark/game-core";
 import type { Language } from "@spark/shared";
 const copy = {
@@ -95,11 +96,22 @@ export { copy as programmingCopy };
 export function WorkbenchPanel({
   language,
   onClose,
+  workbench,
+  onCommand,
+  missionScope,
+  missionTask,
+  programmingLocked = false,
 }: {
   language: Language;
   onClose: () => void;
+  workbench?: Workbench;
+  onCommand?: (command: unknown) => void;
+  missionScope?: string;
+  missionTask?: string;
+  programmingLocked?: boolean;
 }) {
-  const [state, setState] = useState(createWorkbench);
+  const [local, setLocal] = useState(createWorkbench);
+  const state = workbench ?? local;
   const [mode, setMode] = useState<"blocks" | "text">("blocks");
   const [source, setSource] = useState(printProgram(state.program));
   const [id, setId] = useState("R3"),
@@ -107,7 +119,8 @@ export function WorkbenchPanel({
     [b, setB] = useState("GND"),
     [ohms, setOhms] = useState(1000);
   const t = copy[language];
-  const send = (c: unknown) => setState((s) => commandWorkbench(s, c));
+  const send = (c: unknown) =>
+    onCommand ? onCommand(c) : setLocal((s) => commandWorkbench(s, c));
   const program = (p: readonly Instruction[]) => {
     send({ type: "set-program", program: p });
     setSource(printProgram(p));
@@ -145,13 +158,15 @@ export function WorkbenchPanel({
       }}
     >
       <header>
-        <h2>{t.title} · M4</h2>
+        <h2>
+          {t.title} · {onCommand ? "T1" : "M4"}
+        </h2>
         <button autoFocus onClick={onClose}>
           {t.close}
         </button>
       </header>
-      <p>{t.scope}</p>
-      <p>{t.task}</p>
+      <p>{missionScope ?? t.scope}</p>
+      <p>{missionTask ?? t.task}</p>
       <div className="workbench-grid">
         <section>
           <h3>{t.circuit}</h3>
@@ -211,142 +226,144 @@ export function WorkbenchPanel({
           </form>
         </section>
         <section>
-          <h3>
-            {t.blocks} / {t.text}
-          </h3>
-          <button
-            aria-pressed={mode === "blocks"}
-            onClick={() => {
-              setMode("blocks");
-              send({ type: "set-program", program: state.program });
-            }}
+          <fieldset
+            className="program-editor"
+            aria-label={`${t.blocks} / ${t.text}`}
+            disabled={programmingLocked}
           >
-            {t.blocks}
-          </button>
-          <button
-            aria-pressed={mode === "text"}
-            onClick={() => {
-              setSource(printProgram(state.program));
-              setMode("text");
-            }}
-          >
-            {t.text}
-          </button>
-          {mode === "text" ? (
-            <>
-              <label>
-                {t.text}
-                <textarea
-                  maxLength={2048}
-                  value={source}
-                  onChange={(e) => setSource(e.target.value)}
-                  spellCheck={false}
-                />
-              </label>
-              <button onClick={() => send({ type: "text", text: source })}>
-                {t.apply}
-              </button>
-            </>
-          ) : (
-            <>
-              <ol>
-                {state.program.map((i, index) => (
-                  <li key={index}>
-                    <label>
-                      {t.instruction} {index + 1}
-                      <select
-                        value={i.op}
-                        onChange={(e) => {
-                          const op = e.target.value;
-                          program(
-                            state.program.map((p, j) =>
-                              j !== index
-                                ? p
-                                : op === "above"
-                                  ? { op, volts: 2 }
-                                  : op === "repeat"
-                                    ? { op, count: 2 }
-                                    : op === "read"
-                                      ? { op: "read" }
-                                      : { op: "write" },
-                            ),
-                          );
-                        }}
-                      >
-                        <option value="read">READ SENSE</option>
-                        <option value="above">ABOVE</option>
-                        <option value="write">WRITE OUT</option>
-                        <option value="repeat">REPEAT</option>
-                      </select>
-                    </label>
-                    {(i.op === "above" || i.op === "repeat") && (
+            <h3>
+              {t.blocks} / {t.text}
+            </h3>
+            <button
+              aria-pressed={mode === "blocks"}
+              onClick={() => {
+                setMode("blocks");
+                if (state.error === "program")
+                  send({ type: "set-program", program: state.program });
+              }}
+            >
+              {t.blocks}
+            </button>
+            <button
+              aria-pressed={mode === "text"}
+              onClick={() => {
+                setSource(printProgram(state.program));
+                setMode("text");
+              }}
+            >
+              {t.text}
+            </button>
+            {mode === "text" ? (
+              <>
+                <label>
+                  {t.text}
+                  <textarea
+                    maxLength={2048}
+                    value={source}
+                    onChange={(e) => setSource(e.target.value)}
+                    spellCheck={false}
+                  />
+                </label>
+                <button onClick={() => send({ type: "text", text: source })}>
+                  {t.apply}
+                </button>
+              </>
+            ) : (
+              <>
+                <ol>
+                  {state.program.map((i, index) => (
+                    <li key={index}>
                       <label>
-                        {t.parameter} {index + 1}
-                        <input
-                          type="number"
-                          min={i.op === "repeat" ? 1 : 0}
-                          max={i.op === "repeat" ? 128 : 5}
-                          step={i.op === "repeat" ? 1 : 0.1}
-                          value={i.op === "above" ? i.volts : i.count}
-                          onChange={(e) =>
+                        {t.instruction} {index + 1}
+                        <select
+                          value={i.op}
+                          onChange={(e) => {
+                            const op = e.target.value;
                             program(
                               state.program.map((p, j) =>
                                 j !== index
                                   ? p
-                                  : i.op === "above"
-                                    ? {
-                                        op: "above",
-                                        volts: e.target.valueAsNumber,
-                                      }
-                                    : {
-                                        op: "repeat",
-                                        count: e.target.valueAsNumber,
-                                      },
+                                  : op === "above"
+                                    ? { op, volts: 2 }
+                                    : op === "repeat"
+                                      ? { op, count: 2 }
+                                      : op === "read"
+                                        ? { op: "read" }
+                                        : { op: "write" },
                               ),
-                            )
-                          }
-                        />
+                            );
+                          }}
+                        >
+                          <option value="read">READ SENSE</option>
+                          <option value="above">ABOVE</option>
+                          <option value="write">WRITE OUT</option>
+                          <option value="repeat">REPEAT</option>
+                        </select>
                       </label>
-                    )}
-                    <button
-                      disabled={state.program.length === 1}
-                      onClick={() =>
-                        program(state.program.filter((_, j) => j !== index))
-                      }
-                    >
-                      {t.del} {index + 1}
-                    </button>
-                  </li>
-                ))}
-              </ol>
-              <button
-                disabled={state.program.length >= 32}
-                onClick={() => program([...state.program, { op: "read" }])}
-              >
-                {t.add}
-              </button>
-            </>
-          )}
-          <p>{t.limit}</p>
+                      {(i.op === "above" || i.op === "repeat") && (
+                        <label>
+                          {t.parameter} {index + 1}
+                          <input
+                            type="number"
+                            min={i.op === "repeat" ? 1 : 0}
+                            max={i.op === "repeat" ? 128 : 5}
+                            step={i.op === "repeat" ? 1 : 0.1}
+                            value={i.op === "above" ? i.volts : i.count}
+                            onChange={(e) =>
+                              program(
+                                state.program.map((p, j) =>
+                                  j !== index
+                                    ? p
+                                    : i.op === "above"
+                                      ? {
+                                          op: "above",
+                                          volts: e.target.valueAsNumber,
+                                        }
+                                      : {
+                                          op: "repeat",
+                                          count: e.target.valueAsNumber,
+                                        },
+                                ),
+                              )
+                            }
+                          />
+                        </label>
+                      )}
+                      <button
+                        disabled={state.program.length === 1}
+                        onClick={() =>
+                          program(state.program.filter((_, j) => j !== index))
+                        }
+                      >
+                        {t.del} {index + 1}
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+                <button
+                  disabled={state.program.length >= 32}
+                  onClick={() => program([...state.program, { op: "read" }])}
+                >
+                  {t.add}
+                </button>
+              </>
+            )}
+            <p>{t.limit}</p>
+          </fieldset>
         </section>
       </div>
       <button
-        onClick={() =>
-          setState((s) => {
-            const applied =
-              mode === "text"
-                ? commandWorkbench(s, { type: "text", text: source })
-                : s;
-            return commandWorkbench(applied, { type: "run" });
-          })
-        }
+        onClick={() => {
+          if (mode === "text") send({ type: "text", text: source });
+          send({ type: "run" });
+        }}
       >
         {t.run}
       </button>
       <button
         onClick={() => {
           const s = createWorkbench();
-          setState(s);
+          send({ type: "reset" });
           setSource(printProgram(s.program));
         }}
       >
@@ -374,7 +391,12 @@ export function WorkbenchPanel({
             : t.unrun}
         </output>
       </p>
-      {challenge && <p role="status">{t.success}</p>}
+      {challenge && !missionTask && <p role="status">{t.success}</p>}
+      {missionTask && (
+        <p role="status" className="commission-task">
+          {missionTask}
+        </p>
+      )}
       <details>
         <summary>
           {t.trace} ({state.trace.length}/128)

@@ -8,21 +8,26 @@ import { createRoot } from "react-dom/client";
 import {
   createGame,
   execute,
-  createSession,
-  commandSession,
+  createEpisode,
+  commandEpisode,
+  episodeStage,
   nearbyComponents,
   components,
   horizontalDistance,
 } from "@spark/game-core";
-import { languages, type ExplorationCommand } from "@spark/shared";
+import { languages } from "@spark/shared";
+import { episodeCopy } from "./episode-i18n";
 import { messages } from "./i18n";
 import { gameplay } from "./gameplay-i18n";
 import "./style.css";
 import { objectiveTarget, targetBearing } from "./game/navigation";
 function App() {
   const [state, setState] = useState(createGame);
-  const [session, setSession] = useState(createSession);
-  const current = useRef(session);
+  const [episode, setEpisode] = useState(createEpisode);
+  const current = useRef(episode);
+  const session = episode.session;
+  const stage = episodeStage(episode);
+  const e = episodeCopy[state.language];
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading",
   );
@@ -45,12 +50,12 @@ function App() {
     g = gameplay[state.language],
     d = diagnosisCopy[state.language];
   const publish = useCallback(() => {
-    setSession(current.current);
+    setEpisode(current.current);
     setCameraYaw(Number(canvas.current?.dataset.cameraYaw ?? 0));
   }, []);
   const dispatch = useCallback(
-    (command: ExplorationCommand, notify = true) => {
-      current.current = commandSession(current.current, command);
+    (command: unknown, notify = true) => {
+      current.current = commandEpisode(current.current, command);
       if (notify) publish();
     },
     [publish],
@@ -58,6 +63,10 @@ function App() {
   useEffect(() => {
     document.documentElement.lang = state.language;
   }, [state.language]);
+  useEffect(() => {
+    if (episode.activated)
+      menu.current?.querySelector<HTMLHeadingElement>("h2")?.focus();
+  }, [episode.activated]);
   useEffect(() => {
     if (!mounted) return;
     const controller = new AbortController();
@@ -75,11 +84,12 @@ function App() {
     import("./scene")
       .then(({ mountScene }) =>
         mountScene(element, controller.signal, {
-          get: () => current.current,
+          get: () => current.current.session,
+          activated: () => current.current.activated,
           dispatch,
           publish,
           target: () => {
-            const nearby = nearbyComponents(current.current);
+            const nearby = nearbyComponents(current.current.session);
             return (
               nearby.find((c) => c.id === selectedRef.current)?.id ??
               nearby[0]?.id
@@ -135,12 +145,12 @@ function App() {
   const start = () => {
     if (!mounted) {
       setMounted(true);
-      current.current = createSession();
+      current.current = createEpisode();
     }
     dispatch({ type: "start" });
   };
   const end = () => {
-    current.current = createSession();
+    current.current = createEpisode();
     publish();
     setMounted(false);
   };
@@ -164,6 +174,17 @@ function App() {
       {workbench && (
         <WorkbenchPanel
           language={state.language}
+          workbench={session.phase === "title" ? undefined : episode.workbench}
+          onCommand={
+            session.phase === "title"
+              ? undefined
+              : (command) => dispatch({ type: "workbench", command })
+          }
+          missionScope={session.phase === "title" ? undefined : e.missionScope}
+          missionTask={session.phase === "title" ? undefined : e.tasks[stage]}
+          programmingLocked={
+            session.phase !== "title" && !episode.programmingUnlocked
+          }
           onClose={() => {
             setWorkbench(false);
             restoreModalFocus();
@@ -177,7 +198,7 @@ function App() {
         <header>
           <a className="brand" href="./" aria-label="Project Spark">
             <span className="logo">ϟ</span> project<span>spark</span>
-            <small>M6</small>
+            <small>M7</small>
           </a>
           <div className="header-actions">
             {session.phase === "title" && (
@@ -190,7 +211,10 @@ function App() {
                 {pilotCopy[state.language].open}
               </button>
             )}
-            {(session.phase === "title" || session.phase === "complete") && (
+            {(session.phase === "title" ||
+              (session.phase === "complete" &&
+                session.repair.completed &&
+                !episode.activated)) && (
               <button
                 onClick={(e) => {
                   modalOpener.current = e.currentTarget;
@@ -230,9 +254,11 @@ function App() {
         </header>
         {session.phase === "title" && (
           <section className="intro">
-            <p className="eyebrow">{repairCopy[state.language].title} / M3</p>
+            <p className="eyebrow">{repairCopy[state.language].title} / M7</p>
             <h1>{t.title}</h1>
             <p>{g.brief}</p>
+            <p>{e.intro}</p>
+            <p>{e.practice}</p>
           </section>
         )}
         <section className="scene gameplay" aria-label={t.scene}>
@@ -246,12 +272,21 @@ function App() {
               <h2 aria-live="polite" aria-atomic="true">
                 {session.phase === "title"
                   ? g.welcome
-                  : session.repair.completed
-                    ? repairCopy[state.language].world
-                    : session.step === 5
-                      ? repairCopy[state.language].intro
-                      : g.objectives[session.step]}
+                  : episode.activated
+                    ? e.world
+                    : session.repair.completed
+                      ? e.tasks[stage]
+                      : session.step === 5
+                        ? repairCopy[state.language].intro
+                        : g.objectives[session.step]}
               </h2>
+              <p
+                className="episode-stage"
+                data-testid="episode-stage"
+                data-stage={stage}
+              >
+                {e.stages[stage]}
+              </p>
             </div>
             <span
               role="status"
@@ -381,7 +416,11 @@ function App() {
                 )}
                 {showingBoard && (
                   <div className="board-report" role="status">
-                    <p>{repairCopy[state.language].world}</p>
+                    <p>
+                      {episode.activated
+                        ? e.world
+                        : repairCopy[state.language].world}
+                    </p>
                     <button autoFocus onClick={() => setViewBoard(false)}>
                       {repairCopy[state.language].report}
                     </button>
@@ -409,9 +448,11 @@ function App() {
                           : session.phase === "paused"
                             ? g.paused
                             : session.phase === "complete"
-                              ? session.repair.completed
-                                ? repairCopy[state.language].complete
-                                : g.complete
+                              ? episode.activated
+                                ? e.complete
+                                : session.repair.completed
+                                  ? repairCopy[state.language].complete
+                                  : g.complete
                               : session.phase === "diagnosing"
                                 ? d.title
                                 : g.selected
@@ -440,17 +481,23 @@ function App() {
                       }}
                     >
                       <p className="eyebrow">
-                        {session.phase === "inspecting" ? g.scanner : g.mission}
+                        {session.phase === "inspecting"
+                          ? g.scanner
+                          : session.step === 5
+                            ? repairCopy[state.language].title
+                            : g.mission}
                       </p>
-                      <h2>
+                      <h2 tabIndex={-1}>
                         {session.phase === "title"
                           ? g.welcome
                           : session.phase === "paused"
                             ? g.paused
                             : session.phase === "complete"
-                              ? session.repair.completed
-                                ? repairCopy[state.language].complete
-                                : g.complete
+                              ? episode.activated
+                                ? e.complete
+                                : session.repair.completed
+                                  ? repairCopy[state.language].complete
+                                  : g.complete
                               : session.phase === "diagnosing"
                                 ? d.title
                                 : inspected
@@ -460,6 +507,7 @@ function App() {
                       {session.phase === "title" && (
                         <>
                           <p>{g.brief}</p>
+                          <p>{e.intro}</p>
                           <button className="primary" onClick={start}>
                             {g.play}
                           </button>
@@ -506,11 +554,44 @@ function App() {
                       )}
                       {session.phase === "complete" && (
                         <>
-                          <p>
-                            {session.repair.completed
-                              ? repairCopy[state.language].success
-                              : g.completedBody}
-                          </p>
+                          {session.repair.completed && (
+                            <section
+                              className="episode-next"
+                              aria-label={e.stages[stage]}
+                            >
+                              <p role="status">
+                                {episode.activated ? e.success : e.tasks[stage]}
+                              </p>
+                              {!episode.activated && (
+                                <>
+                                  <button
+                                    className="primary"
+                                    onClick={(event) => {
+                                      modalOpener.current = event.currentTarget;
+                                      setWorkbench(true);
+                                    }}
+                                  >
+                                    {e.continue}
+                                  </button>
+                                  <button
+                                    disabled={stage !== "activation"}
+                                    onClick={() =>
+                                      dispatch({ type: "activate-device" })
+                                    }
+                                  >
+                                    {e.activate}
+                                  </button>
+                                </>
+                              )}
+                            </section>
+                          )}
+                          {!episode.activated && (
+                            <p>
+                              {session.repair.completed
+                                ? repairCopy[state.language].success
+                                : g.completedBody}
+                            </p>
+                          )}
                           <button
                             className="primary"
                             onClick={() =>
@@ -520,9 +601,11 @@ function App() {
                             {d.open}
                           </button>
                           <p>
-                            {session.repair.completed
-                              ? repairCopy[state.language].world
-                              : g.terminal}
+                            {episode.activated
+                              ? e.world
+                              : session.repair.completed
+                                ? repairCopy[state.language].world
+                                : g.terminal}
                           </p>
                           <button
                             className="primary"
@@ -555,7 +638,9 @@ function App() {
           </div>
           <div className="scene-bottom">
             <span>{g.controls}</span>
-            <span>{session.step + 1}/6</span>
+            <span>
+              {g.mission} · {session.step + 1}/6
+            </span>
           </div>
         </section>
         <footer>

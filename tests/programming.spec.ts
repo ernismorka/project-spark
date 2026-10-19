@@ -118,4 +118,12 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
   await expect(
     page.getByRole("button", { name: "Pradėti tyrinėjimą", exact: true }),
   ).toBeVisible();
+  await expect(page.getByTestId("episode-stage")).toHaveAttribute(
+    "data-stage",
+    "exploration",
+  );
+  await expect(page.locator("canvas")).toHaveAttribute(
+    "data-device-status",
+    "offline",
+  );
 });

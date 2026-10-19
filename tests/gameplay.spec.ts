@@ -45,7 +45,7 @@ async function begin(page: Page) {
 test("plays First Contact using real movement and interaction inputs", async ({
   page,
 }, testInfo) => {
-  test.setTimeout(180000);
+  test.setTimeout(240000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await begin(page);
@@ -82,6 +82,9 @@ test("plays First Contact using real movement and interaction inputs", async ({
     "data-mission-step",
     "5",
   );
+  await expect(
+    page.getByRole("button", { name: "Open creative workbench" }),
+  ).toHaveCount(0);
   await page.getByRole("button", { name: "Open terminal diagnostics" }).click();
   await expect(page.getByRole("dialog")).toContainText("Follow the voltage");
   await expect(
@@ -175,14 +178,17 @@ test("plays First Contact using real movement and interaction inputs", async ({
     .getByRole("button", { name: "Patvirtinti remontą", exact: true })
     .click();
   await expect(page.getByRole("dialog")).toContainText(
-    "Tamsioji grandinė užbaigta",
+    "Grandinės remontas patvirtintas",
   );
   await expect(page.locator("canvas")).toHaveAttribute(
     "data-circuit-status",
     "verified",
   );
   await page
-    .getByRole("heading", { name: "Tamsioji grandinė užbaigta", exact: true })
+    .getByRole("heading", {
+      name: "Grandinės remontas patvirtintas",
+      exact: true,
+    })
     .scrollIntoViewIfNeeded();
   await page
     .locator(".diagnostic-content")
@@ -190,7 +196,7 @@ test("plays First Contact using real movement and interaction inputs", async ({
   await page.screenshot({ path: testInfo.outputPath("m3-complete-lt.png") });
   await expect(
     page.getByRole("heading", {
-      name: "Tamsioji grandinė užbaigta",
+      name: "Grandinės remontas patvirtintas",
       exact: true,
     }),
   ).toBeFocused();
@@ -210,7 +216,7 @@ test("plays First Contact using real movement and interaction inputs", async ({
   await page.getByRole("button", { name: "Grįžti į pirmąjį kontaktą" }).click();
   await expect(
     page.getByRole("heading", {
-      name: "Tamsioji grandinė užbaigta",
+      name: "Grandinės remontas patvirtintas",
       exact: true,
     }),
   ).toBeVisible();
@@ -221,9 +227,7 @@ test("plays First Contact using real movement and interaction inputs", async ({
   await page.screenshot({ path: testInfo.outputPath("m3-world-verified.png") });
   await page.getByRole("button", { name: "Return to terminal report" }).click();
   await page.getByRole("button", { name: "Open terminal diagnostics" }).click();
-  await expect(page.getByRole("dialog")).toContainText(
-    "The Dark Circuit complete",
-  );
+  await expect(page.getByRole("dialog")).toContainText("DC repair verified");
   await expect(page.getByLabel("SENSE after V", { exact: true })).toHaveText(
     "2.50 V",
   );
@@ -241,6 +245,144 @@ test("plays First Contact using real movement and interaction inputs", async ({
     "data-circuit-status",
     "verified",
   );
+  await expect(
+    page.getByRole("button", { name: "Activate device", exact: true }),
+  ).toBeDisabled();
+  await expect(page.getByTestId("episode-stage")).toHaveAttribute(
+    "data-stage",
+    "construction",
+  );
+  await page.setViewportSize({ width: 1280, height: 1200 });
+  await page
+    .getByRole("button", {
+      name: "Continue at T1: construction and programming",
+    })
+    .click();
+  const missionWorkbench = page.getByRole("dialog", {
+    name: "Creative programming",
+  });
+  await expect(
+    missionWorkbench.getByRole("button", { name: "Text", exact: true }),
+  ).toBeDisabled();
+  await missionWorkbench
+    .getByRole("button", { name: "Connect resistor", exact: true })
+    .click();
+  await missionWorkbench
+    .getByRole("button", { name: "Run controller", exact: true })
+    .click();
+  await expect(missionWorkbench.getByLabel("Workbench SENSE")).toHaveText(
+    "1.67 V",
+  );
+  await expect(missionWorkbench.locator("[data-output]")).toHaveAttribute(
+    "data-output",
+    "false",
+  );
+  await expect(missionWorkbench).toContainText("Construction proven");
+  await expect(missionWorkbench).not.toContainText(
+    "Remove R3 to restore the original divider.",
+  );
+  await expect(
+    missionWorkbench.getByRole("button", { name: "Text", exact: true }),
+  ).toBeEnabled();
+  await missionWorkbench.locator(".commission-task").scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: testInfo.outputPath("m7-construction-en.png"),
+  });
+  await missionWorkbench
+    .getByRole("button", { name: "Text", exact: true })
+    .click();
+  await missionWorkbench
+    .getByRole("textbox", { name: "Text", exact: true })
+    .fill("READ SENSE\nABOVE 1\nWRITE OUT");
+  await missionWorkbench
+    .getByRole("button", { name: "Run controller", exact: true })
+    .click();
+  await expect(missionWorkbench.locator("[data-output]")).toHaveAttribute(
+    "data-output",
+    "true",
+  );
+  await expect(missionWorkbench).toContainText("Controller run accepted");
+  await missionWorkbench
+    .getByRole("button", { name: "Blocks", exact: true })
+    .click();
+  await expect(missionWorkbench.getByLabel("Parameter 2")).toHaveValue("1");
+  // Equivalent blocks can be rerun without changing the accepted text program.
+  await missionWorkbench
+    .getByRole("button", { name: "Run controller", exact: true })
+    .click();
+  await missionWorkbench.locator(".commission-task").scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath("m7-controller-en.png") });
+  await missionWorkbench
+    .getByRole("button", { name: "Return to adventure", exact: true })
+    .click();
+  await expect(page.getByTestId("episode-stage")).toHaveAttribute(
+    "data-stage",
+    "activation",
+  );
+  await page
+    .getByRole("button", {
+      name: "Continue at T1: construction and programming",
+    })
+    .click();
+  await expect(page.getByLabel("Workbench SENSE")).toHaveText("1.67 V");
+  await expect(
+    page
+      .getByRole("dialog", { name: "Creative programming" })
+      .getByLabel("Parameter 2"),
+  ).toHaveValue("1");
+  await page
+    .getByRole("button", { name: "Return to adventure", exact: true })
+    .click();
+  await page.getByRole("combobox").selectOption("lt");
+  await page
+    .getByRole("button", { name: "Tęsti T1: konstravimas ir programavimas" })
+    .click();
+  const ltWorkbench = page.getByRole("dialog", {
+    name: "Kūrybinis programavimas",
+  });
+  await expect(ltWorkbench.getByLabel("Workbench SENSE")).toHaveText("1,67 V");
+  await expect(ltWorkbench).toContainText("Valdiklio vykdymas priimtas");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await ltWorkbench.getByLabel("Workbench SENSE").scrollIntoViewIfNeeded();
+  expect(
+    await ltWorkbench.evaluate((el) => el.scrollWidth <= el.clientWidth),
+  ).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath("m7-controller-lt.png") });
+  await ltWorkbench
+    .getByRole("button", { name: "Grįžti į nuotykį", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Aktyvinti įrenginį", exact: true })
+    .click();
+  await expect(page.getByTestId("episode-stage")).toHaveAttribute(
+    "data-stage",
+    "complete",
+  );
+  await expect(page.locator("canvas")).toHaveAttribute(
+    "data-device-status",
+    "active",
+  );
+  await expect(
+    page.getByRole("heading", {
+      name: "Įrenginys aktyvintas · epizodas užbaigtas",
+      exact: true,
+    }),
+  ).toBeFocused();
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath("m7-complete-lt.png") });
+  await page.getByRole("combobox").selectOption("en");
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.getByRole("button", { name: "View restored board" }).click();
+  await expect(page.locator(".board-report")).toContainText(
+    "Device active · controller commissioning verified",
+  );
+  await page.screenshot({ path: testInfo.outputPath("m7-active-world.png") });
+  await page.getByRole("button", { name: "Return to terminal report" }).click();
   await page.getByRole("button", { name: "Replay The Dark Circuit" }).click();
   await expect(page.locator("canvas")).toHaveAttribute("data-phase", "playing");
   await expect(page.locator("canvas")).toHaveAttribute(
@@ -251,6 +393,14 @@ test("plays First Contact using real movement and interaction inputs", async ({
     "data-mission-step",
     "0",
   );
+  await expect(page.getByTestId("episode-stage")).toHaveAttribute(
+    "data-stage",
+    "exploration",
+  );
+  await expect(page.locator("canvas")).toHaveAttribute(
+    "data-device-status",
+    "offline",
+  );
   expect(errors).toEqual([]);
 });
 test("walk/run/jump, solid collisions, pause, camera zoom and resume are functional", async ({
@@ -259,7 +409,9 @@ test("walk/run/jump, solid collisions, pause, camera zoom and resume are functio
   await begin(page);
   const start = await position(page);
   await page.keyboard.down("KeyW");
-  await page.waitForTimeout(450);
+  await expect
+    .poll(async () => start.z - (await position(page)).z)
+    .toBeGreaterThan(0.5);
   await page.keyboard.up("KeyW");
   const walked = await position(page);
   expect(start.z - walked.z).toBeGreaterThan(0.5);
