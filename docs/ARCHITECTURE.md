@@ -1,5 +1,9 @@
 # Architecture
 
+## M11 guidance difficulty
+
+The browser owns the EN/LT difficulty preference and persists its validated ID under `project-spark:difficulty`. The episode, circuit, repair and pilot state receive the same commands at every difficulty. React switches objectives, compass and diagnostic detail, and the scene reads the preference to update existing beacons and Apprentice-only pad rings. Scene updates invalidate on difficulty changes, including while paused.
+
 ## M10 field diagnostics
 
 `packages/game-core/src/field.ts` owns physical site coordinates, proximity, field evidence and the ideal DC field netlist. `commandEpisode` validates the route, keeps field evidence isolated from classic terminal diagnostics, and writes the shared verified repair prerequisite only after a fresh solver sweep and the player's return to T1. An open supply junction splits VCC and FEED; repair joins them. The existing DC solver, controller and pilot APIs stay in use. Browser code renders the carried meter, notebook, and world markers from serializable episode state. Solves run on accepted probe inputs, outside scene updates.

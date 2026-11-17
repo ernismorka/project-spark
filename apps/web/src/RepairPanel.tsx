@@ -7,10 +7,12 @@ export function RepairPanel({
   session,
   language,
   dispatch,
+  showHints = true,
 }: {
   session: Session;
   language: Language;
   dispatch: (c: ExplorationCommand) => void;
+  showHints?: boolean;
 }) {
   const panel = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -35,10 +37,10 @@ export function RepairPanel({
   return (
     <section ref={panel} className="repair-panel" aria-label={t.title}>
       <h3>{t.title}</h3>
-      <p>{t.intro}</p>
+      {showHints && <p>{t.intro}</p>}
       {!repaired ? (
         <>
-          <p>{t.action}</p>
+          {showHints && <p>{t.action}</p>}
           <button
             className="primary"
             onClick={() => dispatch({ type: "repair-r1", target: "R1" })}
@@ -49,7 +51,7 @@ export function RepairPanel({
       ) : (
         <>
           {!session.repair.completed && <p role="status">{t.repaired}</p>}
-          <p>{t.explanation}</p>
+          {showHints && <p>{t.explanation}</p>}
           <table>
             <caption>{diagnosisCopy[language].evidence}</caption>
             <thead>
@@ -91,7 +93,7 @@ export function RepairPanel({
           </div>
           {!session.repair.completed && (
             <>
-              <p>{ready ? t.pending : t.need}</p>
+              {showHints && <p>{ready ? t.pending : t.need}</p>}
               <button
                 className="primary"
                 disabled={!ready}

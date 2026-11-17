@@ -117,3 +117,7 @@ Accepted terminal edits persist when closed/reopened. Circuit/program edits inva
 ## M10 field diagnostics
 
 For the M10 field route, complete First Contact at T1 and choose **Pick up multimeter**. Follow the meter’s location cue and press **Q** within reach of each pad. Open the field notebook to compare evidence with the healthy readings, select a suspect trace and identify the two readings that locate the break. Walk to the revealed junction and press **Q** to bridge it. Probe all three pads again, then return to T1 for commissioning. The classic terminal diagnostics option remains available when you choose your route at T1. See [M10_PLAN.md](docs/M10_PLAN.md).
+
+## M11 guidance difficulty
+
+Open **Difficulty** in the header from the title screen or during exploration. **Apprentice** adds detailed objectives, directions, highlighted unmeasured probes and contextual hints. **Technician** is the default and gives the existing concise objectives, bearings, nearby controls and general hints. **Engineer** keeps the objectives brief and hides directions, beacons, probe highlights, reference voltages and diagnostic hints. All modes retain the meter readings, valid interactions and the same circuit, fault, evidence and repair rules. The setting is saved in this browser for the current site and applies without restarting the episode.

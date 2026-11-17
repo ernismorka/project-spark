@@ -9,6 +9,7 @@ import {
   type FieldState,
 } from "@spark/game-core";
 import type { Geometry } from "./geometry";
+import type { Difficulty } from "../difficulty";
 export function buildWorld(g: Geometry) {
   const { shape, palette: p } = g;
   shape(
@@ -188,6 +189,10 @@ export function buildFieldFixtures(
   const { shape, palette: p } = g;
   for (const pad of fieldPads)
     shape("cylinder", [pad.x, 0.09, pad.z], [0.95, 0.14, 0.95], p.silver, pads);
+  const highlights = fieldPads.map(({ id, x, z }) => ({
+    id,
+    ring: shape("cylinder", [x, 0.07, z], [1.42, 0.07, 1.42], p.suit, pads),
+  }));
   shape("box", [-5.25, 0.05, -15], [3.5, 0.04, 0.22], p.copper, pads);
   const gap = shape(
     "box",
@@ -228,20 +233,47 @@ export function buildFieldFixtures(
   shape("box", [0, 0.12, 0.51], [0.7, 0.3, 0.03], p.visor, meter);
   board.enabled = false;
   meter.enabled = false;
-  let previousPhase: FieldState["phase"] | undefined;
+  let previousField: FieldState | undefined;
   let previousAvailable = false;
-  return (field: FieldState | undefined, available: boolean) => {
+  let previousDifficulty: Difficulty | undefined;
+  let highlighted = 0;
+  return (
+    field: FieldState | undefined,
+    available: boolean,
+    difficulty: Difficulty,
+  ) => {
     const phase = field?.phase;
-    if (phase === previousPhase && available === previousAvailable) return;
-    previousPhase = phase;
+    if (
+      field === previousField &&
+      available === previousAvailable &&
+      difficulty === previousDifficulty
+    )
+      return highlighted;
+    previousField = field;
     previousAvailable = available;
+    previousDifficulty = difficulty;
     board.enabled = !!phase || available;
     pads.enabled = !!phase;
     stored.enabled = available && !phase;
     meter.enabled = !!phase;
-    marker.enabled = phase === "located";
+    marker.enabled = difficulty !== "engineer" && phase === "located";
     gap.enabled = phase === "located";
     patch.enabled = phase === "recheck" || phase === "verified";
     patch.render!.material = phase === "verified" ? p.healthy : p.suit;
+    const sweep =
+      phase === "collect"
+        ? field?.before
+        : phase === "recheck"
+          ? field?.after
+          : undefined;
+    highlighted = 0;
+    for (const { id, ring } of highlights) {
+      ring.enabled =
+        difficulty === "apprentice" &&
+        sweep !== undefined &&
+        sweep[id] === undefined;
+      if (ring.enabled) highlighted++;
+    }
+    return highlighted;
   };
 }

@@ -435,7 +435,8 @@ test("plays First Contact using real movement and interaction inputs", async ({
 test("troubleshoots the physical feed, verifies it and commissions the device", async ({
   page,
 }, info) => {
-  test.setTimeout(300000);
+  // Software WebGL can make the two real-input board sweeps slow.
+  test.setTimeout(420000);
   page.setDefaultTimeout(12000);
   await begin(page);
   const canvas = page.locator("canvas");
@@ -457,6 +458,16 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   const meter = page.getByRole("complementary", {
     name: "Handheld multimeter",
   });
+  const picker = page.locator(".difficulty-picker");
+  const changeDifficulty = async (name: string) => {
+    await picker.locator("summary").click();
+    await picker.getByRole("radio", { name, exact: true }).check();
+    await picker.locator("summary").click();
+    await canvas.focus();
+  };
+  await expect(canvas).toHaveAttribute("data-probe-highlights", "0");
+  await changeDifficulty("Apprentice (Easy)");
+  await expect(canvas).toHaveAttribute("data-probe-highlights", "3");
   const measure = async (id: string, value: string) => {
     await expect(
       meter.getByRole("button", { name: new RegExp(id) }),
@@ -473,6 +484,11 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await walkTo(page, 3.5, -14);
   await walkTo(page, -3.5, -15);
   await measure("P1", "5.00 V");
+  await expect(canvas).toHaveAttribute("data-probe-highlights", "2");
+  await changeDifficulty("Engineer (Hard)");
+  await expect(canvas).toHaveAttribute("data-probe-highlights", "0");
+  await expect(page.locator(".compass")).toHaveCount(0);
+  await expect(meter.locator("output")).toHaveText("P1 · 5.00 V");
   await page.screenshot({ path: info.outputPath("m10-meter-en.png") });
   await canvas.evaluate((element) => {
     element.dispatchEvent(new Event("webglcontextlost", { cancelable: true }));
@@ -494,11 +510,24 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await walkTo(page, 7, 9);
   await measure("P3", "0.00 V");
   await button("Field notebook").click();
+  await expect(
+    page.getByRole("columnheader", { name: "Healthy", exact: true }),
+  ).toHaveCount(0);
   await page.getByLabel("Suspect segment").selectOption("divider");
   await page.getByLabel("Upstream evidence").selectOption("P1");
   await page.getByLabel("Downstream evidence").selectOption("P2");
   await button("Check diagnosis").click();
+  await expect(page.getByText("Diagnosis rejected.")).toBeVisible();
+  await expect(page.getByText(/Look for voltage on one side/)).toHaveCount(0);
+  await button("Back to the board").click();
+  await changeDifficulty("Technician (Normal)");
+  await button("Field notebook").click();
+  await expect(
+    page.getByRole("columnheader", { name: "Healthy", exact: true }),
+  ).toBeVisible();
   await expect(page.getByText(/Look for voltage on one side/)).toBeVisible();
+  await page.getByLabel("Upstream evidence").selectOption("P1");
+  await page.getByLabel("Downstream evidence").selectOption("P2");
   await page.getByLabel("Suspect segment").selectOption("feed");
   await button("Check diagnosis").click();
   await expect(page.getByRole("dialog")).toContainText("Trace localized");
@@ -563,7 +592,8 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await page.getByRole("combobox").selectOption("en");
   await button("Resume exploration").click();
   await walkTo(page, 3.5, -15);
-  await walkTo(page, 0, -15.9);
+  // Keep the walk tolerance inside T1's interaction range.
+  await walkTo(page, 0, -16.65);
   await button(/Return to T1 report/).click();
   await button("Continue at T1: construction and programming").click();
   await button("Connect resistor").click();
