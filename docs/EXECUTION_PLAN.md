@@ -29,3 +29,5 @@ The owner authorized three browser-side guidance tiers on merged M10 `8b6ae37`. 
 The owner authorized M12 on merged M11 `f9e0dd7`. Implement on `codex/m12-graphics-interactions`. Refine the existing procedural materials and lighting, smooth the engineer pose and camera, and animate only accepted field probes, the physical repair and verified restoration. Preserve the fixed-step movement, solver, episode rules, guidance tiers and EN/LT.
 
 Acceptance covers unchanged readings and repair gates, no feedback for rejected actions, reduced motion, paused render lifecycle, before/after board captures, workload sampling and both packaged browser projects. Record findings and PR evidence in [Development status](DEVELOPMENT_STATUS.md).
+
+Local implementation and verification are complete. [PR #16](https://github.com/ernismorka/project-spark/pull/16) tracks review and exact final-head CI. A later milestone requires owner approval.

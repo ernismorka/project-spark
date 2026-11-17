@@ -48,4 +48,8 @@ The first full Linux M11 run found the narrow Lithuanian legacy diagnostics exit
 
 ## M12 Graphics & Interaction Animations
 
-[M11 PR #15](https://github.com/ernismorka/project-spark/pull/15) landed as `f9e0dd7`. M12 adds PCB finish and lighting changes, velocity-driven character motion, eased camera zoom, and probe, patch and verified status animations driven by accepted field state. No dependencies or gameplay rules changed. Preserved M11 captures cover the standing board and physical repair route for direct comparison. Packaged verification and final visual review are in progress.
+[M11 PR #15](https://github.com/ernismorka/project-spark/pull/15) landed as `f9e0dd7`. M12 implementation `613123e` adds PCB finish and lighting changes, velocity-driven character motion, eased camera zoom, and probe, patch and verified status animations driven by accepted field state. No dependencies or gameplay rules changed. [PR #16](https://github.com/ernismorka/project-spark/pull/16) tracks final-head checks and review.
+
+Windows doctor and headed `pnpm verify` passed, including 94 unit/integration tests, three release tests and all 34 Chromium and Firefox checks. The field test covers a rejected probe, a real reading, repair, reduced-motion feedback and final commissioning. Existing EN/LT, difficulty, cooperative, paused-render and cleanup scenarios passed.
+
+Inspected M11 and M12 captures of the opening board, trace junction and verified 1080p field view, plus M12 meter and repair contact frames. The edge silkscreen marks added four opening draw calls, from 74 to 78. The short 1080p field observations on the Windows host matched M11's local values: 4.20/4.30 ms median/p95 in headed Chromium and 4.16/4.18 ms in headed Firefox. The scene gzip rose from 284.40 kB to 285.33 kB. These observations are scoped to the tested host and do not certify sustained representative hardware performance.
