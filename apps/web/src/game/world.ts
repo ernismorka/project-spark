@@ -1,5 +1,13 @@
 import * as pc from "playcanvas";
-import { components, solids, world } from "@spark/game-core";
+import {
+  components,
+  fieldPads,
+  fieldPatch,
+  fieldTerminal,
+  solids,
+  world,
+  type FieldState,
+} from "@spark/game-core";
 import type { Geometry } from "./geometry";
 export function buildWorld(g: Geometry) {
   const { shape, palette: p } = g;
@@ -165,5 +173,75 @@ export function buildEngineer(g: Geometry, root: pc.Entity) {
         ),
       );
     },
+  };
+}
+
+export function buildFieldFixtures(
+  g: Geometry,
+  root: pc.Entity,
+  engineer: pc.Entity,
+) {
+  const board = new pc.Entity("field-fixtures");
+  root.addChild(board);
+  const pads = new pc.Entity("probe-pads");
+  board.addChild(pads);
+  const { shape, palette: p } = g;
+  for (const pad of fieldPads)
+    shape("cylinder", [pad.x, 0.09, pad.z], [0.95, 0.14, 0.95], p.silver, pads);
+  shape("box", [-5.25, 0.05, -15], [3.5, 0.04, 0.22], p.copper, pads);
+  const gap = shape(
+    "box",
+    [fieldPatch.x, 0.06, fieldPatch.z],
+    [0.3, 0.06, 1],
+    p.board,
+    board,
+  );
+  const patch = shape(
+    "box",
+    [fieldPatch.x, 0.11, fieldPatch.z],
+    [0.5, 0.14, 1.65],
+    p.suit,
+    board,
+  );
+  const marker = shape(
+    "cone",
+    [fieldPatch.x, 2, fieldPatch.z],
+    [0.65, 0.9, 0.65],
+    p.suit,
+    board,
+  );
+  marker.setEulerAngles(180, 0, 0);
+  const stored = shape(
+    "box",
+    [fieldTerminal.x + 0.85, 1.24, fieldTerminal.z],
+    [0.38, 0.18, 0.35],
+    p.suit,
+    board,
+  );
+  const meter = shape(
+    "box",
+    [0.5, 0.94, 0.21],
+    [0.27, 0.36, 0.15],
+    p.suit,
+    engineer,
+  );
+  shape("box", [0, 0.12, 0.51], [0.7, 0.3, 0.03], p.visor, meter);
+  board.enabled = false;
+  meter.enabled = false;
+  let previousPhase: FieldState["phase"] | undefined;
+  let previousAvailable = false;
+  return (field: FieldState | undefined, available: boolean) => {
+    const phase = field?.phase;
+    if (phase === previousPhase && available === previousAvailable) return;
+    previousPhase = phase;
+    previousAvailable = available;
+    board.enabled = !!phase || available;
+    pads.enabled = !!phase;
+    stored.enabled = available && !phase;
+    meter.enabled = !!phase;
+    marker.enabled = phase === "located";
+    gap.enabled = phase === "located";
+    patch.enabled = phase === "recheck" || phase === "verified";
+    patch.render!.material = phase === "verified" ? p.healthy : p.suit;
   };
 }

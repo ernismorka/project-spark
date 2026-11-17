@@ -8,6 +8,14 @@ import {
   type Workbench,
 } from "./programming";
 import { components, horizontalDistance, movement } from "./world";
+import {
+  createField,
+  fieldTarget,
+  fieldTerminal,
+  localizeFieldFault,
+  useFieldSite,
+  type FieldState,
+} from "./field";
 export interface Episode {
   readonly session: Session;
   readonly workbench: Workbench;
@@ -15,6 +23,7 @@ export interface Episode {
   readonly programmingUnlocked: boolean;
   readonly programmed: boolean;
   readonly activated: boolean;
+  readonly field?: FieldState;
 }
 export type EpisodeStage =
   | "exploration"
@@ -84,6 +93,76 @@ function commissioningReady(w: Workbench) {
 }
 export function commandEpisode(e: Episode, c: unknown): Episode {
   if (!c || typeof c !== "object" || !("type" in c)) return e;
+  const field = e.field;
+  if (c.type === "start-field") {
+    if (
+      field ||
+      e.session.diagnosis ||
+      e.session.step !== 5 ||
+      e.session.phase !== "complete" ||
+      horizontalDistance(e.session.player.position, fieldTerminal) >
+        movement.interactionRange ||
+      Math.abs(e.session.player.position.y) > 2
+    )
+      return e;
+    return {
+      ...e,
+      field: createField(),
+      session: { ...e.session, phase: "playing" },
+    };
+  }
+  if (field) {
+    if (c.type === "field-notebook") {
+      if (e.session.phase !== (field.notebook ? "paused" : "playing")) return e;
+      const nextField = { ...field, notebook: !field.notebook };
+      const session = commandSession(e.session, {
+        type: field.notebook ? "resume" : "pause",
+      });
+      return { ...e, field: nextField, session };
+    }
+    if (
+      c.type === "field-diagnose" &&
+      "fault" in c &&
+      "upstream" in c &&
+      "downstream" in c
+    ) {
+      const next = localizeFieldFault(field, c.fault, c.upstream, c.downstream);
+      return next === field ? e : { ...e, field: next };
+    }
+    if (c.type === "field-use" && "target" in c) {
+      if (
+        field.phase === "verified" &&
+        c.target === fieldTerminal.id &&
+        fieldTarget(field, e.session)?.id === c.target
+      ) {
+        return {
+          ...e,
+          session: {
+            ...e.session,
+            phase: "complete",
+            player: { ...e.session.player, velocity: { x: 0, y: 0, z: 0 } },
+            repair: {
+              r1: "restored",
+              completed: true,
+              readings: {
+                VCC: field.after.P1!,
+                SENSE: field.after.P3!,
+              },
+            },
+          },
+        };
+      }
+      const next = useFieldSite(field, e.session, c.target);
+      return next === field ? e : { ...e, field: next };
+    }
+    if (
+      c.type === "open-diagnostics" ||
+      ((c.type === "interact" || c.type === "scan") &&
+        e.session.phase === "playing") ||
+      (c.type === "resume" && field.notebook)
+    )
+      return e;
+  }
   if (c.type === "activate-device") {
     if (
       e.activated ||

@@ -432,6 +432,155 @@ test("plays First Contact using real movement and interaction inputs", async ({
   );
   expect(errors).toEqual([]);
 });
+test("troubleshoots the physical feed, verifies it and commissions the device", async ({
+  page,
+}, info) => {
+  test.setTimeout(300000);
+  page.setDefaultTimeout(12000);
+  await begin(page);
+  const canvas = page.locator("canvas");
+  const press = (key: string) => page.keyboard.press(key);
+  const button = (name: string | RegExp) => page.getByRole("button", { name });
+  await walkTo(page, -7, 23.5);
+  await press("KeyE");
+  await button("Continue exploring").click();
+  await walkTo(page, 7, 24);
+  await walkTo(page, 7, 8.5);
+  await press("KeyF");
+  await button("Continue exploring").click();
+  await walkTo(page, 11, 9);
+  await walkTo(page, 11, -14);
+  await walkTo(page, 6, -21);
+  await walkTo(page, 3.5, -18);
+  await press("KeyE");
+  await button("Pick up multimeter").click();
+  const meter = page.getByRole("complementary", {
+    name: "Handheld multimeter",
+  });
+  const measure = async (id: string, value: string) => {
+    await expect(
+      meter.getByRole("button", { name: new RegExp(id) }),
+    ).toBeVisible();
+    await press("KeyQ");
+    await expect(meter.locator("output")).toHaveText(`${id} · ${value}`);
+  };
+  await press("KeyQ");
+  await expect(meter.locator("output")).toHaveText("—");
+  await expect(button(/Bridge trace/)).toHaveCount(0);
+  await button("Field notebook").click();
+  await expect(button("Check diagnosis")).toBeDisabled();
+  await button("Back to the board").click();
+  await walkTo(page, 3.5, -14);
+  await walkTo(page, -3.5, -15);
+  await measure("P1", "5.00 V");
+  await page.screenshot({ path: info.outputPath("m10-meter-en.png") });
+  await canvas.evaluate((element) => {
+    element.dispatchEvent(new Event("webglcontextlost", { cancelable: true }));
+  });
+  await expect(page.getByTestId("renderer-status")).toHaveAttribute(
+    "data-status",
+    "error",
+  );
+  await button("Try again").click();
+  await expect(page.getByTestId("renderer-status")).toHaveAttribute(
+    "data-status",
+    "ready",
+  );
+  await button("Resume exploration").click();
+  await expect(meter.locator("output")).toHaveText("P1 · 5.00 V");
+  await walkTo(page, -3.5, 16);
+  await walkTo(page, -7, 16);
+  await measure("P2", "0.00 V");
+  await walkTo(page, 7, 9);
+  await measure("P3", "0.00 V");
+  await button("Field notebook").click();
+  await page.getByLabel("Suspect segment").selectOption("divider");
+  await page.getByLabel("Upstream evidence").selectOption("P1");
+  await page.getByLabel("Downstream evidence").selectOption("P2");
+  await button("Check diagnosis").click();
+  await expect(page.getByText(/Look for voltage on one side/)).toBeVisible();
+  await page.getByLabel("Suspect segment").selectOption("feed");
+  await button("Check diagnosis").click();
+  await expect(page.getByRole("dialog")).toContainText("Trace localized");
+  await button("Back to the board").click();
+  await walkTo(page, -7, -3);
+  await expect(button(/Bridge trace/)).toBeVisible();
+  await page.screenshot({ path: info.outputPath("m10-localized-trace.png") });
+  await press("KeyQ");
+  await expect(canvas).toHaveAttribute("data-circuit-status", "restored");
+  await expect(button(/Bridge trace/)).toHaveCount(0);
+  await walkTo(page, -3.5, -15);
+  await measure("P1", "5.00 V");
+  await walkTo(page, -3.5, 16);
+  await walkTo(page, -7, 16);
+  await measure("P2", "5.00 V");
+  await walkTo(page, 7, 9);
+  await measure("P3", "2.50 V");
+  await expect(canvas).toHaveAttribute("data-circuit-status", "verified");
+  await expect(button(/Return to T1 report/)).toHaveCount(0);
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  const fieldFrameIntervals = await page.evaluate(
+    () =>
+      new Promise<number[]>((resolve) => {
+        const samples: number[] = [];
+        let previous: number | undefined;
+        const sample = (now: number) => {
+          if (previous !== undefined) samples.push(now - previous);
+          previous = now;
+          if (samples.length === 90) resolve(samples);
+          else requestAnimationFrame(sample);
+        };
+        requestAnimationFrame(sample);
+      }),
+  );
+  fieldFrameIntervals.sort((a, b) => a - b);
+  console.log(
+    "M10 field frame sample",
+    JSON.stringify({
+      medianMs: fieldFrameIntervals[45],
+      p95Ms: fieldFrameIntervals[85],
+    }),
+  );
+  await page.screenshot({ path: info.outputPath("m10-verified-1080p.png") });
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.getByRole("combobox").focus();
+  await page.getByRole("combobox").selectOption("lt");
+  await button("Tęsti tyrinėjimą").click();
+  await button("Matavimų užrašai").click();
+  await expect(page.getByRole("row").filter({ hasText: "P3" })).toContainText(
+    "2,50 V",
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({ path: info.outputPath("m10-notebook-lt.png") });
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await button("Grįžti į plokštę").click();
+  await page.getByRole("combobox").focus();
+  await page.getByRole("combobox").selectOption("en");
+  await button("Resume exploration").click();
+  await walkTo(page, 3.5, -15);
+  await walkTo(page, 0, -15.9);
+  await button(/Return to T1 report/).click();
+  await button("Continue at T1: construction and programming").click();
+  await button("Connect resistor").click();
+  await button("Run controller").click();
+  await button("Text").click();
+  await page
+    .getByRole("textbox", { name: "Text", exact: true })
+    .fill("READ SENSE\nABOVE 1\nWRITE OUT");
+  await button("Run controller").click();
+  await button("Continue to activation").click();
+  await button("Activate device").click();
+  await expect(canvas).toHaveAttribute("data-device-status", "active");
+  await button("Replay The Dark Circuit").click();
+  await expect(canvas).toHaveAttribute("data-circuit-status", "open");
+  await expect(meter).toHaveCount(0);
+});
+
 test("walk/run/jump, solid collisions, pause, camera zoom and resume are functional", async ({
   page,
 }) => {

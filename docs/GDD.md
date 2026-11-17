@@ -1,5 +1,9 @@
 # Game design document
 
+## M10 Physical Diagnostics & Repair
+
+After First Contact, T1 offers a field multimeter assignment alongside classic terminal diagnostics. The player moves between three probe pads, reads DC voltage relative to GND, compares measured and healthy values in a notebook, and identifies the suspect link and its evidence. Only successful localization marks the repair site. The player restores the trace on the board, repeats all measurements and returns to T1 for the existing commissioning sequence. This bounded slice has one fixed supply trace break. See [M10_PLAN.md](M10_PLAN.md).
+
 ## M8 demo delivery
 
 M8 packages the existing M7 episode as demo 0.8.0-demo.1; it adds no gameplay systems. A concise EN/LT title offers visible Start, controls and reset semantics. The independent practice and local cooperative pilot retain their boundaries. The versioned local folder starts with a Windows command launcher and Node.js 24+, without player-side project tooling. No public deployment or release is authorized. See M8_SCOPE.md for measurable acceptance and DEMO_START.md for startup/smoke instructions.

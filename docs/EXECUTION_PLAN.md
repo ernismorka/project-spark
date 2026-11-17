@@ -13,3 +13,7 @@ The owner approved the scoped [M9 plan](M9_PROPOSAL.md) on 2026-11-17. Branch `c
 Acceptance covers the real-input episode, bilingual guidance and commissioning handoffs, before/after visual inspection, responsive menus, observed rendering workload, preserved simulation/programming/cooperative regressions, and a review PR. Status and validation evidence are tracked in [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md). Human engagement, learning, assistive-technology usability and representative hardware evaluation remain tracked in [PLAYTEST.md](PLAYTEST.md). The next milestone is undefined pending owner review.
 
 Implementation and local acceptance are complete. Review and exact final-head CI are tracked in [PR #11](https://github.com/ernismorka/project-spark/pull/11). Owner approval is required before merge.
+
+## M10 Physical Diagnostics & Repair
+
+The owner authorized M10 scope. Branch `codex/m10-physical-diagnostics` starts at `248990b`, the verified merge of [M9 PR #11](https://github.com/ernismorka/project-spark/pull/11). The [M10 plan](M10_PLAN.md) defines the in-world route and acceptance criteria. Field diagnostics, the existing commissioning handoff and parity coverage are implemented. Full packaged verification and review are the remaining gates.

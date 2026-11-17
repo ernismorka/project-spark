@@ -1,8 +1,13 @@
 import * as pc from "playcanvas";
-import { nearbyComponents, movement, world } from "@spark/game-core";
+import {
+  nearbyComponents,
+  movement,
+  world,
+  type FieldState,
+} from "@spark/game-core";
 import type { ExplorationCommand, Session } from "@spark/shared";
 import { createGeometry } from "./game/geometry";
-import { buildEngineer, buildWorld } from "./game/world";
+import { buildEngineer, buildFieldFixtures, buildWorld } from "./game/world";
 import { FollowCamera } from "./game/camera";
 import { bindInput } from "./game/input";
 import { objectiveTarget } from "./game/navigation";
@@ -12,6 +17,8 @@ export interface SceneBridge {
   publish: () => void;
   target: () => string | undefined;
   activated?: () => boolean;
+  field: () => FieldState | undefined;
+  fieldUse: () => boolean;
 }
 export async function mountScene(
   canvas: HTMLCanvasElement,
@@ -63,6 +70,7 @@ export async function mountScene(
     const pcb = buildWorld(geometry);
     app.batcher!.generate([batchGroupId]);
     const player = buildEngineer(geometry, app.root);
+    const fieldFixtures = buildFieldFixtures(geometry, app.root, player.entity);
     const cameraEntity = new pc.Entity("follow-camera");
     cameraEntity.addComponent("camera", {
       clearColor: new pc.Color().fromString("#102b36"),
@@ -86,6 +94,7 @@ export async function mountScene(
       bridge.get,
       bridge.dispatch,
       () => bridge.target() ?? nearbyComponents(bridge.get())[0]?.id,
+      bridge.fieldUse,
     );
     let accumulator = 0,
       time = 0,
@@ -94,15 +103,18 @@ export async function mountScene(
     let lastState: Session | undefined;
     let renderDirty = true;
     let lastActivated = false;
+    let lastField: FieldState | undefined;
     update = (delta: number) => {
       const state = bridge.get();
       const activated = bridge.activated?.() ?? false;
+      const field = bridge.field();
       const visible = !canvas.closest("main[inert]") && !document.hidden;
       app!.autoRender =
         visible &&
         (state.phase === "playing" ||
           state !== lastState ||
           activated !== lastActivated ||
+          field !== lastField ||
           renderDirty);
       if (!visible) {
         renderDirty = true;
@@ -114,6 +126,7 @@ export async function mountScene(
       renderDirty = false;
       lastState = state;
       lastActivated = activated;
+      lastField = field;
       const dt = Math.min(delta, 0.1);
       time += dt;
       if (state.phase !== lastPhase) {
@@ -141,7 +154,11 @@ export async function mountScene(
       );
       camera.update(next.player.position, dt);
       const destination = objectiveTarget(next.step);
-      pcb.marker.enabled = next.phase !== "complete";
+      pcb.marker.enabled = !field && next.phase !== "complete";
+      fieldFixtures(
+        field,
+        next.step === 5 && next.phase === "complete" && !next.diagnosis,
+      );
       pcb.marker.setPosition(
         destination.x,
         4 + Math.sin(time * 2) * 0.2,
@@ -159,14 +176,19 @@ export async function mountScene(
         cameraPosition.z - next.player.position.z,
       ).toFixed(3);
       pcb.status(
-        next.repair.r1 === "restored",
-        next.repair.completed,
+        next.repair.r1 === "restored" ||
+          field?.phase === "recheck" ||
+          field?.phase === "verified",
+        next.repair.completed || field?.phase === "verified",
         activated,
       );
       canvas.dataset.deviceStatus = activated ? "active" : "offline";
-      canvas.dataset.circuitStatus = next.repair.completed
-        ? "verified"
-        : next.repair.r1;
+      canvas.dataset.circuitStatus =
+        next.repair.completed || field?.phase === "verified"
+          ? "verified"
+          : field?.phase === "recheck"
+            ? "restored"
+            : next.repair.r1;
       canvas.dataset.phase = next.phase;
       canvas.dataset.missionStep = String(next.step);
       publishTime += dt;

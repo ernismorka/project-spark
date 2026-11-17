@@ -25,3 +25,7 @@ Reviewed Playwright before/after captures of the opening board and commissioning
 The comparable opening-scene draw count rose from 72 on M8 to 74 on M9 with the added static detail. The 90-frame Windows 1080p observations were 4.20/4.30 ms median/p95 in headed Chromium on Radeon 780M and 4.16/4.18 ms in headed Firefox on its reported AMD Direct3D11 adapter. The M8 recovery used headless rendering, so frame times from those runs are not a controlled comparison. Scene gzip changed from 283.61 kB to 283.72 kB. Browser workload observations do not certify sustained performance on representative hardware.
 
 Implementation commit `f186451` is submitted for review in [PR #11](https://github.com/ernismorka/project-spark/pull/11). Use the PR checks for exact final-head CI results.
+
+## M10 Physical Diagnostics & Repair
+
+GitHub and Git ancestry confirm [M9 PR #11](https://github.com/ernismorka/project-spark/pull/11) is merged as `248990b`. The new M10 branch carries the local [field diagnostics plan](M10_PLAN.md). Implemented the three site probes, evidence notebook, one guarded trace repair, fresh verification and T1 commissioning handoff. The legacy terminal route remains available at the start of each run. Full test and browser evidence is pending.

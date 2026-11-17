@@ -1,5 +1,9 @@
 # Architecture
 
+## M10 field diagnostics
+
+`packages/game-core/src/field.ts` owns physical site coordinates, proximity, field evidence and the ideal DC field netlist. `commandEpisode` validates the route, keeps field evidence isolated from classic terminal diagnostics, and writes the shared verified repair prerequisite only after a fresh solver sweep and the player's return to T1. An open supply junction splits VCC and FEED; repair joins them. The existing DC solver, controller and pilot APIs stay in use. Browser code renders the carried meter, notebook, and world markers from serializable episode state. Solves run on accepted probe inputs, outside scene updates.
+
 ## M8 local demo distribution
 
 scripts/package-demo.mjs builds the unchanged Vite application and stages a versioned folder with SHA-256 inventory/provenance, launcher/server, startup/limitations/playtest documents and available production dependency notices. No dependencies are installed in the player folder. File contents are reproducible for the same source/runtime/lockfile; archive timestamps are outside that claim.
