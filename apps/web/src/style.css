@@ -963,3 +963,32 @@ footer {
   min-width: 0;
   max-width: 100%;
 }
+
+.difficulty-picker {
+  position: relative;
+}
+.difficulty-picker summary {
+  cursor: pointer;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #66818b;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.difficulty-picker fieldset {
+  position: absolute;
+  right: 0;
+  z-index: 5;
+  min-width: max-content;
+  margin: 4px 0 0;
+  padding: 8px;
+  border: 1px solid #66818b;
+  border-radius: 8px;
+  background: #132d39;
+}
+.difficulty-picker fieldset label {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  padding: 0.45rem;
+  cursor: pointer;
+}

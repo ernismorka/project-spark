@@ -2,14 +2,17 @@ import { RepairPanel } from "./RepairPanel";
 import { diagnosticPoints } from "@spark/game-core";
 import type { Session, ExplorationCommand, Language } from "@spark/shared";
 import { diagnosisCopy, faultChoices } from "./diagnosis-i18n";
+import { difficultyCopy } from "./difficulty";
 export function DiagnosticPanel({
   session,
   language,
   dispatch,
+  showHints = true,
 }: {
   session: Session;
   language: Language;
   dispatch: (c: ExplorationCommand) => void;
+  showHints?: boolean;
 }) {
   const state = session.diagnosis!;
   const t = diagnosisCopy[language];
@@ -23,7 +26,7 @@ export function DiagnosticPanel({
   return (
     <div className="diagnostics">
       <div className="diagnostic-content">
-        <p>{t.intro}</p>
+        {showHints && <p>{t.intro}</p>}
         <svg viewBox="0 0 520 145" role="img" aria-label={t.scope}>
           <g fill="none" stroke="#d7ee91" strokeWidth="3">
             <path d="M55 105V35H150m70 0h70m0 0h70m0 0h80v70H55" />
@@ -57,7 +60,7 @@ export function DiagnosticPanel({
           <circle cx="110" cy="35" r="5" fill="#f4bd6b" />
           <circle cx="290" cy="35" r="5" fill="#f4bd6b" />
         </svg>
-        <p className="reference">{t.reference}</p>
+        {showHints && <p className="reference">{t.reference}</p>}
         <fieldset>
           <legend>{t.evidence}</legend>
           <div className="measurement-grid">
@@ -83,7 +86,7 @@ export function DiagnosticPanel({
         </fieldset>
         <fieldset>
           <legend>{t.hypothesis}</legend>
-          {!ready && <p>{t.need}</p>}
+          {showHints && !ready && <p>{t.need}</p>}
           <div className="fault-options">
             {faultChoices.map((fault) => (
               <button
@@ -103,11 +106,15 @@ export function DiagnosticPanel({
           }
         >
           {state.outcome === "incorrect" ? (
-            t.incorrect
+            showHints ? (
+              t.incorrect
+            ) : (
+              difficultyCopy[language].incorrect
+            )
           ) : identified ? (
             <>
               <strong>{t.identified}</strong>
-              <p>{t.explanation}</p>
+              {showHints && <p>{t.explanation}</p>}
             </>
           ) : null}
         </div>
@@ -116,6 +123,7 @@ export function DiagnosticPanel({
             session={session}
             language={language}
             dispatch={dispatch}
+            showHints={showHints}
           />
         )}
         <p className="model-limits">{t.limits}</p>

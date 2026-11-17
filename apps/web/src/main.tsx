@@ -30,8 +30,19 @@ import { messages } from "./i18n";
 import { gameplay } from "./gameplay-i18n";
 import "./style.css";
 import { objectiveTarget, targetBearing } from "./game/navigation";
+import {
+  difficulties,
+  difficultyCopy,
+  readDifficulty,
+  saveDifficulty,
+} from "./difficulty";
 function App() {
   const [state, setState] = useState(createGame);
+  const [difficulty, setDifficulty] = useState(readDifficulty);
+  const guidance = useRef(difficulty);
+  guidance.current = difficulty;
+  const difficultyText = difficultyCopy[state.language];
+  const navigation = difficulty !== "engineer";
   const [episode, setEpisode] = useState(createEpisode);
   const current = useRef(episode);
   const session = episode.session;
@@ -43,6 +54,19 @@ function App() {
   const fieldOffered =
     !field && !session.diagnosis && !session.repair.completed;
   const stageLabel = fieldActive ? fieldText.stage : e.stages[stage];
+  const episodeTask =
+    !navigation &&
+    (stage === "construction" ||
+      stage === "programming" ||
+      stage === "activation")
+      ? difficultyText.commissioning[stage]
+      : e.tasks[stage];
+  const explorationTask =
+    difficulty === "technician"
+      ? gameplay[state.language].objectives[session.step]
+      : (difficulty === "apprentice"
+          ? difficultyText.detailed
+          : difficultyText.exploration)[session.step];
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading",
   );
@@ -103,6 +127,7 @@ function App() {
           get: () => current.current.session,
           activated: () => current.current.activated,
           field: () => current.current.field,
+          difficulty: () => guidance.current,
           fieldUse: () => {
             const { field, session } = current.current;
             if (!field) return false;
@@ -223,7 +248,7 @@ function App() {
               ? undefined
               : {
                   scope: e.missionScope,
-                  task: e.tasks[stage],
+                  task: episodeTask,
                   scopeLabel: e.scopeLabel,
                   returnLabel: e.returnToReport,
                   nextAction:
@@ -287,6 +312,27 @@ function App() {
                 {g.pause}
               </button>
             )}
+            <details className="difficulty-picker">
+              <summary>
+                {difficultyText.label} · {difficultyText[difficulty]}
+              </summary>
+              <fieldset aria-label={difficultyText.label}>
+                {difficulties.map((value) => (
+                  <label key={value}>
+                    <input
+                      type="radio"
+                      name="difficulty"
+                      checked={difficulty === value}
+                      onChange={() => {
+                        setDifficulty(value);
+                        saveDifficulty(value);
+                      }}
+                    />
+                    {difficultyText[value]}
+                  </label>
+                ))}
+              </fieldset>
+            </details>
             <label>
               {t.language}
               <select
@@ -341,12 +387,14 @@ function App() {
                   : episode.activated
                     ? e.world
                     : field && !session.repair.completed
-                      ? fieldTask(field, state.language)
+                      ? fieldTask(field, state.language, difficulty)
                       : session.repair.completed
-                        ? e.tasks[stage]
+                        ? episodeTask
                         : session.step === 5
-                          ? repairCopy[state.language].intro
-                          : g.objectives[session.step]}
+                          ? navigation
+                            ? repairCopy[state.language].intro
+                            : difficultyText.terminal
+                          : explorationTask}
               </h2>
               <p
                 className="episode-stage"
@@ -390,7 +438,7 @@ function App() {
               <>
                 {session.phase === "playing" && field && (
                   <>
-                    {fieldGuide && (
+                    {navigation && fieldGuide && (
                       <div className="compass">
                         <span>{fieldText.next}</span>
                         <span>
@@ -461,35 +509,37 @@ function App() {
                 )}
                 {session.phase === "playing" && !field && (
                   <>
-                    <div className="compass">
-                      <span>
-                        {g.north}{" "}
-                        <b
-                          aria-hidden="true"
-                          data-testid="north-arrow"
-                          style={{ transform: `rotate(${cameraYaw}rad)` }}
-                        >
-                          ↑
-                        </b>
-                      </span>
-                      <span>
-                        <b
-                          aria-hidden="true"
-                          style={{ transform: `rotate(${bearing}rad)` }}
-                        >
-                          ↑
-                        </b>{" "}
-                        {g.distance} · {objectiveName} ·{" "}
-                        {Math.round(
-                          horizontalDistance(
-                            session.player.position,
-                            destination,
-                          ),
-                        )}{" "}
-                        m
-                      </span>
-                    </div>
-                    {!target && (
+                    {navigation && (
+                      <div className="compass">
+                        <span>
+                          {g.north}{" "}
+                          <b
+                            aria-hidden="true"
+                            data-testid="north-arrow"
+                            style={{ transform: `rotate(${cameraYaw}rad)` }}
+                          >
+                            ↑
+                          </b>
+                        </span>
+                        <span>
+                          <b
+                            aria-hidden="true"
+                            style={{ transform: `rotate(${bearing}rad)` }}
+                          >
+                            ↑
+                          </b>{" "}
+                          {g.distance} · {objectiveName} ·{" "}
+                          {Math.round(
+                            horizontalDistance(
+                              session.player.position,
+                              destination,
+                            ),
+                          )}{" "}
+                          m
+                        </span>
+                      </div>
+                    )}
+                    {navigation && !target && (
                       <p className="exploration-hint">{g.approach}</p>
                     )}
                     <div className="crosshair" aria-hidden="true">
@@ -647,7 +697,7 @@ function App() {
                       </h2>
                       {session.phase === "title" && (
                         <>
-                          <p>{g.brief}</p>
+                          {navigation && <p>{g.brief}</p>}
                           <p>{e.practice}</p>
                         </>
                       )}
@@ -655,6 +705,7 @@ function App() {
                         <FieldNotebook
                           field={field}
                           language={state.language}
+                          difficulty={difficulty}
                           dispatch={dispatch}
                         />
                       )}
@@ -662,8 +713,8 @@ function App() {
                         <>
                           <p>
                             {field
-                              ? fieldTask(field, state.language)
-                              : g.objectives[session.step]}
+                              ? fieldTask(field, state.language, difficulty)
+                              : explorationTask}
                           </p>
                           <button
                             className="primary"
@@ -698,6 +749,7 @@ function App() {
                         <DiagnosticPanel
                           session={session}
                           language={state.language}
+                          showHints={navigation}
                           dispatch={dispatch}
                         />
                       )}
@@ -705,7 +757,7 @@ function App() {
                         <>
                           {fieldOffered && (
                             <>
-                              <p>{fieldText.brief}</p>
+                              {navigation && <p>{fieldText.brief}</p>}
                               <button
                                 className="primary"
                                 onClick={() =>
@@ -726,7 +778,7 @@ function App() {
                                   ? field
                                     ? fieldText.completed
                                     : e.success
-                                  : e.tasks[stage]}
+                                  : episodeTask}
                               </p>
                               {!episode.activated && (
                                 <>
@@ -789,7 +841,9 @@ function App() {
                                 ? repairCopy[state.language].world
                                 : fieldOffered
                                   ? fieldText.choice
-                                  : g.terminal}
+                                  : navigation
+                                    ? g.terminal
+                                    : difficultyText.terminal}
                           </p>
                           <button
                             className="primary"

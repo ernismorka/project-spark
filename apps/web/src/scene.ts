@@ -11,6 +11,7 @@ import { buildEngineer, buildFieldFixtures, buildWorld } from "./game/world";
 import { FollowCamera } from "./game/camera";
 import { bindInput } from "./game/input";
 import { objectiveTarget } from "./game/navigation";
+import type { Difficulty } from "./difficulty";
 export interface SceneBridge {
   get: () => Session;
   dispatch: (command: ExplorationCommand, publish?: boolean) => void;
@@ -19,6 +20,7 @@ export interface SceneBridge {
   activated?: () => boolean;
   field: () => FieldState | undefined;
   fieldUse: () => boolean;
+  difficulty: () => Difficulty;
 }
 export async function mountScene(
   canvas: HTMLCanvasElement,
@@ -104,10 +106,12 @@ export async function mountScene(
     let renderDirty = true;
     let lastActivated = false;
     let lastField: FieldState | undefined;
+    let lastDifficulty: Difficulty | undefined;
     update = (delta: number) => {
       const state = bridge.get();
       const activated = bridge.activated?.() ?? false;
       const field = bridge.field();
+      const difficulty = bridge.difficulty();
       const visible = !canvas.closest("main[inert]") && !document.hidden;
       app!.autoRender =
         visible &&
@@ -115,6 +119,7 @@ export async function mountScene(
           state !== lastState ||
           activated !== lastActivated ||
           field !== lastField ||
+          difficulty !== lastDifficulty ||
           renderDirty);
       if (!visible) {
         renderDirty = true;
@@ -127,6 +132,7 @@ export async function mountScene(
       lastState = state;
       lastActivated = activated;
       lastField = field;
+      lastDifficulty = difficulty;
       const dt = Math.min(delta, 0.1);
       time += dt;
       if (state.phase !== lastPhase) {
@@ -154,11 +160,16 @@ export async function mountScene(
       );
       camera.update(next.player.position, dt);
       const destination = objectiveTarget(next.step);
-      pcb.marker.enabled = !field && next.phase !== "complete";
-      fieldFixtures(
-        field,
-        next.step === 5 && next.phase === "complete" && !next.diagnosis,
+      pcb.marker.enabled =
+        difficulty !== "engineer" && !field && next.phase !== "complete";
+      canvas.dataset.probeHighlights = String(
+        fieldFixtures(
+          field,
+          next.step === 5 && next.phase === "complete" && !next.diagnosis,
+          difficulty,
+        ),
       );
+      canvas.dataset.guidanceBeacon = String(pcb.marker.enabled);
       pcb.marker.setPosition(
         destination.x,
         4 + Math.sin(time * 2) * 0.2,

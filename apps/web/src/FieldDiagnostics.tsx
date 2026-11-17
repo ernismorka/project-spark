@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { fieldPads, type FieldState } from "@spark/game-core";
 import type { Language } from "@spark/shared";
+import { difficultyCopy, type Difficulty } from "./difficulty";
 
 const en = {
   start: "Pick up multimeter",
@@ -106,24 +107,39 @@ export function fieldVoltage(language: Language, value: number | undefined) {
     : voltageFormat[language].format(value) + " V";
 }
 
-export function fieldTask(field: FieldState, language: Language) {
+export function fieldTask(
+  field: FieldState,
+  language: Language,
+  difficulty: Difficulty,
+) {
   const copy = fieldCopy[language];
-  return field.phase === "collect" &&
+  const guidance = difficultyCopy[language];
+  if (difficulty === "engineer") return guidance.field[field.phase];
+  if (
+    field.phase === "collect" &&
     fieldPads.every(({ id }) => field.before[id] !== undefined)
-    ? copy.ready
-    : copy[field.phase];
+  )
+    return copy.ready;
+  if (difficulty === "apprentice") {
+    if (field.phase === "collect") return guidance.probeHelp;
+    if (field.phase === "located") return guidance.repairHelp;
+  }
+  return copy[field.phase];
 }
 
 export function FieldNotebook({
   field,
   language,
+  difficulty,
   dispatch,
 }: {
   field: FieldState;
   language: Language;
+  difficulty: Difficulty;
   dispatch: (command: unknown) => void;
 }) {
   const copy = fieldCopy[language];
+  const showHints = difficulty !== "engineer";
   const [fault, setFault] = useState("");
   const [upstream, setUpstream] = useState("");
   const [downstream, setDownstream] = useState("");
@@ -136,12 +152,12 @@ export function FieldNotebook({
       >
         {copy.close}
       </button>
-      <p role="status">{fieldTask(field, language)}</p>
+      <p role="status">{fieldTask(field, language, difficulty)}</p>
       <table>
         <thead>
           <tr>
             <th scope="col">{copy.point}</th>
-            <th scope="col">{copy.healthy}</th>
+            {showHints && <th scope="col">{copy.healthy}</th>}
             <th scope="col">{copy.before}</th>
             <th scope="col">{copy.after}</th>
           </tr>
@@ -150,7 +166,9 @@ export function FieldNotebook({
           {fieldPads.map(({ id }) => (
             <tr key={id}>
               <th scope="row">{copy.labels[id]}</th>
-              <td>{fieldVoltage(language, id === "P3" ? 2.5 : 5)}</td>
+              {showHints && (
+                <td>{fieldVoltage(language, id === "P3" ? 2.5 : 5)}</td>
+              )}
               <td>{fieldVoltage(language, field.before[id])}</td>
               <td>{fieldVoltage(language, field.after[id])}</td>
             </tr>
@@ -208,7 +226,11 @@ export function FieldNotebook({
           >
             {copy.diagnose}
           </button>
-          {field.incorrect && <p role="status">{copy.incorrect}</p>}
+          {field.incorrect && (
+            <p role="status">
+              {showHints ? copy.incorrect : difficultyCopy[language].incorrect}
+            </p>
+          )}
         </form>
       )}
     </div>
