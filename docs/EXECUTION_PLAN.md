@@ -16,4 +16,4 @@ Implementation and local acceptance are complete. Review and exact final-head CI
 
 ## M10 Physical Diagnostics & Repair
 
-The owner authorized M10 scope. Branch `codex/m10-physical-diagnostics` starts at `248990b`, the verified merge of [M9 PR #11](https://github.com/ernismorka/project-spark/pull/11). The [M10 plan](M10_PLAN.md) defines the in-world route and acceptance criteria. Field diagnostics, the existing commissioning handoff and parity coverage are implemented. Full packaged verification and review are the remaining gates.
+The owner authorized M10 scope. Branch `codex/m10-physical-diagnostics` starts at `248990b`, the verified merge of [M9 PR #11](https://github.com/ernismorka/project-spark/pull/11). The [M10 plan](M10_PLAN.md) defines the in-world route and acceptance criteria. Field diagnostics, the existing commissioning handoff and parity coverage are implemented. [Development status](DEVELOPMENT_STATUS.md) records local verification and performance observations. Review and exact final-head CI are tracked in [PR #13](https://github.com/ernismorka/project-spark/pull/13). The next milestone requires owner approval.
