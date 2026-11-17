@@ -45,3 +45,7 @@ Implementation is on `codex/m11-difficulty-guidance` from merged M10. Three EN/L
 Windows doctor and the full headed verifier passed before the final Engineer HUD tightening. The run covered 92 unit and integration tests, three release tests and all 34 Chromium and Firefox checks. Both browsers switched tiers during physical diagnosis, preserved measured values and completed verification and commissioning. The opening Technician scene remained at 74 draw calls per frame. The focused final HUD recheck and exact final-head CI are tracked in [PR #15](https://github.com/ernismorka/project-spark/pull/15).
 
 The first full Linux M11 run found the narrow Lithuanian legacy diagnostics exit below the viewport in both browsers. The narrow header now uses a compact difficulty summary with the selection available to assistive technology and in the open picker. The diagnostic viewport reserves room for narrow header layouts. The existing exit-in-viewport regression remains in place.
+
+## M12 Graphics & Interaction Animations
+
+[M11 PR #15](https://github.com/ernismorka/project-spark/pull/15) landed as `f9e0dd7`. M12 adds PCB finish and lighting changes, velocity-driven character motion, eased camera zoom, and probe, patch and verified status animations driven by accepted field state. No dependencies or gameplay rules changed. Preserved M11 captures cover the standing board and physical repair route for direct comparison. Packaged verification and final visual review are in progress.

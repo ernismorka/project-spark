@@ -1,5 +1,9 @@
 # Game design document
 
+## M12 Graphics & Interaction Animations
+
+The PCB uses distinct copper, solder-mask and component finishes. The engineer turns, strides and settles into an idle pose. Accepted field actions briefly show the corresponding meter probe or repair tool and contact feedback. The verified trace pulses when the last valid recheck completes. The cues preserve the M11 visibility rules for navigational guidance and the unchanged M10 evidence and repair rules.
+
 ## M10 Physical Diagnostics & Repair
 
 After First Contact, T1 offers a field multimeter assignment alongside classic terminal diagnostics. The player moves between three probe pads, reads DC voltage relative to GND, compares measured and healthy values in a notebook, and identifies the suspect link and its evidence. Only successful localization marks the repair site. The player restores the trace on the board, repeats all measurements and returns to T1 for the existing commissioning sequence. This bounded slice has one fixed supply trace break. See [M10_PLAN.md](M10_PLAN.md).

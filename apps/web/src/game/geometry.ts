@@ -1,27 +1,28 @@
 import * as pc from "playcanvas";
 export function createGeometry(root: pc.Entity, batchGroupId?: number) {
   const materials: pc.StandardMaterial[] = [];
-  const material = (color: string, glow = false) => {
+  const material = (color: string, glow = false, finish = 0.14) => {
     const m = new pc.StandardMaterial();
     m.diffuse = new pc.Color().fromString(color);
     if (glow) {
       m.emissive = m.diffuse.clone();
       m.emissiveIntensity = 0.5;
     }
-    m.shininess = 30;
+    m.specular.set(finish, finish, finish);
+    m.shininess = 38;
     m.update();
     materials.push(m);
     return m;
   };
   const palette = {
     healthy: material("#83f2ad", true),
-    board: material("#17665c"),
-    edge: material("#113d40"),
-    copper: material("#dfb96d"),
+    board: material("#206f61", false, 0.07),
+    edge: material("#14383a"),
+    copper: material("#d89759", false, 0.34),
     ink: material("#b2dbb4"),
-    chip: material("#23313e"),
-    silver: material("#b6cbd0"),
-    blue: material("#5cacc2"),
+    chip: material("#29364a"),
+    silver: material("#b6cbd0", false, 0.3),
+    blue: material("#479bb5", false, 0.26),
     red: material("#fa927d", true),
     suit: material("#f3c85c"),
     visor: material("#153b50"),

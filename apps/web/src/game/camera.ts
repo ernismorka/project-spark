@@ -51,6 +51,7 @@ export class FollowCamera {
   yaw = 0;
   pitch = 0.48;
   zoom = 8;
+  private displayedZoom = 8;
   private target = new pc.Vec3();
   private initialized = false;
   private readonly desiredTarget = new pc.Vec3();
@@ -74,7 +75,10 @@ export class FollowCamera {
       Math.min(cameraSettings.maxZoom, this.zoom + delta * 0.01),
     );
   }
-  update(position: Vec3, dt: number) {
+  update(position: Vec3, dt: number, reducedMotion = false) {
+    this.displayedZoom +=
+      (this.zoom - this.displayedZoom) *
+      (reducedMotion ? 1 : 1 - Math.exp(-12 * dt));
     const desiredTarget = this.desiredTarget.set(
       position.x,
       position.y + 1.25,
@@ -93,18 +97,18 @@ export class FollowCamera {
     if (clipDistance(desiredTarget, this.target) < 1)
       this.target.copy(desiredTarget);
     const offset = this.offset.set(
-      Math.sin(this.yaw) * Math.cos(this.pitch) * this.zoom,
-      Math.sin(this.pitch) * this.zoom,
-      Math.cos(this.yaw) * Math.cos(this.pitch) * this.zoom,
+      Math.sin(this.yaw) * Math.cos(this.pitch) * this.displayedZoom,
+      Math.sin(this.pitch) * this.displayedZoom,
+      Math.cos(this.yaw) * Math.cos(this.pitch) * this.displayedZoom,
     );
     const desired = this.desired.copy(this.target).add(offset);
     const fraction = clipDistance(this.target, desired);
-    if (this.zoom * fraction < 0.5) {
+    if (this.displayedZoom * fraction < 0.5) {
       // A nearby wall can leave no usable rear view. Use clear space overhead,
       // with a nonparallel up axis, rather than placing the camera at its target.
       desired
         .copy(this.target)
-        .add(this.offset.set(0, Math.min(this.zoom, 3), 0));
+        .add(this.offset.set(0, Math.min(this.displayedZoom, 3), 0));
       this.offset.mulScalar(clipDistance(this.target, desired));
       this.entity.setPosition(desired.copy(this.target).add(this.offset));
       this.entity.lookAt(

@@ -20,6 +20,9 @@ export function buildWorld(g: Geometry) {
   );
   for (const x of [-23, 23]) shape("box", [x, -0.1, 0], [0.2, 0.1, 78], p.ink);
   for (const z of [-39, 39]) shape("box", [0, -0.1, z], [46, 0.1, 0.2], p.ink);
+  for (const x of [-20, 20])
+    for (const z of [-24, -12, 0, 12, 24])
+      shape("box", [x, 0.027, z], [1.4, 0.025, 0.08], p.ink);
   // Conductive traces form legible routes; decorative paths are not a simulated circuit.
   for (const x of [-14, -7, 0, 7, 14]) {
     const outer = Math.abs(x) === 14;
@@ -141,10 +144,12 @@ export function buildEngineer(g: Geometry, root: pc.Entity) {
   const player = new pc.Entity("engineer");
   root.addChild(player);
   const { shape, palette: p } = g;
-  shape("box", [0, 0.92, 0], [0.65, 0.7, 0.4], p.suit, player);
-  shape("sphere", [0, 1.5, 0], [0.65, 0.65, 0.65], p.white, player);
-  shape("box", [0, 1.52, 0.29], [0.48, 0.24, 0.12], p.visor, player);
-  shape("box", [0, 0.98, -0.28], [0.45, 0.5, 0.22], p.blue, player);
+  const body = new pc.Entity("engineer-pose");
+  player.addChild(body);
+  shape("box", [0, 0.92, 0], [0.65, 0.7, 0.4], p.suit, body);
+  shape("sphere", [0, 1.5, 0], [0.65, 0.65, 0.65], p.white, body);
+  shape("box", [0, 1.52, 0.29], [0.48, 0.24, 0.12], p.visor, body);
+  shape("box", [0, 0.98, -0.28], [0.45, 0.5, 0.22], p.blue, body);
   const limbs = [
     [-0.22, 0.31, 0],
     [0.22, 0.31, 0],
@@ -156,19 +161,46 @@ export function buildEngineer(g: Geometry, root: pc.Entity) {
       v as [number, number, number],
       [i < 2 ? 0.24 : 0.2, i < 2 ? 0.55 : 0.6, 0.25],
       i < 2 ? p.chip : p.suit,
-      player,
+      body,
     ),
   );
+  let stride = 0;
+  let heading = Math.PI;
+  let amplitude = 0;
   return {
     entity: player,
-    animate: (time: number, speed: number, grounded: boolean) => {
+    body,
+    hand: limbs[3],
+    animate: (
+      dt: number,
+      time: number,
+      speed: number,
+      grounded: boolean,
+      facing: number,
+      reach: number,
+      reduced: boolean,
+    ) => {
+      const ease = reduced ? 1 : 1 - Math.exp(-14 * dt);
+      heading +=
+        Math.atan2(Math.sin(facing - heading), Math.cos(facing - heading)) *
+        ease;
+      player.setEulerAngles(0, heading * pc.math.RAD_TO_DEG, 0);
+      amplitude += (Math.min(speed / 5, 1) - amplitude) * ease;
+      stride += speed * dt * 2.5;
+      const idle = reduced ? 0 : Math.sin(time * 2.6) * 0.022 * (1 - amplitude);
+      const bounce =
+        reduced || !grounded
+          ? 0
+          : Math.abs(Math.sin(stride)) * amplitude * 0.05;
+      body.setLocalPosition(0, idle + bounce - reach * 0.08, 0);
+      body.setLocalEulerAngles(reach * 15, 0, 0);
       limbs.forEach((limb, i) =>
         limb.setLocalEulerAngles(
-          grounded
-            ? Math.sin(time * 11 + (i % 2) * Math.PI) *
-                Math.min(speed / 4, 1) *
-                28
-            : -15,
+          (grounded
+            ? Math.sin(stride + (i % 2) * Math.PI) *
+              amplitude *
+              (reduced ? 12 : 33)
+            : -15) - (i === 3 ? reach * 52 : i === 2 ? reach * 20 : 0),
           0,
           0,
         ),
@@ -241,7 +273,12 @@ export function buildFieldFixtures(
     field: FieldState | undefined,
     available: boolean,
     difficulty: Difficulty,
+    reach: number,
   ) => {
+    if (field) {
+      meter.setLocalPosition(0.5, 0.94 + reach * 0.26, 0.21 + reach * 0.16);
+      meter.setLocalEulerAngles(-reach * 24, 0, 0);
+    }
     const phase = field?.phase;
     if (
       field === previousField &&

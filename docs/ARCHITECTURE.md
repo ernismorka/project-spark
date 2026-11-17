@@ -1,5 +1,9 @@
 # Architecture
 
+## M12 graphics and interaction animation
+
+The browser derives short animation cues from transitions in the authoritative field state. A new reading raises the meter and reaches the selected probe, localized repair animates the iron at the trace, and a completed verification sweep pulses the repaired link. Failed actions and scene remounts produce no cues. The field action and resulting readings take effect immediately through the existing domain commands. Motion follows browser reduced-motion preferences, and the renderer still stops drawing during a settled pause. The camera eases only its displayed zoom and keeps the existing collision checks and input bearings.
+
 ## M11 guidance difficulty
 
 The browser owns the EN/LT difficulty preference and persists its validated ID under `project-spark:difficulty`. The episode, circuit, repair and pilot state receive the same commands at every difficulty. React switches objectives, compass and diagnostic detail, and the scene reads the preference to update existing beacons and Apprentice-only pad rings. Scene updates invalidate on difficulty changes, including while paused.

@@ -23,3 +23,9 @@ The owner authorized M10 scope. Branch `codex/m10-physical-diagnostics` starts a
 The owner authorized three browser-side guidance tiers on merged M10 `8b6ae37`. [M10 PR #13](https://github.com/ernismorka/project-spark/pull/13) is merged. M11 reuses the existing scene beacon, compass, meter and notebook. Acceptance covers EN/LT, persistent selection, switching during play and mid-diagnosis, tier-specific visual cues and unchanged move, probe, proof, repair and commissioning behavior. The expanded field test also absorbs the timeout-only [PR #14](https://github.com/ernismorka/project-spark/pull/14) and moves its T1 waypoint inside the interaction range after a slower rerun revealed the actual boundary issue.
 
 [M11 PR #15](https://github.com/ernismorka/project-spark/pull/15) tracks review and exact final-head checks. The next milestone requires owner approval.
+
+## M12 Graphics & Interaction Animations
+
+The owner authorized M12 on merged M11 `f9e0dd7`. Implement on `codex/m12-graphics-interactions`. Refine the existing procedural materials and lighting, smooth the engineer pose and camera, and animate only accepted field probes, the physical repair and verified restoration. Preserve the fixed-step movement, solver, episode rules, guidance tiers and EN/LT.
+
+Acceptance covers unchanged readings and repair gates, no feedback for rejected actions, reduced motion, paused render lifecycle, before/after board captures, workload sampling and both packaged browser projects. Record findings and PR evidence in [Development status](DEVELOPMENT_STATUS.md).
