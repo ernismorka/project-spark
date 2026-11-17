@@ -24,6 +24,7 @@ export function bindInput(
   get: () => Session,
   dispatch: (command: ExplorationCommand) => void,
   target: () => string | undefined,
+  fieldUse?: () => boolean,
 ) {
   const keys = new Set<string>();
   let jump = false;
@@ -67,6 +68,10 @@ export function bindInput(
       keys.add(e.code);
     }
     if (!e.repeat && e.code === controls.jump) jump = true;
+    if (e.code === "KeyQ" && !e.repeat && fieldUse?.()) {
+      e.preventDefault();
+      return;
+    }
     const id = target();
     if (
       !e.repeat &&

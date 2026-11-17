@@ -1,5 +1,7 @@
 # Roadmap
 
+M10 Physical Diagnostics & Repair is authorized on merged [M9 PR #11](https://github.com/ernismorka/project-spark/pull/11). See [M10_PLAN.md](M10_PLAN.md) for the fixed field assignment, acceptance checks and preservation of the classic terminal and cooperative flows.
+
 | Milestone                | Scope                                                                                                                     | Acceptance                                                                                                                                                                                                                  |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M8 Playable Demo Release | Package and stabilize the existing integrated episode, Windows local launcher, EN/LT demo guidance, release documentation | M8_SCOPE.md: reproducible versioned folder/inventory, standalone startup/error/security checks, full episode/replay and preserved Chromium/Firefox coverage, inspected captures, documented performance limits, unmerged PR |

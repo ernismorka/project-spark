@@ -4,7 +4,7 @@
 
 Read README.md, docs/GDD.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, docs/EXECUTION_PLAN.md and docs/DEVELOPMENT_STATUS.md before continuing. GDD and roadmap are the product source of truth. Do not expand them without authorization.
 
-M8 PR #10 is merged as 6d23e20. The owner approved M9 Dark Circuit player experience on 2026-11-17; follow docs/M9_PROPOSAL.md and docs/EXECUTION_PLAN.md. Keep changes to player guidance, static world presentation and feedback for the existing episode. Preserve existing APIs and regression coverage. No new gameplay systems, multiplayer, solver categories, language features, dependencies or public deployment/release. Domain code remains serializable and browser-independent. Later milestones require owner approval.
+M9 PR #11 is merged as 248990b. The owner approved M10 Physical Diagnostics & Repair. Follow docs/M10_PLAN.md and docs/EXECUTION_PLAN.md. Keep the field assignment to one fixed trace fault, physical DC probes, evidence, repair and commissioning handoff. Preserve existing APIs and regression coverage. No new multiplayer, solver categories, language features, dependencies or public deployment/release. Domain code remains serializable and browser-independent. Later milestones require owner approval.
 
 ## Autonomous workflow
 
@@ -30,4 +30,4 @@ Preserve sandbox and security restrictions. Never modify machine-wide Codex appr
 
 ## Session continuity
 
-On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M9 is authorized on merged PR #10. After submitting M9, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.
+On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M10 is authorized on merged PR #11. After submitting M10, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.

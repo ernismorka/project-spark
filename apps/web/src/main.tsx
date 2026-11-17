@@ -2,6 +2,12 @@ import { PilotPanel, pilotCopy } from "./PilotPanel";
 import { WorkbenchPanel, programmingCopy } from "./WorkbenchPanel";
 import { repairCopy } from "./repair-i18n";
 import { DiagnosticPanel } from "./DiagnosticPanel";
+import {
+  FieldNotebook,
+  fieldCopy,
+  fieldTask,
+  fieldVoltage,
+} from "./FieldDiagnostics";
 import { diagnosisCopy } from "./diagnosis-i18n";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -14,6 +20,9 @@ import {
   nearbyComponents,
   components,
   horizontalDistance,
+  fieldDestinations,
+  fieldTarget,
+  type PadId,
 } from "@spark/game-core";
 import { languages } from "@spark/shared";
 import { episodeCopy } from "./episode-i18n";
@@ -28,6 +37,12 @@ function App() {
   const session = episode.session;
   const stage = episodeStage(episode);
   const e = episodeCopy[state.language];
+  const field = episode.field;
+  const fieldText = fieldCopy[state.language];
+  const fieldActive = !!field && !session.repair.completed;
+  const fieldOffered =
+    !field && !session.diagnosis && !session.repair.completed;
+  const stageLabel = fieldActive ? fieldText.stage : e.stages[stage];
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading",
   );
@@ -87,6 +102,14 @@ function App() {
         mountScene(element, controller.signal, {
           get: () => current.current.session,
           activated: () => current.current.activated,
+          field: () => current.current.field,
+          fieldUse: () => {
+            const { field, session } = current.current;
+            if (!field) return false;
+            const target = fieldTarget(field, session);
+            if (target) dispatch({ type: "field-use", target: target.id });
+            return true;
+          },
           dispatch,
           publish,
           target: () => {
@@ -156,6 +179,16 @@ function App() {
     setMounted(false);
   };
   const destination = objectiveTarget(session.step);
+  const fieldSite = field && fieldTarget(field, session);
+  const fieldGuide = field && (fieldSite ?? fieldDestinations(field)[0]);
+  const fieldGuideName =
+    fieldGuide?.id === "T1"
+      ? "T1"
+      : fieldGuide?.id === "FEED-LINK"
+        ? fieldText.patch
+        : fieldGuide
+          ? fieldText.labels[fieldGuide.id as PadId]
+          : undefined;
   const objectiveName =
     "kind" in destination
       ? `${destination.id} · ${g.componentNames[destination.kind]}`
@@ -307,18 +340,20 @@ function App() {
                   ? g.welcome
                   : episode.activated
                     ? e.world
-                    : session.repair.completed
-                      ? e.tasks[stage]
-                      : session.step === 5
-                        ? repairCopy[state.language].intro
-                        : g.objectives[session.step]}
+                    : field && !session.repair.completed
+                      ? fieldTask(field, state.language)
+                      : session.repair.completed
+                        ? e.tasks[stage]
+                        : session.step === 5
+                          ? repairCopy[state.language].intro
+                          : g.objectives[session.step]}
               </h2>
               <p
                 className="episode-stage"
                 data-testid="episode-stage"
                 data-stage={stage}
               >
-                {e.stages[stage]}
+                {stageLabel}
               </p>
             </div>
             <span
@@ -353,7 +388,78 @@ function App() {
               </div>
             ) : (
               <>
-                {session.phase === "playing" && (
+                {session.phase === "playing" && field && (
+                  <>
+                    {fieldGuide && (
+                      <div className="compass">
+                        <span>{fieldText.next}</span>
+                        <span>
+                          <b
+                            aria-hidden="true"
+                            style={{
+                              transform: `rotate(${targetBearing(
+                                fieldGuide.x - session.player.position.x,
+                                fieldGuide.z - session.player.position.z,
+                                cameraYaw,
+                              )}rad)`,
+                            }}
+                          >
+                            ↑
+                          </b>{" "}
+                          {fieldGuideName} ·{" "}
+                          {Math.round(
+                            horizontalDistance(
+                              session.player.position,
+                              fieldGuide,
+                            ),
+                          )}{" "}
+                          m
+                        </span>
+                      </div>
+                    )}
+                    <aside className="field-meter" aria-label={fieldText.meter}>
+                      <strong>{fieldText.meter} · DC / GND</strong>
+                      <output role="status">
+                        {field.last ? `${field.last} · ` : ""}
+                        {fieldVoltage(
+                          state.language,
+                          field.last
+                            ? (field.phase === "collect" ||
+                              field.phase === "located"
+                                ? field.before
+                                : field.after)[field.last]
+                            : undefined,
+                        )}
+                      </output>
+                      {fieldSite && (
+                        <button
+                          className="primary"
+                          onClick={() => {
+                            dispatch({
+                              type: "field-use",
+                              target: fieldSite.id,
+                            });
+                            if (fieldSite.id !== "T1")
+                              canvas.current?.focus({ preventScroll: true });
+                          }}
+                        >
+                          Q ·{" "}
+                          {field.phase === "located"
+                            ? fieldText.patch
+                            : field.phase === "verified"
+                              ? fieldText.report
+                              : `${fieldText.probe} ${fieldSite.id}`}
+                        </button>
+                      )}
+                      <button
+                        onClick={() => dispatch({ type: "field-notebook" })}
+                      >
+                        {fieldText.title}
+                      </button>
+                    </aside>
+                  </>
+                )}
+                {session.phase === "playing" && !field && (
                   <>
                     <div className="compass">
                       <span>
@@ -475,7 +581,9 @@ function App() {
                         session.phase === "title"
                           ? g.welcome
                           : session.phase === "paused"
-                            ? g.paused
+                            ? field?.notebook
+                              ? fieldText.title
+                              : g.paused
                             : session.phase === "complete"
                               ? episode.activated
                                 ? e.complete
@@ -487,10 +595,12 @@ function App() {
                                 : g.selected
                       }
                       onKeyDown={(e) => {
+                        if (field?.notebook && e.key === "Escape")
+                          dispatch({ type: "field-notebook" });
                         if (e.key === "Tab") {
                           const buttons = Array.from(
-                            e.currentTarget.querySelectorAll<HTMLButtonElement>(
-                              "button:not(:disabled)",
+                            e.currentTarget.querySelectorAll<HTMLElement>(
+                              "button:not(:disabled), select:not(:disabled)",
                             ),
                           );
                           if (
@@ -520,7 +630,9 @@ function App() {
                         {session.phase === "title"
                           ? g.welcome
                           : session.phase === "paused"
-                            ? g.paused
+                            ? field?.notebook
+                              ? fieldText.title
+                              : g.paused
                             : session.phase === "complete"
                               ? episode.activated
                                 ? e.complete
@@ -539,9 +651,20 @@ function App() {
                           <p>{e.practice}</p>
                         </>
                       )}
-                      {session.phase === "paused" && (
+                      {session.phase === "paused" && field?.notebook && (
+                        <FieldNotebook
+                          field={field}
+                          language={state.language}
+                          dispatch={dispatch}
+                        />
+                      )}
+                      {session.phase === "paused" && !field?.notebook && (
                         <>
-                          <p>{g.objectives[session.step]}</p>
+                          <p>
+                            {field
+                              ? fieldTask(field, state.language)
+                              : g.objectives[session.step]}
+                          </p>
                           <button
                             className="primary"
                             onClick={() => dispatch({ type: "resume" })}
@@ -580,13 +703,30 @@ function App() {
                       )}
                       {session.phase === "complete" && (
                         <>
+                          {fieldOffered && (
+                            <>
+                              <p>{fieldText.brief}</p>
+                              <button
+                                className="primary"
+                                onClick={() =>
+                                  dispatch({ type: "start-field" })
+                                }
+                              >
+                                {fieldText.start}
+                              </button>
+                            </>
+                          )}
                           {session.repair.completed && (
                             <section
                               className="episode-next"
                               aria-label={e.stages[stage]}
                             >
                               <p role="status">
-                                {episode.activated ? e.success : e.tasks[stage]}
+                                {episode.activated
+                                  ? field
+                                    ? fieldText.completed
+                                    : e.success
+                                  : e.tasks[stage]}
                               </p>
                               {!episode.activated && (
                                 <>
@@ -624,26 +764,32 @@ function App() {
                           {!episode.activated && (
                             <p>
                               {session.repair.completed
-                                ? repairCopy[state.language].success
+                                ? field
+                                  ? fieldText.restored
+                                  : repairCopy[state.language].success
                                 : g.completedBody}
                             </p>
                           )}
-                          <button
-                            className={
-                              episode.activated ? undefined : "primary"
-                            }
-                            onClick={() =>
-                              dispatch({ type: "open-diagnostics" })
-                            }
-                          >
-                            {d.open}
-                          </button>
+                          {!field && (
+                            <button
+                              className={
+                                episode.activated ? undefined : "primary"
+                              }
+                              onClick={() =>
+                                dispatch({ type: "open-diagnostics" })
+                              }
+                            >
+                              {d.open}
+                            </button>
+                          )}
                           <p>
                             {episode.activated
                               ? e.world
                               : session.repair.completed
                                 ? repairCopy[state.language].world
-                                : g.terminal}
+                                : fieldOffered
+                                  ? fieldText.choice
+                                  : g.terminal}
                           </p>
                           <button
                             className="primary"
@@ -663,7 +809,9 @@ function App() {
                         </>
                       )}
                       {session.phase !== "diagnosing" && (
-                        <p className="menu-controls">{g.controls}</p>
+                        <p className="menu-controls">
+                          {fieldActive ? fieldText.controls : g.controls}
+                        </p>
                       )}
                       {session.phase !== "diagnosing" && (
                         <p className="menu-controls">{g.camera}</p>
@@ -675,10 +823,10 @@ function App() {
             )}
           </div>
           <div className="scene-bottom">
-            <span>{g.controls}</span>
+            <span>{fieldActive ? fieldText.controls : g.controls}</span>
             <span>
               {session.step === 5
-                ? e.stages[stage]
+                ? stageLabel
                 : `${g.mission} · ${session.step + 1}/6`}
             </span>
           </div>

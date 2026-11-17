@@ -39,3 +39,14 @@ export {
 export * from "./programming";
 export * from "./pilot";
 export * from "./episode";
+export {
+  atFieldSite,
+  fieldDestinations,
+  fieldPads,
+  fieldPatch,
+  fieldRange,
+  fieldTarget,
+  fieldTerminal,
+  type FieldState,
+  type PadId,
+} from "./field";

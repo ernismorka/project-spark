@@ -77,14 +77,22 @@ test("records the comparable 3D view and rendering workload", async ({
   await expect(
     page.getByRole("button", { name: "Resume exploration" }),
   ).toBeVisible();
-  await page.waitForTimeout(300);
-  const pausedDraws = await page.evaluate(() =>
-    Reflect.get(window, "__sparkDraws"),
+  const pausedFrameDraws = await page.evaluate(
+    () =>
+      new Promise<number[]>((resolve) => {
+        const draws: number[] = [];
+        const sample = () => {
+          draws.push(Number(Reflect.get(window, "__sparkDraws")));
+          if (draws.length === 8) resolve(draws);
+          else requestAnimationFrame(sample);
+        };
+        requestAnimationFrame(sample);
+      }),
   );
-  await page.waitForTimeout(500);
-  expect(await page.evaluate(() => Reflect.get(window, "__sparkDraws"))).toBe(
-    pausedDraws,
-  );
+  // Let the phase transition's final draw settle on slow software renderers.
+  const settledDraws = pausedFrameDraws.slice(3);
+  const pausedDraws = settledDraws[0];
+  expect(settledDraws).toEqual(Array(settledDraws.length).fill(pausedDraws));
   await page.getByRole("button", { name: "Resume exploration" }).click();
   await expect
     .poll(() =>

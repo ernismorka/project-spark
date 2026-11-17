@@ -915,3 +915,51 @@ footer {
   color: #d7ee91;
   font-variant-numeric: tabular-nums;
 }
+
+.field-meter {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  display: grid;
+  gap: 8px;
+  max-width: calc(100% - 32px);
+  padding: 12px;
+  background: #132d39f5;
+  border: 1px solid #66818b;
+  border-radius: 10px;
+}
+.field-meter output {
+  color: #d7ee91;
+  font: 600 1.2rem monospace;
+}
+.field-meter .primary {
+  background: #d7ee91;
+  color: #14222a;
+}
+.field-notebook table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.field-notebook th,
+.field-notebook td {
+  padding: 0.35rem;
+  border-bottom: 1px solid #66818b70;
+  text-align: left;
+}
+.field-notebook td {
+  white-space: nowrap;
+}
+.field-notebook form {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.field-notebook label {
+  display: grid;
+  gap: 4px;
+}
+.field-notebook select {
+  min-width: 0;
+  max-width: 100%;
+}
