@@ -435,7 +435,8 @@ test("plays First Contact using real movement and interaction inputs", async ({
 test("troubleshoots the physical feed, verifies it and commissions the device", async ({
   page,
 }, info) => {
-  test.setTimeout(300000);
+  // The real-input route has two board sweeps, including on software WebGL.
+  test.setTimeout(420000);
   page.setDefaultTimeout(12000);
   await begin(page);
   const canvas = page.locator("canvas");
