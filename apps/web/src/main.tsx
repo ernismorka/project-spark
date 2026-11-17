@@ -545,15 +545,24 @@ function App() {
                     <div className="crosshair" aria-hidden="true">
                       ·
                     </div>
-                    <div className="position" aria-label={g.coordinates}>
-                      {coordinate(session.player.position.x)};{" "}
-                      {coordinate(session.player.position.z)}
-                      {session.recoveries > 0 && (
-                        <p>
-                          {g.checkpoint} · {session.recoveries}
-                        </p>
-                      )}
-                    </div>
+                    {(navigation || session.recoveries > 0) && (
+                      <div
+                        className="position"
+                        aria-label={navigation ? g.coordinates : undefined}
+                      >
+                        {navigation && (
+                          <>
+                            {coordinate(session.player.position.x)};{" "}
+                            {coordinate(session.player.position.z)}
+                          </>
+                        )}
+                        {session.recoveries > 0 && (
+                          <p>
+                            {g.checkpoint} · {session.recoveries}
+                          </p>
+                        )}
+                      </div>
+                    )}
                     {target && (
                       <aside className="interaction">
                         <p>{g.nearby}</p>

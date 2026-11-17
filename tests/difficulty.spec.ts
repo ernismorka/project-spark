@@ -24,6 +24,7 @@ test("switches localized guidance during play and persists the difficulty", asyn
   await expect(canvas).toHaveAttribute("data-guidance-beacon", "false");
   await expect(canvas).toHaveAttribute("data-phase", "playing");
   await expect(page.locator(".compass")).toHaveCount(0);
+  await expect(page.getByLabel("Board position")).toHaveCount(0);
   await expect(
     page.getByRole("heading", { name: "Leave the pad", exact: true }),
   ).toBeVisible();

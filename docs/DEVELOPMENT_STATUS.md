@@ -40,4 +40,6 @@ The exact merged M10 head passed both Linux browser projects and the Windows lau
 
 ## M11 difficulty guidance
 
-Implementation is on `codex/m11-difficulty-guidance` from merged M10. Three EN/LT guidance tiers persist per browser origin and can switch during play. Apprentice highlights unmeasured probe pads and gives longer instructions. Technician retains the existing cues. Engineer hides directional guidance and diagnostic hints while retaining measured evidence and valid actions. No game-core or solver code changed. Verification is in progress.
+Implementation is on `codex/m11-difficulty-guidance` from merged M10. Three EN/LT guidance tiers persist per browser origin and can switch during play. Apprentice highlights unmeasured probe pads and gives longer instructions. Technician retains the existing cues. Engineer hides directional guidance, coordinates and diagnostic hints while retaining measured evidence and valid actions. No game-core or solver code changed.
+
+Windows doctor and the full headed verifier passed before the final Engineer HUD tightening. The run covered 92 unit and integration tests, three release tests and all 34 Chromium and Firefox checks. Both browsers switched tiers during physical diagnosis, preserved measured values and completed verification and commissioning. The opening Technician scene remained at 74 draw calls per frame. The focused final HUD recheck and exact final-head CI are tracked in [PR #15](https://github.com/ernismorka/project-spark/pull/15).

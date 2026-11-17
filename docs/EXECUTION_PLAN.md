@@ -21,3 +21,5 @@ The owner authorized M10 scope. Branch `codex/m10-physical-diagnostics` starts a
 ## M11 guidance difficulty
 
 The owner authorized three browser-side guidance tiers on merged M10 `8b6ae37`. [M10 PR #13](https://github.com/ernismorka/project-spark/pull/13) is merged. M11 reuses the existing scene beacon, compass, meter and notebook. Acceptance covers EN/LT, persistent selection, switching during play and mid-diagnosis, tier-specific visual cues and unchanged move, probe, proof, repair and commissioning behavior. The expanded field test also absorbs the timeout-only [PR #14](https://github.com/ernismorka/project-spark/pull/14) and moves its T1 waypoint inside the interaction range after a slower rerun revealed the actual boundary issue.
+
+[M11 PR #15](https://github.com/ernismorka/project-spark/pull/15) tracks review and exact final-head checks. The next milestone requires owner approval.
