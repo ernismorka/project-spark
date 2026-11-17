@@ -314,7 +314,11 @@ function App() {
             )}
             <details className="difficulty-picker">
               <summary>
-                {difficultyText.label} · {difficultyText[difficulty]}
+                {difficultyText.label}
+                <span className="difficulty-current">
+                  {" "}
+                  · {difficultyText[difficulty]}
+                </span>
               </summary>
               <fieldset aria-label={difficultyText.label}>
                 {difficulties.map((value) => (

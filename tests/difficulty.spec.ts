@@ -40,6 +40,16 @@ test("switches localized guidance during play and persists the difficulty", asyn
   await page.getByRole("combobox").focus();
   await page.getByRole("combobox").selectOption("lt");
   await expect(summary).toHaveText("Sudėtingumas · Mokinys (lengvas)");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await summary.click();
+  await expect(
+    picker.getByRole("radio", { name: "Mokinys (lengvas)" }),
+  ).toBeChecked();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
   await page.reload();
   await expect(summary).toHaveText("Difficulty · Apprentice (Easy)");
   await page.evaluate(() =>
