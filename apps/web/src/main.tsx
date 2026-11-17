@@ -42,6 +42,7 @@ function App() {
   selectedRef.current = selected;
   const canvas = useRef<HTMLCanvasElement>(null);
   const menu = useRef<HTMLDivElement>(null);
+  const activateButton = useRef<HTMLButtonElement>(null);
   const modalOpener = useRef<HTMLButtonElement | null>(null);
   const restoreModalFocus = () => {
     requestAnimationFrame(() => modalOpener.current?.focus());
@@ -155,6 +156,10 @@ function App() {
     setMounted(false);
   };
   const destination = objectiveTarget(session.step);
+  const objectiveName =
+    "kind" in destination
+      ? `${destination.id} · ${g.componentNames[destination.kind]}`
+      : g.startPad;
   const bearing = targetBearing(
     destination.x - session.player.position.x,
     destination.z - session.player.position.z,
@@ -180,14 +185,34 @@ function App() {
               ? undefined
               : (command) => dispatch({ type: "workbench", command })
           }
-          missionScope={session.phase === "title" ? undefined : e.missionScope}
-          missionTask={session.phase === "title" ? undefined : e.tasks[stage]}
+          mission={
+            session.phase === "title"
+              ? undefined
+              : {
+                  scope: e.missionScope,
+                  task: e.tasks[stage],
+                  scopeLabel: e.scopeLabel,
+                  returnLabel: e.returnToReport,
+                  nextAction:
+                    stage === "activation" ? e.continueToActivation : undefined,
+                }
+          }
           programmingLocked={
             session.phase !== "title" && !episode.programmingUnlocked
           }
-          onClose={() => {
+          onClose={(returnToReport) => {
             setWorkbench(false);
-            restoreModalFocus();
+            if (!returnToReport) {
+              restoreModalFocus();
+            } else {
+              setViewBoard(false);
+              requestAnimationFrame(() =>
+                (stage === "activation"
+                  ? activateButton.current
+                  : modalOpener.current
+                )?.focus(),
+              );
+            }
           }}
         />
       )}
@@ -348,11 +373,7 @@ function App() {
                         >
                           ↑
                         </b>{" "}
-                        {g.distance} ·{" "}
-                        {destination.id === "START"
-                          ? g.startPad
-                          : destination.id}{" "}
-                        ·{" "}
+                        {g.distance} · {objectiveName} ·{" "}
                         {Math.round(
                           horizontalDistance(
                             session.player.position,
@@ -570,7 +591,11 @@ function App() {
                               {!episode.activated && (
                                 <>
                                   <button
-                                    className="primary"
+                                    className={
+                                      stage === "activation"
+                                        ? undefined
+                                        : "primary"
+                                    }
                                     onClick={(event) => {
                                       modalOpener.current = event.currentTarget;
                                       setWorkbench(true);
@@ -579,6 +604,12 @@ function App() {
                                     {e.continue}
                                   </button>
                                   <button
+                                    ref={activateButton}
+                                    className={
+                                      stage === "activation"
+                                        ? "primary"
+                                        : undefined
+                                    }
                                     disabled={stage !== "activation"}
                                     onClick={() =>
                                       dispatch({ type: "activate-device" })

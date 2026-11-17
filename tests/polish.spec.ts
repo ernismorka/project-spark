@@ -155,7 +155,7 @@ test("keeps orientation cues aligned and clears movement when keyboard focus lea
     if (i === 179) throw new Error("Could not reach R1");
   }
   await expect(page.locator(".interaction")).toContainText("R1 · Resistor");
-  await expect(page.locator(".compass")).toContainText("R1");
+  await expect(page.locator(".compass")).toContainText("R1 · Resistor");
   const box = await canvas.boundingBox();
   if (!box) throw new Error("Missing board");
   await page.mouse.move(box.x + box.width * 0.4, box.y + box.height * 0.5);

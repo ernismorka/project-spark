@@ -10,6 +10,9 @@ it("clips camera segments before solid boxes and permits unobstructed views", ()
 it("clamps pitch/zoom, smooths follow and snaps after checkpoint recovery", () => {
   const entity = new Entity();
   const camera = new FollowCamera(entity);
+  const initialZoom = camera.zoom;
+  camera.wheel(250);
+  expect(camera.zoom).toBe(initialZoom + 2.5);
   camera.orbit(20, 100000);
   expect(camera.pitch).toBe(cameraSettings.maxPitch);
   camera.orbit(0, -100000);

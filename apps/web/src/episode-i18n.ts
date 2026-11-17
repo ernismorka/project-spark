@@ -6,7 +6,10 @@ type Copy = {
   intro: string;
   practice: string;
   missionScope: string;
+  scopeLabel: string;
   continue: string;
+  returnToReport: string;
+  continueToActivation: string;
   activate: string;
   complete: string;
   success: string;
@@ -23,7 +26,10 @@ const en: Copy = {
     "Title workbench is independent practice. Episode construction unlocks at T1 after verified repair; practice does not award mission progress.",
   missionScope:
     "This commissioning network is separate from the verified diagnostic divider. Accepted circuit/program edits persist when you close this panel. Edits invalidate affected proof. OUT and the final device display are abstract status responses, not MCU or LED physics. Replay/end/reload reset the episode.",
+  scopeLabel: "About this circuit",
   continue: "Continue at T1: construction and programming",
+  returnToReport: "Return to terminal report",
+  continueToActivation: "Continue to activation",
   activate: "Activate device",
   complete: "Device activated · episode complete",
   success:
@@ -42,7 +48,7 @@ const en: Copy = {
     diagnosis:
       "First measure, identify R1, restore its connection and verify both fresh measurements. Construction stays locked until verification.",
     construction:
-      "Repair verified. Next, connect R3 = 1 kΩ from SENSE to GND. Keep READ SENSE / ABOVE 2 / WRITE OUT and run to record the lower voltage and OFF response. Programming unlocks after this proof.",
+      "Connect R3 = 1 kΩ from SENSE to GND. This gives SENSE another path to ground and lowers its voltage. Run READ SENSE / ABOVE 2 / WRITE OUT to see why OUT turns OFF and unlock programming.",
     programming:
       "Construction proven. Change the program to READ SENSE / ABOVE 1 / WRITE OUT using blocks or text, then run. The same solved voltage should now produce ON.",
     activation:
@@ -61,7 +67,10 @@ const lt: Copy = {
     "Pradžios dirbtuvė skirta atskirai praktikai. Epizodo konstravimas atrakinamas T1 po patvirtinto remonto; praktika užduoties pažangos nesuteikia.",
   missionScope:
     "Ši parengimo grandinė atskira nuo patikrinto diagnostinio daliklio. Priimti grandinės ir programos pakeitimai išlieka uždarius šį langą. Pakeitimai panaikina susijusį patvirtinimą. OUT ir galutinis ekranas yra abstraktūs būsenos indikatoriai, o ne mikrovaldiklio ar diodo fizika. Pakartojus, baigus sesiją ar perkrovus epizodas atkuriamas.",
+  scopeLabel: "Apie šią grandinę",
   continue: "Tęsti T1: konstravimas ir programavimas",
+  returnToReport: "Grįžti į terminalo ataskaitą",
+  continueToActivation: "Pereiti prie aktyvinimo",
   activate: "Aktyvinti įrenginį",
   complete: "Įrenginys aktyvintas · epizodas užbaigtas",
   success:
@@ -81,7 +90,7 @@ const lt: Copy = {
     diagnosis:
       "Pirmiausia išmatuok, nustatyk R1 gedimą, atkurk jungtį ir patvirtink abu naujus matavimus. Konstravimas lieka užrakintas iki patvirtinimo.",
     construction:
-      "Remontas patvirtintas. Prijunk R3 = 1 kΩ tarp SENSE ir GND. Palik READ SENSE / ABOVE 2 / WRITE OUT ir vykdyk, kad užfiksuotum mažesnę įtampą bei IŠJUNGTA būseną. Tada bus atrakintas programavimas.",
+      "Prijunk R3 = 1 kΩ tarp SENSE ir GND. Papildoma šaka į žemę sumažina SENSE įtampą. Vykdyk READ SENSE / ABOVE 2 / WRITE OUT, kad pamatytum, kodėl OUT išsijungia, ir atrakintum programavimą.",
     programming:
       "Konstravimas patvirtintas. Blokais ar tekstu pakeisk programą į READ SENSE / ABOVE 1 / WRITE OUT ir vykdyk. Ta pati apskaičiuota įtampa dabar turi duoti ĮJUNGTA būseną.",
     activation:

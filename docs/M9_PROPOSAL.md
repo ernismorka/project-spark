@@ -1,6 +1,6 @@
-# Proposed M9 — Dark Circuit player experience
+# M9 — Dark Circuit player experience
 
-Approval pending. Use merged M8, PR #10 at `6d23e20`, as the starting baseline and recheck main before creating `codex/m9-player-experience`. The shipped episode and consolidated playtest in [PLAYTEST.md](PLAYTEST.md) define the evaluation route.
+Approved by the owner on 2026-11-17. The starting baseline is merged M8, PR #10 at `6d23e20`, on branch `codex/m9-player-experience`. The shipped episode and consolidated playtest in [PLAYTEST.md](PLAYTEST.md) define the evaluation route.
 
 The 1280×720 recovery capture shows a visible Start button, but part of the title's introductory card sits below the fold. In play, the first beacon points along the copper trace and the controls appear in both the board hint and footer. Check whether first-time players see the briefing, follow the beacon and recognize the inspect/identify distinction before changing those cues.
 
@@ -15,4 +15,4 @@ At commissioning, the accepted-run notice directs the player to the terminal rep
 
 Keep the work in the browser presentation, input and rendering layer, primarily `apps/web/src/game`, `apps/web/src/scene.ts`, `apps/web/src/style.css` and existing mission UI and EN/LT copy. Preserve solver results, controller language and budgets, deterministic serializable mission state, and loopback cooperative roles and reconnect. Existing electronics, programming, episode and two-client tests remain release gates. Scope excludes new levels, puzzle categories, networking, dependencies, saves and public deployment.
 
-After approval, document the selected fixes and measured baseline, implement focused changes with regressions, capture results and open an unmerged PR. Human learning, enjoyment and representative hardware results require the consolidated playtest.
+The implementation prioritizes a named beacon destination, a clearer central trace and existing landmark shapes, an explanation of the observed SENSE threshold comparison, and an explicit route from the accepted run to the activation control. The mission proof and practice workbench still use the existing solver and controller. Human learning, enjoyment and representative hardware results require the consolidated playtest.

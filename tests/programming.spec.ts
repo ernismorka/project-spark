@@ -65,6 +65,7 @@ test("builds and programs the controller through blocks and text in EN/LT", asyn
     .fill("while(true) {}");
   await panel.getByRole("button", { name: "Apply text", exact: true }).click();
   await expect(panel.getByRole("alert")).toContainText("Invalid program");
+  await expect(panel.getByText(/ABOVE threshold/)).toHaveCount(0);
   await panel
     .getByRole("button", { name: "Reset workbench", exact: true })
     .click();

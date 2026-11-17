@@ -13,9 +13,11 @@ export function buildWorld(g: Geometry) {
   for (const z of [-39, 39]) shape("box", [0, -0.1, z], [46, 0.1, 0.2], p.ink);
   // Conductive traces form legible routes; decorative paths are not a simulated circuit.
   for (const x of [-14, -7, 0, 7, 14]) {
-    shape("box", [x, 0.02, 0], [0.13, 0.025, 74], p.copper);
+    const outer = Math.abs(x) === 14;
+    const trace = outer ? p.edge : p.copper;
+    shape("box", [x, 0.02, 0], [x === 0 ? 0.23 : 0.1, 0.025, 74], trace);
     for (const z of [-30, -8, 5, 20, 32])
-      shape("cylinder", [x, 0.04, z], [0.55, 0.035, 0.55], p.copper);
+      shape("cylinder", [x, 0.04, z], [0.55, 0.035, 0.55], trace);
   }
   for (const z of [-30, -8, 5, 20, 32])
     shape("box", [0, 0.02, z], [36, 0.025, 0.14], p.copper);
@@ -38,8 +40,10 @@ export function buildWorld(g: Geometry) {
         );
         band.setEulerAngles(0, 0, 90);
       }
-      for (const side of [-1, 1])
+      for (const side of [-1, 1]) {
+        shape("box", [x + side * 2, 0.04, z], [0.9, 0.04, 0.85], p.copper);
         shape("box", [x + side * 2, 0.3, z], [0.2, 0.6, 0.2], p.silver);
+      }
     } else if (c.kind === "capacitor") {
       shape("cylinder", [x, 2.5, z], [3, 5, 3], p.blue);
       shape("cylinder", [x, 5.03, z], [2.9, 0.1, 2.9], p.silver);
@@ -65,6 +69,8 @@ export function buildWorld(g: Geometry) {
           );
       shape("box", [x, 3.03, z], [4, 0.05, 0.1], p.ink);
     } else {
+      for (const side of [-1, 1])
+        shape("box", [x + side * 1.7, 0.04, z], [0.15, 0.04, 3], p.ink);
       shape("box", [x, 0.6, z], [2.4, 1.2, 1.4], p.chip);
       const screen = shape("box", [x, 1.4, z], [2.1, 0.7, 0.14], p.blue);
       screen.setEulerAngles(-20, 0, 0);
@@ -85,7 +91,18 @@ export function buildWorld(g: Geometry) {
     }
   for (let i = 0; i < 10; i++)
     shape("box", [-16 + i * 3.5, 0.06, -38], [1.7, 0.08, 3], p.copper);
-  shape("cylinder", [world.spawn.x, 0.03, world.spawn.z], [4, 0.04, 4], p.ink);
+  const { x: spawnX, z: spawnZ } = world.spawn;
+  shape("cylinder", [spawnX, 0.035, spawnZ], [4, 0.05, 4], p.copper);
+  shape("cylinder", [spawnX, 0.065, spawnZ], [3.6, 0.04, 3.6], p.edge);
+  for (const side of [-1, 1]) {
+    const stroke = shape(
+      "box",
+      [spawnX + side * 0.32, 0.08, spawnZ - 2.7],
+      [0.14, 0.025, 0.9],
+      p.ink,
+    );
+    stroke.setEulerAngles(0, side * 45, 0);
+  }
   const marker = shape("cone", [0, 4, 26], [0.6, 0.9, 0.6], p.suit);
   marker.setEulerAngles(180, 0, 0);
   // Abstract terminal status beacon, not a simulated LED.

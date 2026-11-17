@@ -239,7 +239,7 @@ test("plays First Contact using real movement and interaction inputs", async ({
     .click();
   await expect(page.getByLabel("Workbench SENSE")).toHaveText("2.50 V");
   await page
-    .getByRole("button", { name: "Return to adventure", exact: true })
+    .getByRole("button", { name: "Return to terminal report", exact: true })
     .click();
   await expect(page.locator("canvas")).toHaveAttribute(
     "data-circuit-status",
@@ -278,6 +278,10 @@ test("plays First Contact using real movement and interaction inputs", async ({
     "false",
   );
   await expect(missionWorkbench).toContainText("Construction proven");
+  await expect(missionWorkbench).toContainText("SENSE ≤ 2.00 V → OUT OFF");
+  await expect(
+    missionWorkbench.getByRole("button", { name: "Continue to activation" }),
+  ).toHaveCount(0);
   await expect(missionWorkbench).not.toContainText(
     "Remove R3 to restore the original divider.",
   );
@@ -302,6 +306,7 @@ test("plays First Contact using real movement and interaction inputs", async ({
     "true",
   );
   await expect(missionWorkbench).toContainText("Controller run accepted");
+  await expect(missionWorkbench).toContainText("SENSE > 1.00 V → OUT ON");
   await missionWorkbench
     .getByRole("button", { name: "Blocks", exact: true })
     .click();
@@ -313,12 +318,15 @@ test("plays First Contact using real movement and interaction inputs", async ({
   await missionWorkbench.locator(".commission-task").scrollIntoViewIfNeeded();
   await page.screenshot({ path: testInfo.outputPath("m7-controller-en.png") });
   await missionWorkbench
-    .getByRole("button", { name: "Return to adventure", exact: true })
+    .getByRole("button", { name: "Continue to activation", exact: true })
     .click();
   await expect(page.getByTestId("episode-stage")).toHaveAttribute(
     "data-stage",
     "activation",
   );
+  await expect(
+    page.getByRole("button", { name: "Activate device", exact: true }),
+  ).toBeFocused();
   await page
     .getByRole("button", {
       name: "Continue at T1: construction and programming",
@@ -331,7 +339,7 @@ test("plays First Contact using real movement and interaction inputs", async ({
       .getByLabel("Parameter 2"),
   ).toHaveValue("1");
   await page
-    .getByRole("button", { name: "Return to adventure", exact: true })
+    .getByRole("button", { name: "Return to terminal report", exact: true })
     .click();
   await page.getByRole("combobox").selectOption("lt");
   await page
@@ -342,14 +350,29 @@ test("plays First Contact using real movement and interaction inputs", async ({
   });
   await expect(ltWorkbench.getByLabel("Workbench SENSE")).toHaveText("1,67 V");
   await expect(ltWorkbench).toContainText("Valdiklio vykdymas priimtas");
+  await expect(ltWorkbench).toContainText("SENSE > 1,00 V → OUT ĮJUNGTA");
+  await expect(
+    ltWorkbench.getByRole("button", { name: "Pereiti prie aktyvinimo" }),
+  ).toBeEnabled();
   await page.setViewportSize({ width: 390, height: 844 });
   await ltWorkbench.getByLabel("Workbench SENSE").scrollIntoViewIfNeeded();
   expect(
     await ltWorkbench.evaluate((el) => el.scrollWidth <= el.clientWidth),
   ).toBe(true);
   await page.screenshot({ path: testInfo.outputPath("m7-controller-lt.png") });
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.evaluate(() => (document.documentElement.style.zoom = "2"));
+  expect(
+    await ltWorkbench.evaluate((el) => el.scrollWidth <= el.clientWidth),
+  ).toBe(true);
+  await expect(
+    ltWorkbench.getByRole("button", { name: "Pereiti prie aktyvinimo" }),
+  ).toBeEnabled();
+  await page.evaluate(() =>
+    document.documentElement.style.removeProperty("zoom"),
+  );
   await ltWorkbench
-    .getByRole("button", { name: "Grįžti į nuotykį", exact: true })
+    .getByRole("button", { name: "Grįžti į terminalo ataskaitą", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Aktyvinti įrenginį", exact: true })
@@ -383,6 +406,11 @@ test("plays First Contact using real movement and interaction inputs", async ({
   );
   await expect(page.locator(".scene-bottom")).toContainText("Episode complete");
   await page.screenshot({ path: testInfo.outputPath("m7-active-world.png") });
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.screenshot({
+    path: testInfo.outputPath("m9-active-world-1080p.png"),
+  });
+  await page.setViewportSize({ width: 1280, height: 720 });
   await page.getByRole("button", { name: "Return to terminal report" }).click();
   await page.getByRole("button", { name: "Replay The Dark Circuit" }).click();
   await expect(page.locator("canvas")).toHaveAttribute("data-phase", "playing");
@@ -430,9 +458,16 @@ test("walk/run/jump, solid collisions, pause, camera zoom and resume are functio
   expect(await position(page)).toEqual(paused);
   await page.getByRole("button", { name: "Resume exploration" }).click();
   const canvas = page.locator("canvas");
+  const readZoom = async () =>
+    Number(await canvas.getAttribute("data-camera-zoom"));
+  const initialZoom = await readZoom();
   await canvas.hover();
   await page.mouse.wheel(0, 250);
-  await expect(canvas).toHaveAttribute("data-camera-zoom", "10.50");
+  // Headed browsers on Windows can deliver different native wheel deltas.
+  await expect.poll(readZoom).toBeGreaterThan(initialZoom);
+  const zoomedOut = await readZoom();
+  await page.mouse.wheel(0, -250);
+  await expect.poll(readZoom).toBeLessThan(zoomedOut);
   await walkTo(page, -7, 23.5);
   await page.keyboard.down("KeyW");
   await page.waitForTimeout(1500);
