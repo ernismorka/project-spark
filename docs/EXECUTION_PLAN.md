@@ -11,3 +11,5 @@ The versioned local package, Windows launcher, EN/LT presentation, packaging gat
 The owner approved the scoped [M9 plan](M9_PROPOSAL.md) on 2026-11-17. Branch `codex/m9-player-experience` started at merged M8 `6d23e20`. The Windows formatting fix and recovery evidence were preserved separately as `4994289` on `codex/m8-windows-recovery` and applied to M9 for Windows verification.
 
 Acceptance covers the real-input episode, bilingual guidance and commissioning handoffs, before/after visual inspection, responsive menus, observed rendering workload, preserved simulation/programming/cooperative regressions, and a review PR. Status and validation evidence are tracked in [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md). Human engagement, learning, assistive-technology usability and representative hardware evaluation remain tracked in [PLAYTEST.md](PLAYTEST.md). The next milestone is undefined pending owner review.
+
+Implementation and local acceptance are complete. Review and exact final-head CI are tracked in [PR #11](https://github.com/ernismorka/project-spark/pull/11). Owner approval is required before merge.
