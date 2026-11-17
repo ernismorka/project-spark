@@ -49,6 +49,7 @@ const copy = {
     instruction: "Instruction",
     parameter: "Parameter",
     unrun: "Not run",
+    threshold: "ABOVE threshold",
   },
   lt: {
     open: "Atverti kūrybinę dirbtuvę",
@@ -90,6 +91,7 @@ const copy = {
     instruction: "Instrukcija",
     parameter: "Parametras",
     unrun: "Nevykdyta",
+    threshold: "ABOVE slenkstis",
   },
 };
 export { copy as programmingCopy };
@@ -98,16 +100,20 @@ export function WorkbenchPanel({
   onClose,
   workbench,
   onCommand,
-  missionScope,
-  missionTask,
+  mission,
   programmingLocked = false,
 }: {
   language: Language;
-  onClose: () => void;
+  onClose: (returnToReport?: boolean) => void;
   workbench?: Workbench;
   onCommand?: (command: unknown) => void;
-  missionScope?: string;
-  missionTask?: string;
+  mission?: {
+    scope: string;
+    task: string;
+    scopeLabel: string;
+    returnLabel: string;
+    nextAction?: string;
+  };
   programmingLocked?: boolean;
 }) {
   const [local, setLocal] = useState(createWorkbench);
@@ -131,6 +137,17 @@ export function WorkbenchPanel({
       maximumFractionDigits: 2,
     }).format(n);
   const challenge = workbenchChallenge(state);
+  const [read, above, write] = state.program;
+  const sense = state.result?.ok ? state.result.voltages.SENSE : undefined;
+  const comparison =
+    !state.error &&
+    sense !== undefined &&
+    state.trace.length === 3 &&
+    read?.op === "read" &&
+    above?.op === "above" &&
+    write?.op === "write"
+      ? `${t.threshold}: SENSE ${state.output ? ">" : "≤"} ${format(above.volts)} V → OUT ${state.output ? t.on : t.off}`
+      : undefined;
   return (
     <section
       className="workbench"
@@ -142,7 +159,7 @@ export function WorkbenchPanel({
         if (e.key === "Tab") {
           const items = Array.from(
             e.currentTarget.querySelectorAll<HTMLElement>(
-              "button:not(:disabled),input,select,textarea,summary",
+              ":is(button,input,select,textarea,summary):not(:disabled)",
             ),
           );
           const first = items[0],
@@ -161,12 +178,24 @@ export function WorkbenchPanel({
         <h2>
           {t.title} · {onCommand ? "T1" : "M4"}
         </h2>
-        <button autoFocus onClick={onClose}>
-          {t.close}
+        <button autoFocus onClick={() => onClose(Boolean(mission))}>
+          {mission?.returnLabel ?? t.close}
         </button>
       </header>
-      <p>{missionScope ?? t.scope}</p>
-      <p>{missionTask ?? t.task}</p>
+      {mission ? (
+        <>
+          <details className="commission-scope">
+            <summary>{mission.scopeLabel}</summary>
+            <p>{mission.scope}</p>
+          </details>
+          <p>{mission.task}</p>
+        </>
+      ) : (
+        <>
+          <p>{t.scope}</p>
+          <p>{t.task}</p>
+        </>
+      )}
       <div className="workbench-grid">
         <section>
           <h3>{t.circuit}</h3>
@@ -386,16 +415,20 @@ export function WorkbenchPanel({
         </strong>{" "}
         · SENSE:{" "}
         <output aria-label="Workbench SENSE">
-          {state.result?.ok
-            ? format(state.result.voltages.SENSE) + " V"
-            : t.unrun}
+          {sense === undefined ? t.unrun : format(sense) + " V"}
         </output>
       </p>
-      {challenge && !missionTask && <p role="status">{t.success}</p>}
-      {missionTask && (
-        <p role="status" className="commission-task">
-          {missionTask}
-        </p>
+      {comparison && <p className="controller-comparison">{comparison}</p>}
+      {challenge && !mission && <p role="status">{t.success}</p>}
+      {mission && (
+        <div className="commission-task">
+          <p role="status">{mission.task}</p>
+          {mission.nextAction && (
+            <button className="primary" onClick={() => onClose(true)}>
+              {mission.nextAction}
+            </button>
+          )}
+        </div>
       )}
       <details>
         <summary>

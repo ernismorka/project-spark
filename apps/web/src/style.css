@@ -401,6 +401,7 @@ footer {
   background: #112a37dc;
   border: 1px solid #ffffff30;
   border-radius: 8px;
+  max-width: calc(100% - 48px);
 }
 .compass span:first-child {
   color: #d7ee91;
@@ -708,6 +709,7 @@ footer {
   border-radius: 12px;
   padding: 24px;
   overflow: auto;
+  overscroll-behavior: contain;
   color: #edf3ee;
 }
 .workbench header {
@@ -895,4 +897,21 @@ footer {
   border-left: 3px solid #d7ee91;
   padding: 10px 12px;
   background: #d7ee910a;
+}
+.commission-task p {
+  margin: 0;
+}
+.commission-task button {
+  margin: 10px 0 0;
+  background: #d7ee91;
+  border-color: #d7ee91;
+  color: #14222a;
+}
+.commission-scope summary {
+  color: #d7ee91;
+  font-weight: 650;
+}
+.controller-comparison {
+  color: #d7ee91;
+  font-variant-numeric: tabular-nums;
 }
