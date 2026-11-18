@@ -20,7 +20,11 @@ export function createGeometry(
     materials.push(m);
     return m;
   };
+  const terminal = material("#ffffff", false, 0.24);
+  terminal.diffuseVertexColor = true;
+  terminal.update();
   const palette = {
+    terminal,
     healthy: material("#83f2ad", true),
     board: material("#206f61", false, 0.07),
     edge: material("#14383a"),
@@ -35,22 +39,22 @@ export function createGeometry(
     white: material("#f0edcf"),
     brown: material("#9b5b37"),
   };
-  let roundedMesh: pc.Mesh | undefined;
+  let terminalMesh: pc.Mesh | undefined;
   const shape = (
-    type: "box" | "cylinder" | "sphere" | "cone" | "rounded",
+    type: "box" | "cylinder" | "sphere" | "cone" | "terminal",
     p: [number, number, number],
     s: [number, number, number],
     m: pc.StandardMaterial,
     parent = root,
   ) => {
     const e = new pc.Entity();
-    if (type === "rounded") {
-      roundedMesh ??= pc.Mesh.fromGeometry(
+    if (type === "terminal") {
+      terminalMesh ??= pc.Mesh.fromGeometry(
         device,
         Object.assign(new pc.Geometry(), terminalShell),
       );
       e.addComponent("render", {
-        meshInstances: [new pc.MeshInstance(roundedMesh, m, e)],
+        meshInstances: [new pc.MeshInstance(terminalMesh, m, e)],
       });
     } else e.addComponent("render", { type, material: m });
     if (parent === root) e.render!.batchGroupId = batchGroupId;

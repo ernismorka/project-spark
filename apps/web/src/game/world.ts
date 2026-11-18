@@ -83,32 +83,7 @@ export function buildWorld(g: Geometry) {
     } else {
       for (const side of [-1, 1])
         shape("box", [x + side * 1.7, 0.04, z], [0.15, 0.04, 3], p.ink);
-      shape("rounded", [x, 0.16, z], [2.4, 0.32, 1.4], p.copper);
-      shape("rounded", [x, 0.69, z], [2.24, 1.14, 1.32], p.white);
-      shape("rounded", [x, 0.68, z + 0.64], [1.94, 0.64, 0.12], p.chip);
-      for (const socketX of [-0.55, 0.55]) {
-        const socket = shape(
-          "cylinder",
-          [x + socketX, 0.69, z + 0.71],
-          [0.24, 0.07, 0.24],
-          p.copper,
-        );
-        socket.setEulerAngles(90, 0, 0);
-      }
-      const bezel = shape(
-        "rounded",
-        [x, 1.32, z + 0.22],
-        [1.98, 0.69, 0.26],
-        p.visor,
-      );
-      bezel.setEulerAngles(-20, 0, 0);
-      const screen = shape(
-        "rounded",
-        [x, 1.32, z + 0.35],
-        [1.68, 0.43, 0.08],
-        p.blue,
-      );
-      screen.setEulerAngles(-20, 0, 0);
+      shape("terminal", [x, 0, z], [1, 1, 1], p.terminal);
     }
   }
   for (const s of solids.filter((s) => s.id.startsWith("step")))

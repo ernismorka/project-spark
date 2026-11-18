@@ -2,7 +2,7 @@
 
 ## M13 T1 art and field journal
 
-T1's original rounded mesh is bundled with the browser scene. Its static instances share one source mesh and take part in existing board batching. Collision and interaction still use the existing game-core coordinates. The field journal renders live values, localized evidence and guarded diagnosis controls over a small packaged texture. Page selection is UI-only. Motion uses CSS and respects the browser's reduced-motion preference. See [ART_ASSETS.md](ART_ASSETS.md) for the assets and provenance.
+T1's original rounded mesh is bundled with the browser scene. The housing, screen and sockets use one baked vertex-colored mesh and participate in the existing board batching. Collision and interaction still use the existing game-core coordinates. The field journal renders live values, localized evidence and guarded diagnosis controls over a small packaged texture. Page selection is UI-only. Motion uses CSS and respects the browser's reduced-motion preference. See [ART_ASSETS.md](ART_ASSETS.md) for the assets and provenance.
 
 ## M12 graphics and interaction animation
 
