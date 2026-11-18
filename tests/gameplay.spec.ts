@@ -468,22 +468,30 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await expect(canvas).toHaveAttribute("data-probe-highlights", "0");
   await changeDifficulty("Apprentice (Easy)");
   await expect(canvas).toHaveAttribute("data-probe-highlights", "3");
-  const measure = async (id: string, value: string) => {
+  const measure = async (
+    id: string,
+    value: string,
+    motion?: "probe" | "verified",
+  ) => {
     await expect(
       meter.getByRole("button", { name: new RegExp(id) }),
     ).toBeVisible();
     await press("KeyQ");
+    if (motion)
+      await expect(canvas).toHaveAttribute("data-interaction-motion", motion);
     await expect(meter.locator("output")).toHaveText(`${id} · ${value}`);
   };
   await press("KeyQ");
   await expect(meter.locator("output")).toHaveText("—");
+  await expect(canvas).toHaveAttribute("data-interaction-motion", "idle");
   await expect(button(/Bridge trace/)).toHaveCount(0);
   await button("Field notebook").click();
   await expect(button("Check diagnosis")).toBeDisabled();
   await button("Back to the board").click();
   await walkTo(page, 3.5, -14);
   await walkTo(page, -3.5, -15);
-  await measure("P1", "5.00 V");
+  await measure("P1", "5.00 V", "probe");
+  await page.screenshot({ path: info.outputPath("m12-probe.png") });
   await expect(canvas).toHaveAttribute("data-probe-highlights", "2");
   await changeDifficulty("Engineer (Hard)");
   await expect(canvas).toHaveAttribute("data-probe-highlights", "0");
@@ -536,6 +544,8 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await expect(button(/Bridge trace/)).toBeVisible();
   await page.screenshot({ path: info.outputPath("m10-localized-trace.png") });
   await press("KeyQ");
+  await expect(canvas).toHaveAttribute("data-interaction-motion", "repair");
+  await page.screenshot({ path: info.outputPath("m12-repair.png") });
   await expect(canvas).toHaveAttribute("data-circuit-status", "restored");
   await expect(button(/Bridge trace/)).toHaveCount(0);
   await walkTo(page, -3.5, -15);
@@ -544,7 +554,10 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await walkTo(page, -7, 16);
   await measure("P2", "5.00 V");
   await walkTo(page, 7, 9);
-  await measure("P3", "2.50 V");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await measure("P3", "2.50 V", "verified");
+  await expect(canvas).toHaveAttribute("data-interaction-tool", "false");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(canvas).toHaveAttribute("data-circuit-status", "verified");
   await expect(button(/Return to T1 report/)).toHaveCount(0);
   await page.setViewportSize({ width: 1920, height: 1080 });

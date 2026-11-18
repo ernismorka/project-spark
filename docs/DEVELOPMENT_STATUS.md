@@ -45,3 +45,11 @@ Implementation is on `codex/m11-difficulty-guidance` from merged M10. Three EN/L
 Windows doctor and the full headed verifier passed before the final Engineer HUD tightening. The run covered 92 unit and integration tests, three release tests and all 34 Chromium and Firefox checks. Both browsers switched tiers during physical diagnosis, preserved measured values and completed verification and commissioning. The opening Technician scene remained at 74 draw calls per frame. The focused final HUD recheck and exact final-head CI are tracked in [PR #15](https://github.com/ernismorka/project-spark/pull/15).
 
 The first full Linux M11 run found the narrow Lithuanian legacy diagnostics exit below the viewport in both browsers. The narrow header now uses a compact difficulty summary with the selection available to assistive technology and in the open picker. The diagnostic viewport reserves room for narrow header layouts. The existing exit-in-viewport regression remains in place.
+
+## M12 Graphics & Interaction Animations
+
+[M11 PR #15](https://github.com/ernismorka/project-spark/pull/15) landed as `f9e0dd7`. M12 implementation `613123e` adds PCB finish and lighting changes, velocity-driven character motion, eased camera zoom, and probe, patch and verified status animations driven by accepted field state. No dependencies or gameplay rules changed. [PR #16](https://github.com/ernismorka/project-spark/pull/16) tracks final-head checks and review.
+
+Windows doctor and headed `pnpm verify` passed, including 94 unit/integration tests, three release tests and all 34 Chromium and Firefox checks. The field test covers a rejected probe, a real reading, repair, reduced-motion feedback and final commissioning. Existing EN/LT, difficulty, cooperative, paused-render and cleanup scenarios passed.
+
+Inspected M11 and M12 captures of the opening board, trace junction and verified 1080p field view, plus M12 meter and repair contact frames. The edge silkscreen marks added four opening draw calls, from 74 to 78. The short 1080p field observations on the Windows host matched M11's local values: 4.20/4.30 ms median/p95 in headed Chromium and 4.16/4.18 ms in headed Firefox. The scene gzip rose from 284.40 kB to 285.33 kB. These observations are scoped to the tested host and do not certify sustained representative hardware performance.

@@ -1,5 +1,7 @@
 # Roadmap
 
+M12 Graphics & Interaction Animations is authorized on merged [M11 PR #15](https://github.com/ernismorka/project-spark/pull/15). It refines the existing procedural board and adds presentation-only movement, camera and accepted-action animations, with before/after browser captures and workload checks.
+
 M11 guidance difficulty is authorized on merged M10. It adds a persistent Apprentice, Technician or Engineer presentation preference while retaining the same simulation, fault and repair authority.
 
 M10 Physical Diagnostics & Repair is authorized on merged [M9 PR #11](https://github.com/ernismorka/project-spark/pull/11). See [M10_PLAN.md](M10_PLAN.md) for the fixed field assignment, acceptance checks and preservation of the classic terminal and cooperative flows.

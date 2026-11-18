@@ -12,6 +12,11 @@ import { FollowCamera } from "./game/camera";
 import { bindInput } from "./game/input";
 import { objectiveTarget } from "./game/navigation";
 import type { Difficulty } from "./difficulty";
+import {
+  acceptedFieldMotion,
+  type FieldMotion,
+} from "./game/interaction-motion";
+import { buildFieldEffects } from "./game/field-effects";
 export interface SceneBridge {
   get: () => Session;
   dispatch: (command: ExplorationCommand, publish?: boolean) => void;
@@ -66,13 +71,15 @@ export async function mountScene(
     app = new pc.AppBase(canvas);
     app.init(options);
     app.graphicsDevice.maxPixelRatio = Math.min(window.devicePixelRatio, 1.5);
-    app.scene.ambientLight = new pc.Color(0.7, 0.8, 0.85);
+    app.scene.ambientLight = new pc.Color(0.56, 0.69, 0.79);
     batchGroupId = app.batcher!.addGroup("static-board", false, 32)!.id;
     geometry = createGeometry(app.root, batchGroupId);
     const pcb = buildWorld(geometry);
     app.batcher!.generate([batchGroupId]);
     const player = buildEngineer(geometry, app.root);
-    const fieldFixtures = buildFieldFixtures(geometry, app.root, player.entity);
+    const fieldFixtures = buildFieldFixtures(geometry, app.root, player.body);
+    const animateField = buildFieldEffects(geometry, app.root, player.hand);
+    const motionPreference = matchMedia("(prefers-reduced-motion: reduce)");
     const cameraEntity = new pc.Entity("follow-camera");
     cameraEntity.addComponent("camera", {
       clearColor: new pc.Color().fromString("#102b36"),
@@ -85,10 +92,10 @@ export async function mountScene(
     const light = new pc.Entity();
     light.addComponent("light", {
       type: "directional",
-      color: new pc.Color(1, 0.94, 0.83),
-      intensity: 1.3,
+      color: new pc.Color(1, 0.89, 0.75),
+      intensity: 1.46,
     });
-    light.setEulerAngles(45, 30, 0);
+    light.setEulerAngles(52, 38, 0);
     app.root.addChild(light);
     input = bindInput(
       canvas,
@@ -107,6 +114,8 @@ export async function mountScene(
     let lastActivated = false;
     let lastField: FieldState | undefined;
     let lastDifficulty: Difficulty | undefined;
+    let fieldMotion: FieldMotion | undefined;
+    let motionTime = 0;
     update = (delta: number) => {
       const state = bridge.get();
       const activated = bridge.activated?.() ?? false;
@@ -131,10 +140,18 @@ export async function mountScene(
       renderDirty = false;
       lastState = state;
       lastActivated = activated;
+      const started = acceptedFieldMotion(lastField, field);
       lastField = field;
       lastDifficulty = difficulty;
       const dt = Math.min(delta, 0.1);
       time += dt;
+      const reduced = motionPreference.matches;
+      if (started) {
+        fieldMotion = started;
+        motionTime = 0;
+      } else motionTime += dt;
+      if (state.phase !== "playing" || motionTime >= (reduced ? 0.35 : 0.8))
+        fieldMotion = undefined;
       if (state.phase !== lastPhase) {
         input!.release();
         lastPhase = state.phase;
@@ -152,13 +169,31 @@ export async function mountScene(
         next.player.position.y,
         next.player.position.z,
       );
-      player.entity.setEulerAngles(0, (next.player.facing * 180) / Math.PI, 0);
+      const speed = Math.hypot(next.player.velocity.x, next.player.velocity.z);
+      const reach =
+        fieldMotion && !reduced && speed < 1.2
+          ? Math.min(1, motionTime * 7, (0.8 - motionTime) * 5)
+          : 0;
+      const facing =
+        reach > 0 && fieldMotion
+          ? Math.atan2(
+              fieldMotion.site.x - next.player.position.x,
+              fieldMotion.site.z - next.player.position.z,
+            )
+          : next.player.facing;
       player.animate(
+        dt,
         time,
-        Math.hypot(next.player.velocity.x, next.player.velocity.z),
+        speed,
         next.player.grounded,
+        facing,
+        reach,
+        reduced,
       );
-      camera.update(next.player.position, dt);
+      animateField(fieldMotion, motionTime, reduced, reach);
+      canvas.dataset.interactionMotion = fieldMotion?.kind ?? "idle";
+      canvas.dataset.interactionTool = String(reach > 0.05);
+      camera.update(next.player.position, dt, reduced);
       const destination = objectiveTarget(next.step);
       pcb.marker.enabled =
         difficulty !== "engineer" && !field && next.phase !== "complete";
@@ -167,12 +202,13 @@ export async function mountScene(
           field,
           next.step === 5 && next.phase === "complete" && !next.diagnosis,
           difficulty,
+          reach,
         ),
       );
       canvas.dataset.guidanceBeacon = String(pcb.marker.enabled);
       pcb.marker.setPosition(
         destination.x,
-        4 + Math.sin(time * 2) * 0.2,
+        4 + (reduced ? 0 : Math.sin(time * 2) * 0.2),
         destination.z,
       );
       canvas.dataset.playerX = next.player.position.x.toFixed(3);
