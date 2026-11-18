@@ -37,3 +37,5 @@ Local implementation and verification are complete. [PR #16](https://github.com/
 The owner authorized M13 on merged M12 `7ecc53d`. Use `codex/m13-field-journal` to demonstrate the original ivory, teal and copper art direction at the T1 service area. Pair a rounded terminal mesh with an illustrated journal containing a measurements leaf and a diagnosis leaf. Keep the current board collisions, commands, evidence, guidance tiers and movement.
 
 Acceptance covers the offline assets and their provenance, a real EN/LT field playthrough, keyboard page navigation and diagnosis, reduced motion, narrow layout, before/after captures and a comparable scene-workload sample.
+
+Local implementation and verification are complete. See [Development status](DEVELOPMENT_STATUS.md) for browser results, capture review and workload observations. [PR #17](https://github.com/ernismorka/project-spark/pull/17) tracks final-head checks and review. A later milestone requires owner approval.
