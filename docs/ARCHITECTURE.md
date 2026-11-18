@@ -4,6 +4,8 @@
 
 The original `workshop.glb` loads with the scene. The board uses static batches, while named character meshes share a rigid joint hierarchy with keyed gait poses and two-segment arms. Lighting, silkscreen and contact shadows remain presentation. Collision and target distances still come from game-core.
 
+Known CPU WebGL renderers use a half-scale framebuffer, a simpler material on the wide board and bench surfaces, and one directional light. Hardware-accelerated adapters keep the normal framebuffer budget and light rig. Journal controls stay at CSS resolution on both.
+
 N and the HUD button dispatch the existing notebook toggle after the multimeter is acquired. The accepted domain pause starts the reversible grip, lift, cover and camera sequence. Browser input remains locked until the reverse sequence ends. The canvas renders during transitions and settles to invalidation-only rendering once the notebook is open. Two physical pages print live before/after readings, while the keyboard-operable EN/LT journal provides diagnosis and the full readings table. Reduced motion goes directly to the settled poses. The browser owns all animation timing.
 
 ## M13 T1 art and field journal

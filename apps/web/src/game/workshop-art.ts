@@ -1,7 +1,12 @@
 import * as pc from "playcanvas";
 import workshopUrl from "../assets/workshop.glb?url";
+import type { Geometry } from "./geometry";
 
-export async function loadWorkshop(app: pc.AppBase, signal: AbortSignal) {
+export async function loadWorkshop(
+  app: pc.AppBase,
+  signal: AbortSignal,
+  softwarePalette?: Geometry["palette"],
+) {
   const response = await fetch(workshopUrl, { signal });
   if (!response.ok) throw new Error("Workshop mesh could not be loaded.");
   const contents = await response.arrayBuffer();
@@ -39,6 +44,14 @@ export async function loadWorkshop(app: pc.AppBase, signal: AbortSignal) {
     if (!(model instanceof pc.Entity))
       throw new Error(`Missing workshop mesh ${name}.`);
     const part = model.clone();
+    if (softwarePalette && name !== "eye" && name !== "mouth") {
+      const material =
+        name === "bench" || name === "board"
+          ? softwarePalette.background
+          : softwarePalette.terminal;
+      for (const instance of part.render!.meshInstances!)
+        instance.material = material;
+    }
     part.setLocalPosition(x, y, z);
     parent.addChild(part);
     part.render!.batchGroupId = batchGroupId;

@@ -23,8 +23,14 @@ export function createGeometry(
   const terminal = material("#ffffff", false, 0.24);
   terminal.diffuseVertexColor = true;
   terminal.update();
+  const background = material("#000000");
+  background.useLighting = false;
+  background.emissive.set(1, 1, 1);
+  background.emissiveVertexColor = true;
+  background.update();
   const palette = {
     terminal,
+    background,
     healthy: material("#83f2ad", true),
     board: material("#206f61", false, 0.07),
     edge: material("#14383a"),

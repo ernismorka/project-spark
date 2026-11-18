@@ -88,8 +88,19 @@ export async function mountScene(
     ];
     app = new pc.AppBase(canvas);
     app.init(options);
-    app.graphicsDevice.maxPixelRatio = Math.min(window.devicePixelRatio, 1.5);
-    app.scene.ambientLight = new pc.Color(0.44, 0.53, 0.66);
+    const renderer = device as pc.WebglGraphicsDevice;
+    const software = /swiftshader|llvmpipe|softpipe|software rasterizer/i.test(
+      String(renderer.unmaskedRenderer),
+    );
+    // Software adapters shade on the CPU. Keep the accessible journal at CSS
+    // resolution while reducing the amount of 3D work on these adapters.
+    device.maxPixelRatio = Math.min(
+      window.devicePixelRatio,
+      software ? 0.5 : 1.5,
+    );
+    app.scene.ambientLight = software
+      ? new pc.Color(0.55, 0.64, 0.77)
+      : new pc.Color(0.44, 0.53, 0.66);
     const air = new pc.Color().fromString("#627e98");
     app.scene.fog.type = pc.FOG_LINEAR;
     app.scene.fog.color.copy(air);
@@ -97,7 +108,11 @@ export async function mountScene(
     app.scene.fog.end = 108;
     batchGroupId = app.batcher!.addGroup("static-board", false, 64)!.id;
     geometry = createGeometry(app.root, device, batchGroupId);
-    const workshop = await loadWorkshop(app, signal);
+    const workshop = await loadWorkshop(
+      app,
+      signal,
+      software ? geometry.palette : undefined,
+    );
     const pcb = buildWorld(geometry, workshop, app.root, batchGroupId);
     decals = buildWorkshopDecals(device, app.root, batchGroupId);
     app.batcher!.generate([batchGroupId]);
@@ -119,18 +134,20 @@ export async function mountScene(
     light.addComponent("light", {
       type: "directional",
       color: new pc.Color(1, 0.91, 0.81),
-      intensity: 1.66,
+      intensity: software ? 1.42 : 1.66,
     });
     light.setEulerAngles(52, 38, 0);
     app.root.addChild(light);
-    const fill = new pc.Entity("cool bounce");
-    fill.addComponent("light", {
-      type: "directional",
-      color: new pc.Color(0.63, 0.81, 1),
-      intensity: 0.62,
-    });
-    fill.setEulerAngles(27, -139, 0);
-    app.root.addChild(fill);
+    if (!software) {
+      const fill = new pc.Entity("cool bounce");
+      fill.addComponent("light", {
+        type: "directional",
+        color: new pc.Color(0.63, 0.81, 1),
+        intensity: 0.62,
+      });
+      fill.setEulerAngles(27, -139, 0);
+      app.root.addChild(fill);
+    }
     let journal = 0;
     let journalStage: JournalStage = "closed";
     canvas.dataset.journal = journalStage;
