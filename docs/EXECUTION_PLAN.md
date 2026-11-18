@@ -48,3 +48,5 @@ The owner authorized M14 on merged M13 `926f255`. Use `codex/m14-character-art` 
 2. Author a compact 3D kit for the engineer, notebook and main board landmarks. Use a joint hierarchy and keyed poses for gait, idle and taking out the notebook. Keep immutable board meshes in static batches.
 3. Route N and the visible notebook control through the existing episode command. Freeze traversal, animate the book and camera, show live evidence on the physical pages and retain localized keyboard-operable diagnosis controls. Reverse the sequence on close and bypass animated motion when reduced motion is set.
 4. Record asset provenance and capture comparable browser frames. Exercise open, view, close, reduced motion and the complete repair/commissioning route in packaged browser tests. Run the full verifier and review rendering workload before opening the PR.
+
+Implementation, packaged local verification and before/after captures are complete. [Development status](DEVELOPMENT_STATUS.md) records the results and measured workload. [PR #18](https://github.com/ernismorka/project-spark/pull/18) tracks final-head checks and review. A later milestone requires owner approval.
