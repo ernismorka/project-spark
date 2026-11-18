@@ -56,3 +56,19 @@ it("keeps close obstruction views nondegenerate and preserves orbit orientation"
     0.1,
   );
 });
+
+it("pushes toward the journal smoothly and restores the original camera pose", () => {
+  const entity = new Entity();
+  const camera = new FollowCamera(entity);
+  const foot = { x: -3.5, y: 0, z: -15 };
+  camera.update(foot, 1);
+  const initial = entity.getPosition().clone();
+  camera.update(foot, 0.016, false, 0.5, 2.6);
+  const middle = entity.getPosition().clone();
+  camera.update(foot, 0.016, false, 1, 2.6);
+  const close = entity.getPosition().clone();
+  expect(initial.distance(middle)).toBeGreaterThan(1);
+  expect(initial.distance(middle)).toBeLessThan(initial.distance(close));
+  camera.update(foot, 0.016);
+  expect(entity.getPosition().distance(initial)).toBeLessThan(0.001);
+});

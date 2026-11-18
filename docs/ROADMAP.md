@@ -1,5 +1,7 @@
 # Roadmap
 
+M14 Character & Art Overhaul is authorized on merged [M13 PR #17](https://github.com/ernismorka/project-spark/pull/17). It covers an original articulated character, a PCB workshop art kit and a physical field notebook. Acceptance includes before/after captures, bilingual keyboard access, reduced motion and the complete diagnostic and programming route.
+
 M13 Visual Identity & Field Journal is authorized on merged [M12 PR #16](https://github.com/ernismorka/project-spark/pull/16). The slice covers T1's visual identity, a live two-leaf journal and browser validation of the existing route. [ART_ASSETS.md](ART_ASSETS.md) records artwork and mesh provenance.
 
 M12 Graphics & Interaction Animations is authorized on merged [M11 PR #15](https://github.com/ernismorka/project-spark/pull/15). It refines the existing procedural board and adds presentation-only movement, camera and accepted-action animations, with before/after browser captures and workload checks.

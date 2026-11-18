@@ -14,6 +14,10 @@ The demo runs only on this computer. Internet is unnecessary after Node/browser 
 
 WASD moves relative to the camera; Shift runs; Space jumps. Click the board to focus, drag to orbit if pointer lock is unavailable, wheel to zoom. E inspects, F identifies a supported nearby component. Follow the gold beacon and compass. Esc pauses/releases capture. Menus support Tab/Shift+Tab/Enter. Valdymas taip pat paaiškintas žaidimo languose.
 
+On the field route, pick up the multimeter at T1. Q takes a reading or repairs the localized junction. N opens or closes the notebook. Press Tab to reach Measurements and Diagnosis, and use Escape to return to the board.
+
+Pasirinkus matavimus plokštėje, multimetrą paimk prie T1. Q matuoja įtampą arba taiso nustatytą jungtį. N atveria arba užveria užrašus. Tab perkelia žymeklį į matavimų ir diagnozės valdiklius. Escape grąžina į plokštę.
+
 Follow the episode: explore → measure VCC/SENSE → diagnose R1 → restore → remeasure both → verify → terminal construction → programming → activate. The terminal explains each next action. Title workbench is separate practice and grants no episode progress. See KNOWN-LIMITATIONS.md and PLAYTEST.md.
 
 ## Troubleshooting / Trikčių šalinimas

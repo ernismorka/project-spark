@@ -964,16 +964,21 @@ footer {
   max-width: 100%;
 }
 
+.menu-layer.journal-stage {
+  background: linear-gradient(90deg, transparent 25%, #17344c94 100%);
+  justify-content: flex-end;
+  align-items: center;
+  padding: clamp(8px, 2.1vw, 30px);
+}
 .game-menu.field-journal-menu {
-  width: min(680px, 100%);
+  width: min(42%, 485px);
   border: 1px solid #b78764;
-  border-radius: 10px 22px 22px 10px;
-  padding: clamp(10px, 3vw, 22px);
-  background: linear-gradient(90deg, #694834 0 7px, #193c41 7px 100%);
+  border-radius: 12px 16px 16px 12px;
+  padding: clamp(8px, 1.3vw, 18px);
+  background: #193b49f5;
   box-shadow:
     0 16px 55px #081c26b8,
     inset 0 0 0 4px #254e50;
-  animation: journal-open 260ms ease-out both;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -990,6 +995,7 @@ footer {
 }
 .field-journal-menu h2 {
   font-family: Georgia, serif;
+  font-size: clamp(1.1rem, 2.2vw, 1.55rem);
   margin: 0 0 8px;
   color: #fff5dc;
 }
@@ -1021,7 +1027,7 @@ footer {
   transform-origin: left center;
   animation: journal-leaf-in 230ms ease-out both;
   border-radius: 0 10px 12px 4px;
-  padding: clamp(8px, 2.5vw, 20px);
+  padding: clamp(7px, 1.15vw, 13px);
   min-width: 0;
   color: #1c3442;
   grid-column: 1 / -1;
@@ -1035,7 +1041,7 @@ footer {
   margin: 0 0 10px;
 }
 .journal-leaf table {
-  font-size: clamp(0.72rem, 2.7vw, 1rem);
+  font-size: clamp(0.72rem, 1.35vw, 0.92rem);
 }
 .journal-leaf th,
 .journal-leaf td {
@@ -1068,6 +1074,7 @@ footer {
 .journal-leaf label {
   color: #203b4c;
   font-weight: 650;
+  font-size: 0.82rem;
   min-width: 0;
 }
 .journal-leaf button {
@@ -1077,15 +1084,13 @@ footer {
   outline: 2px solid #307b87;
   outline-offset: 2px;
 }
-@keyframes journal-open {
-  from {
-    transform: perspective(900px) rotateX(12deg) scale(0.97);
-    opacity: 0;
-  }
-  to {
-    transform: none;
-    opacity: 1;
-  }
+.field-meter kbd {
+  display: inline-block;
+  margin-left: 0.6em;
+  padding: 0.05em 0.42em;
+  border: 1px solid #66818b;
+  border-radius: 3px;
+  color: #c5d9df;
 }
 @keyframes journal-leaf-in {
   from {
@@ -1106,16 +1111,32 @@ footer {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .game-menu.field-journal-menu,
   .journal-leaf,
   .journal-leaf .journal-ink {
     animation: none;
   }
 }
 
-@media (max-width: 600px) {
-  .game-menu.field-journal-menu,
+@media (max-width: 760px) {
+  .menu-layer.journal-stage {
+    align-items: flex-end;
+    justify-content: center;
+    background: linear-gradient(transparent 27%, #17344c9c 100%);
+  }
+  .game-menu.field-journal-menu:not(.diagnostic-menu) {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: calc(56% - 8px);
+  }
   .journal-leaf form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 430px) {
+  .game-menu.field-journal-menu {
     grid-template-columns: minmax(0, 1fr);
   }
   .field-journal-menu .journal-close {

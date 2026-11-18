@@ -63,3 +63,9 @@ Windows doctor and headed `pnpm verify` passed with 94 unit and integration test
 The opening scene used 80 draw calls in both browsers, up from 78 in M12. Baking the T1 surfaces into one mesh brought the count down from the first M13 pass of 88. The scene gzip grew from 285.33 kB to 298.98 kB, and the journal paper is a separate 23.64 kB JPEG. In short 1080p field samples on the same Windows host, Chromium reported 4.20/4.30 ms median/p95, matching M12. Firefox reported 4.16/8.34 ms, up from 4.16/4.18 ms in M12. The separate Firefox opening scene sample still reported 4.16/4.18 ms. These are host-specific observations. Sustained performance on representative hardware remains unverified.
 
 [PR #17](https://github.com/ernismorka/project-spark/pull/17) tracks review and exact final-head CI.
+
+## M14 Character & Art Overhaul
+
+Started from merged M13 `926f255` on `codex/m14-character-art`. The original [workshop art kit](ART_ASSETS.md) replaces the flat component silhouettes and primitive engineer. N opens the physical field notebook after T1 multimeter pickup. The notebook holds live solver readings and retains bilingual keyboard-operated diagnosis. The scene locks movement through the close animation and honors reduced motion.
+
+The first packaged Windows pass covered 97 unit and integration tests, three release tests and all 34 headed Chromium and Firefox checks. The comparable opening scene used 104 draw calls in both browsers. Final-head verification will sample the larger static batches and capture final before/after evidence.

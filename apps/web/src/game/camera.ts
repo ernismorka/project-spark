@@ -49,15 +49,18 @@ export function clipDistance(from: Vec3, to: Vec3): number {
 }
 export class FollowCamera {
   yaw = 0;
-  pitch = 0.48;
-  zoom = 8;
-  private displayedZoom = 8;
+  pitch = 0.47;
+  zoom = 7.3;
+  private displayedZoom = this.zoom;
   private target = new pc.Vec3();
   private initialized = false;
   private readonly desiredTarget = new pc.Vec3();
   private readonly offset = new pc.Vec3();
   private readonly desired = new pc.Vec3();
   private readonly overheadUp = new pc.Vec3();
+  private readonly journalView = new pc.Vec3();
+  private readonly journalTarget = new pc.Vec3();
+  private readonly view = new pc.Vec3();
   constructor(readonly entity: pc.Entity) {}
   orbit(x: number, y: number) {
     this.yaw -= x * cameraSettings.sensitivity;
@@ -75,7 +78,13 @@ export class FollowCamera {
       Math.min(cameraSettings.maxZoom, this.zoom + delta * 0.01),
     );
   }
-  update(position: Vec3, dt: number, reducedMotion = false) {
+  update(
+    position: Vec3,
+    dt: number,
+    reducedMotion = false,
+    journal = 0,
+    aspect = 1.7,
+  ) {
     this.displayedZoom +=
       (this.zoom - this.displayedZoom) *
       (reducedMotion ? 1 : 1 - Math.exp(-12 * dt));
@@ -121,5 +130,40 @@ export class FollowCamera {
       );
       this.entity.lookAt(this.target);
     }
+    if (this.entity.camera)
+      this.entity.camera.fov = pc.math.lerp(58, 49, journal);
+    if (journal === 0) return;
+    const c = Math.cos(this.yaw);
+    const s = Math.sin(this.yaw);
+    const portrait = aspect < 1.2;
+    const pullback = portrait ? 3.32 : 2.0;
+    const side = pc.math.clamp((aspect - 0.86) * 0.58, 0, 0.85);
+    this.journalTarget.set(
+      position.x + side * c,
+      position.y + (portrait ? 0.14 : 1.24),
+      position.z - side * s,
+    );
+    this.journalView.set(
+      position.x + pullback * s + (side + 0.12) * c,
+      position.y + (portrait ? 3.4 : 2.31),
+      position.z + pullback * c - (side + 0.12) * s,
+    );
+    if (clipDistance(desiredTarget, this.journalView) < 0.48) {
+      // At the face of a tall component the top of the open book is still visible.
+      this.journalView.set(
+        position.x + 0.14 * s,
+        position.y + 3,
+        position.z + 0.14 * c,
+      );
+    }
+    this.view.lerp(this.entity.getPosition(), this.journalView, journal);
+    this.view.lerp(
+      desiredTarget,
+      this.view,
+      clipDistance(desiredTarget, this.view),
+    );
+    this.journalTarget.lerp(this.target, this.journalTarget, journal);
+    this.entity.setPosition(this.view);
+    this.entity.lookAt(this.journalTarget);
   }
 }

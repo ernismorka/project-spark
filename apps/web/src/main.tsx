@@ -30,6 +30,7 @@ import { messages } from "./i18n";
 import { gameplay } from "./gameplay-i18n";
 import "./style.css";
 import { objectiveTarget, targetBearing } from "./game/navigation";
+import type { JournalStage } from "./game/engineer-motion";
 import {
   difficulties,
   difficultyCopy,
@@ -49,6 +50,10 @@ function App() {
   const stage = episodeStage(episode);
   const e = episodeCopy[state.language];
   const field = episode.field;
+  const [journalStage, setJournalStage] = useState<JournalStage>("closed");
+  const playing = session.phase === "playing" && journalStage === "closed";
+  const language = useRef(state.language);
+  language.current = state.language;
   const fieldText = fieldCopy[state.language];
   const fieldActive = !!field && !session.repair.completed;
   const fieldOffered =
@@ -112,10 +117,12 @@ function App() {
     const controller = new AbortController();
     let dispose: (() => void) | undefined;
     setStatus("loading");
+    setJournalStage("closed");
     const element = canvas.current!;
     const lost = (event: Event) => {
       event.preventDefault();
       dispatch({ type: "pause" });
+      setJournalStage("closed");
       setStatus("error");
       controller.abort();
       queueMicrotask(() => dispose?.());
@@ -127,6 +134,18 @@ function App() {
           get: () => current.current.session,
           activated: () => current.current.activated,
           field: () => current.current.field,
+          language: () => language.current,
+          journalStage: setJournalStage,
+          journalToggle: () => {
+            const { field, session } = current.current;
+            if (
+              !field ||
+              session.phase !== (field.notebook ? "paused" : "playing")
+            )
+              return false;
+            dispatch({ type: "field-notebook" });
+            return true;
+          },
           difficulty: () => guidance.current,
           fieldUse: () => {
             const { field, session } = current.current;
@@ -180,9 +199,13 @@ function App() {
       menu.current
         ?.querySelector<HTMLButtonElement>("button:not(:disabled)")
         ?.focus();
-  }, [session.phase, viewBoard]);
+  }, [session.phase, viewBoard, journalStage]);
   const showingBoard =
     viewBoard && session.phase === "complete" && session.repair.completed;
+  const showSceneMenu =
+    session.phase !== "playing" &&
+    !showingBoard &&
+    (!field?.notebook || journalStage === "open");
   const nearby = nearbyComponents(session);
   const target = nearby.find((c) => c.id === selected) ?? nearby[0];
   const inspected = components.find((c) => c.id === session.inspection?.id);
@@ -307,7 +330,7 @@ function App() {
                 {programmingCopy[state.language].open}
               </button>
             )}
-            {session.phase === "playing" && (
+            {playing && (
               <button onClick={() => dispatch({ type: "pause" })}>
                 {g.pause}
               </button>
@@ -440,7 +463,7 @@ function App() {
               </div>
             ) : (
               <>
-                {session.phase === "playing" && field && (
+                {playing && field && (
                   <>
                     {navigation && fieldGuide && (
                       <div className="compass">
@@ -504,14 +527,16 @@ function App() {
                         </button>
                       )}
                       <button
+                        aria-keyshortcuts="N"
                         onClick={() => dispatch({ type: "field-notebook" })}
                       >
                         {fieldText.title}
+                        <kbd aria-hidden="true">N</kbd>
                       </button>
                     </aside>
                   </>
                 )}
-                {session.phase === "playing" && !field && (
+                {playing && !field && (
                   <>
                     {navigation && (
                       <div className="compass">
@@ -624,11 +649,15 @@ function App() {
                     </button>
                   </div>
                 )}
-                {session.phase !== "playing" && !showingBoard && (
+                {showSceneMenu && (
                   <div
                     className={
                       "menu-layer " +
-                      (session.phase === "inspecting" ? "inspection-layer" : "")
+                      (field?.notebook
+                        ? "journal-stage"
+                        : session.phase === "inspecting"
+                          ? "inspection-layer"
+                          : "")
                     }
                   >
                     <div
@@ -660,8 +689,6 @@ function App() {
                                 : g.selected
                       }
                       onKeyDown={(e) => {
-                        if (field?.notebook && e.key === "Escape")
-                          dispatch({ type: "field-notebook" });
                         if (e.key === "Tab") {
                           const buttons = Array.from(
                             e.currentTarget.querySelectorAll<HTMLElement>(

@@ -1,5 +1,9 @@
 # Game design document
 
+## M14 Character & Art Overhaul
+
+The miniature engineer wears an ivory shell, marigold work gear and a petrol-blue visor. Articulated limbs, a moving visor expression and a small tool pack show motion and scale on the layered PCB workshop. For field diagnostics, N draws a physical notebook, opens it in the engineer's hands and moves the camera in. Its two pages show before/after evidence. Keyboard-operated journal controls retain the readings table and diagnosis form. Closing puts the book away and restores the follow camera. Reduced motion uses the settled poses.
+
 ## M13 Visual Identity & Field Journal
 
 The T1 service area demonstrates an original miniature-workshop look with an ivory rounded housing, copper footing, dark connector panel and blue display. The engineer's journal separates measurements and diagnosis into two leaves. It opens on live readings, turns on player input and reveals recorded voltages as ink. Players retain keyboard access, EN/LT and reduced motion. Guidance tiers still govern which hints appear.

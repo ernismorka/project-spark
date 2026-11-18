@@ -73,6 +73,14 @@ test("packaged HTTP server confines reads, validates authority and stops cleanly
     const image = await get(`/${paper}`, { method: "HEAD" });
     assert.equal(image.status, 200);
     assert.equal(image.headers["content-type"], "image/jpeg");
+    const workshop = Object.keys(assets).find((name) =>
+      /^assets\/workshop-.*\.glb$/.test(name),
+    );
+    assert.ok(workshop);
+    assert.ok(assets[workshop].bytes < 1.25 * 1024 * 1024);
+    const mesh = await get(`/${workshop}`, { method: "HEAD" });
+    assert.equal(mesh.status, 200);
+    assert.equal(mesh.headers["content-type"], "model/gltf-binary");
     for (const path of [
       "/../manifest.json",
       "/%2e%2e/manifest.json",

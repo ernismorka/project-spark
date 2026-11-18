@@ -25,6 +25,10 @@ export function bindInput(
   dispatch: (command: ExplorationCommand) => void,
   target: () => string | undefined,
   fieldUse?: () => boolean,
+  journal?: {
+    locked: () => boolean;
+    toggle: () => boolean;
+  },
 ) {
   const keys = new Set<string>();
   let jump = false;
@@ -40,7 +44,7 @@ export function bindInput(
     if (document.pointerLockElement === canvas) document.exitPointerLock();
   };
   const lock = () => {
-    if (get().phase === "playing" && !disposed) {
+    if (get().phase === "playing" && !disposed && !journal?.locked()) {
       canvas.focus({ preventScroll: true });
       canvas.requestPointerLock?.()?.catch(() => {
         /* Drag-to-orbit remains available when the browser denies lock. */
@@ -48,6 +52,25 @@ export function bindInput(
     }
   };
   const keydown = (e: KeyboardEvent) => {
+    if (
+      !e.repeat &&
+      !e.ctrlKey &&
+      !e.altKey &&
+      !e.metaKey &&
+      (e.code === "KeyN" || (e.code === controls.pause && journal?.locked())) &&
+      (e.code === controls.pause ||
+        document.activeElement === canvas ||
+        (document.activeElement?.tagName !== "SELECT" &&
+          document.activeElement?.closest(
+            ".field-journal-menu, .field-meter",
+          ))) &&
+      journal?.toggle()
+    ) {
+      e.preventDefault();
+      release();
+      return;
+    }
+    if (journal?.locked()) return;
     if (e.code === controls.pause) {
       if (get().phase === "diagnosing") dispatch({ type: "close-diagnostics" });
       else if (get().phase === "inspecting")
@@ -87,7 +110,7 @@ export function bindInput(
   };
   const keyup = (e: KeyboardEvent) => keys.delete(e.code);
   const down = () => {
-    if (get().phase === "playing") {
+    if (get().phase === "playing" && !journal?.locked()) {
       dragging = true;
       lock();
     }
@@ -98,24 +121,30 @@ export function bindInput(
   const mouse = (e: MouseEvent) => {
     if (
       get().phase === "playing" &&
+      !journal?.locked() &&
       (document.pointerLockElement === canvas || dragging)
     )
       camera.orbit(e.movementX, e.movementY);
   };
   const wheel = (e: WheelEvent) => {
-    if (get().phase === "playing") {
+    if (get().phase === "playing" && !journal?.locked()) {
       e.preventDefault();
       camera.wheel(e.deltaY);
     }
   };
   const change = () => {
-    if (!document.pointerLockElement && get().phase === "playing") {
+    if (
+      !document.pointerLockElement &&
+      get().phase === "playing" &&
+      !journal?.locked()
+    ) {
       clear();
       dispatch({ type: "pause" });
     }
   };
   const blur = () => {
-    if (get().phase === "playing") dispatch({ type: "pause" });
+    if (get().phase === "playing" && !journal?.locked())
+      dispatch({ type: "pause" });
     release();
   };
   window.addEventListener("keydown", keydown);
