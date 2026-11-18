@@ -53,3 +53,7 @@ The first full Linux M11 run found the narrow Lithuanian legacy diagnostics exit
 Windows doctor and headed `pnpm verify` passed, including 94 unit/integration tests, three release tests and all 34 Chromium and Firefox checks. The field test covers a rejected probe, a real reading, repair, reduced-motion feedback and final commissioning. Existing EN/LT, difficulty, cooperative, paused-render and cleanup scenarios passed.
 
 Inspected M11 and M12 captures of the opening board, trace junction and verified 1080p field view, plus M12 meter and repair contact frames. The edge silkscreen marks added four opening draw calls, from 74 to 78. The short 1080p field observations on the Windows host matched M11's local values: 4.20/4.30 ms median/p95 in headed Chromium and 4.16/4.18 ms in headed Firefox. The scene gzip rose from 284.40 kB to 285.33 kB. These observations are scoped to the tested host and do not certify sustained representative hardware performance.
+
+## M13 Visual Identity & Field Journal
+
+[M12 PR #16](https://github.com/ernismorka/project-spark/pull/16) merged at `7ecc53d`. M13's original T1 mesh and journal paper are documented in [ART_ASSETS.md](ART_ASSETS.md), which ships with the package. The journal has keyboard-operable measurement and diagnosis leaves, live solver readings and reduced-motion support. No solver, board behavior or repair rules changed. Local packaged verification and visual comparison are in progress.

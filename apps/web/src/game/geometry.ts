@@ -1,5 +1,11 @@
 import * as pc from "playcanvas";
-export function createGeometry(root: pc.Entity, batchGroupId?: number) {
+import terminalShell from "../assets/terminal-shell.json";
+
+export function createGeometry(
+  root: pc.Entity,
+  device: pc.GraphicsDevice,
+  batchGroupId: number,
+) {
   const materials: pc.StandardMaterial[] = [];
   const material = (color: string, glow = false, finish = 0.14) => {
     const m = new pc.StandardMaterial();
@@ -29,17 +35,25 @@ export function createGeometry(root: pc.Entity, batchGroupId?: number) {
     white: material("#f0edcf"),
     brown: material("#9b5b37"),
   };
+  let roundedMesh: pc.Mesh | undefined;
   const shape = (
-    type: "box" | "cylinder" | "sphere" | "cone",
+    type: "box" | "cylinder" | "sphere" | "cone" | "rounded",
     p: [number, number, number],
     s: [number, number, number],
     m: pc.StandardMaterial,
     parent = root,
   ) => {
     const e = new pc.Entity();
-    e.addComponent("render", { type, material: m });
-    if (parent === root && batchGroupId !== undefined)
-      e.render!.batchGroupId = batchGroupId;
+    if (type === "rounded") {
+      roundedMesh ??= pc.Mesh.fromGeometry(
+        device,
+        Object.assign(new pc.Geometry(), terminalShell),
+      );
+      e.addComponent("render", {
+        meshInstances: [new pc.MeshInstance(roundedMesh, m, e)],
+      });
+    } else e.addComponent("render", { type, material: m });
+    if (parent === root) e.render!.batchGroupId = batchGroupId;
     e.setLocalPosition(...p);
     e.setLocalScale(...s);
     parent.addChild(e);

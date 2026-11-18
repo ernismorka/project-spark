@@ -31,3 +31,9 @@ The owner authorized M12 on merged M11 `f9e0dd7`. Implement on `codex/m12-graphi
 Acceptance covers unchanged readings and repair gates, no feedback for rejected actions, reduced motion, paused render lifecycle, before/after board captures, workload sampling and both packaged browser projects. Record findings and PR evidence in [Development status](DEVELOPMENT_STATUS.md).
 
 Local implementation and verification are complete. [PR #16](https://github.com/ernismorka/project-spark/pull/16) tracks review and exact final-head CI. A later milestone requires owner approval.
+
+## M13 Visual Identity & Field Journal
+
+The owner authorized M13 on merged M12 `7ecc53d`. Use `codex/m13-field-journal` to demonstrate the original ivory, teal and copper art direction at the T1 service area. Pair a rounded terminal mesh with an illustrated journal containing a measurements leaf and a diagnosis leaf. Keep the current board collisions, commands, evidence, guidance tiers and movement.
+
+Acceptance covers the offline assets and their provenance, a real EN/LT field playthrough, keyboard page navigation and diagnosis, reduced motion, narrow layout, before/after captures and a comparable scene-workload sample.

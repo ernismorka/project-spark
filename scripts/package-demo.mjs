@@ -80,6 +80,7 @@ export async function packageDemo() {
     ["DEMO_START.md", "START-HERE.md"],
     ["DEMO_LIMITATIONS.md", "KNOWN-LIMITATIONS.md"],
     ["PLAYTEST.md", "PLAYTEST.md"],
+    ["ART_ASSETS.md", "ART-ASSETS.md"],
   ])
     await cp(resolve(root, "docs", from), join(stage, to));
   // Conservative production workspace license inventory, including optional pilot deps.

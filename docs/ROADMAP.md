@@ -1,5 +1,7 @@
 # Roadmap
 
+M13 Visual Identity & Field Journal is authorized on merged [M12 PR #16](https://github.com/ernismorka/project-spark/pull/16). The slice covers T1's visual identity, a live two-leaf journal and browser validation of the existing route. [ART_ASSETS.md](ART_ASSETS.md) records artwork and mesh provenance.
+
 M12 Graphics & Interaction Animations is authorized on merged [M11 PR #15](https://github.com/ernismorka/project-spark/pull/15). It refines the existing procedural board and adds presentation-only movement, camera and accepted-action animations, with before/after browser captures and workload checks.
 
 M11 guidance difficulty is authorized on merged M10. It adds a persistent Apprentice, Technician or Engineer presentation preference while retaining the same simulation, fault and repair authority.

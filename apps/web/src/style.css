@@ -964,6 +964,166 @@ footer {
   max-width: 100%;
 }
 
+.game-menu.field-journal-menu {
+  width: min(680px, 100%);
+  border: 1px solid #b78764;
+  border-radius: 10px 22px 22px 10px;
+  padding: clamp(10px, 3vw, 22px);
+  background: linear-gradient(90deg, #694834 0 7px, #193c41 7px 100%);
+  box-shadow:
+    0 16px 55px #081c26b8,
+    inset 0 0 0 4px #254e50;
+  animation: journal-open 260ms ease-out both;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+.field-journal-menu .field-notebook {
+  display: contents;
+}
+.field-journal-menu .journal-close {
+  grid-column: 2;
+  justify-self: end;
+  margin: 0 0 8px;
+  background: #f2ca9d;
+  border-color: #f2ca9d;
+}
+.field-journal-menu h2 {
+  font-family: Georgia, serif;
+  margin: 0 0 8px;
+  color: #fff5dc;
+}
+.field-journal-menu .eyebrow {
+  margin: 0 0 4px;
+  color: #efba91;
+  grid-column: 1 / -1;
+}
+.field-notebook .journal-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-block: 4px 0;
+  grid-column: 1 / -1;
+}
+.field-notebook .journal-pages button {
+  margin: 0;
+  border-radius: 8px 8px 0 0;
+  border-color: #c9b898;
+  padding: 7px 12px;
+  color: #203a42;
+  background: #cfbd99;
+}
+.field-notebook .journal-pages button[aria-pressed="true"] {
+  background: #fff4dc;
+  font-weight: 750;
+}
+.journal-leaf {
+  transform-origin: left center;
+  animation: journal-leaf-in 230ms ease-out both;
+  border-radius: 0 10px 12px 4px;
+  padding: clamp(8px, 2.5vw, 20px);
+  min-width: 0;
+  color: #1c3442;
+  grid-column: 1 / -1;
+  background: #f8eed8 url("./assets/journal-paper.jpg") center / cover;
+  box-shadow:
+    2px 3px 0 #cab491,
+    4px 6px 0 #a38e70;
+}
+.journal-leaf p {
+  color: #203b4c;
+  margin: 0 0 10px;
+}
+.journal-leaf table {
+  font-size: clamp(0.72rem, 2.7vw, 1rem);
+}
+.journal-leaf th,
+.journal-leaf td {
+  border-bottom-color: #49626e60;
+  padding: clamp(3px, 1vw, 8px);
+}
+.journal-leaf .journal-ink {
+  display: inline-block;
+  color: #165469;
+  font:
+    italic 700 1em Georgia,
+    serif;
+  animation: journal-write 300ms 55ms ease-out both;
+}
+.journal-leaf select {
+  width: 100%;
+  color: #233945;
+  background: #fff8e8;
+  padding: 6px;
+  border: 1px solid #8b9a98;
+}
+.journal-leaf form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.journal-leaf form > :first-child,
+.journal-leaf form > button,
+.journal-leaf form > p {
+  grid-column: 1 / -1;
+}
+.journal-leaf label {
+  color: #203b4c;
+  font-weight: 650;
+  min-width: 0;
+}
+.journal-leaf button {
+  justify-self: start;
+}
+.field-journal-menu :focus-visible {
+  outline: 2px solid #307b87;
+  outline-offset: 2px;
+}
+@keyframes journal-open {
+  from {
+    transform: perspective(900px) rotateX(12deg) scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes journal-leaf-in {
+  from {
+    transform: perspective(900px) rotateY(-13deg);
+    opacity: 0.72;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes journal-write {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-menu.field-journal-menu,
+  .journal-leaf,
+  .journal-leaf .journal-ink {
+    animation: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .game-menu.field-journal-menu,
+  .journal-leaf form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .field-journal-menu .journal-close {
+    grid-column: 1;
+    justify-self: start;
+  }
+}
+
 .difficulty-picker {
   position: relative;
 }

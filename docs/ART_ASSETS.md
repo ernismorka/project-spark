@@ -1,0 +1,14 @@
+# Art assets
+
+M13's original service area uses warm ivory shells, a teal work surface, smoked-glass blue panels and copper edges. Rounded corners and material contrast support the miniature scale. All artwork and meshes were produced for Project Spark without third-party game assets.
+
+| Asset                                     | Source and rights                                                                                                                                                                                                    | Delivery                                                                                                                                                             |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/src/assets/journal-paper.jpg`   | Original AI-generated texture using the built-in OpenAI ImageGen tool. No external source artwork was supplied. No third-party asset license is asserted.                                                            | Cropped by the UI as a paper background, resized to 640 × 640, and converted to JPEG at quality 62. All journal text, readings and labels come from the application. |
+| `apps/web/src/assets/terminal-shell.json` | Original Project Spark mesh data authored for M13. Rounded cube surfaces were projected onto a radius-0.1 bevel with smooth normals and outward triangle winding. No imported geometry or third-party asset license. | 216 vertices and 300 triangles. The renderer reuses a single source mesh, applies existing materials and batches static terminal parts.                              |
+
+The demo includes a copy of this inventory. The JS/CSS and media are served locally with the packaged game.
+
+## Journal texture prompt
+
+> Use case: stylized-concept. Asset type: background texture for the live UI of an open engineer field journal in an original playful miniature PCB adventure. Orthographic straight-on single full-bleed warm ivory engineering paper sheet, very fine pale muted blue grid, subtle real paper fibers, sparse tiny blue pencil circuit sketches exclusively in the extreme corners (abstract solder-pad dots, wire curves); broad uniform clean light center for dark text overlay. Minimal quiet printmaking, cream #f8f0db, slate-blue ink, fine tactile fiber detail, flat evenly lit, no shadow, no book edges. No text, letters, numbers, logos, watermark, objects, perspective, or heavy stains. Full bleed square.
