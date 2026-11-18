@@ -8,6 +8,9 @@ const en = {
   brief:
     "Take the meter to three probe pads. All DC readings use the board’s fixed GND reference.",
   title: "Field notebook",
+  measurements: "Measurements",
+  diagnosis: "Diagnosis",
+  pages: "Journal pages",
   stage: "Field diagnostics",
   controls:
     "WASD · Walk   Shift · Run   Space · Jump   Q · Use meter or repair   Esc · Pause",
@@ -49,6 +52,9 @@ const lt: typeof en = {
   brief:
     "Nunešk multimetrą prie trijų matavimo taškų. Nuolatinė įtampa matuojama plokštės GND atžvilgiu.",
   title: "Matavimų užrašai",
+  measurements: "Matavimai",
+  diagnosis: "Diagnozė",
+  pages: "Užrašų puslapiai",
   stage: "Diagnostika plokštėje",
   controls:
     "WASD · Eiti   Shift · Bėgti   Space · Šokti   Q · Matuoti ar taisyti   Esc · Pristabdyti",
@@ -140,6 +146,9 @@ export function FieldNotebook({
 }) {
   const copy = fieldCopy[language];
   const showHints = difficulty !== "engineer";
+  const [page, setPage] = useState<"measurements" | "diagnosis">(
+    "measurements",
+  );
   const [fault, setFault] = useState("");
   const [upstream, setUpstream] = useState("");
   const [downstream, setDownstream] = useState("");
@@ -147,92 +156,130 @@ export function FieldNotebook({
   return (
     <div className="field-notebook">
       <button
-        className="primary"
+        className="primary journal-close"
         onClick={() => dispatch({ type: "field-notebook" })}
       >
         {copy.close}
       </button>
-      <p role="status">{fieldTask(field, language, difficulty)}</p>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">{copy.point}</th>
-            {showHints && <th scope="col">{copy.healthy}</th>}
-            <th scope="col">{copy.before}</th>
-            <th scope="col">{copy.after}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {fieldPads.map(({ id }) => (
-            <tr key={id}>
-              <th scope="row">{copy.labels[id]}</th>
-              {showHints && (
-                <td>{fieldVoltage(language, id === "P3" ? 2.5 : 5)}</td>
-              )}
-              <td>{fieldVoltage(language, field.before[id])}</td>
-              <td>{fieldVoltage(language, field.after[id])}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {field.phase === "collect" && (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            dispatch({ type: "field-diagnose", fault, upstream, downstream });
-          }}
-        >
-          <label>
-            {copy.fault}
-            <select
-              disabled={!ready}
-              value={fault}
-              onChange={(event) => setFault(event.target.value)}
-            >
-              <option value="">{copy.choose}</option>
-              <option value="source">{copy.source}</option>
-              <option value="feed">{copy.feed}</option>
-              <option value="divider">{copy.divider}</option>
-            </select>
-          </label>
-          {[
-            { label: copy.upstream, value: upstream, set: setUpstream },
-            { label: copy.downstream, value: downstream, set: setDownstream },
-          ].map(({ label, value, set }) => (
-            <label key={label}>
-              {label}
+      <nav aria-label={copy.pages} className="journal-pages">
+        {(["measurements", "diagnosis"] as const).map((leaf) => (
+          <button
+            key={leaf}
+            type="button"
+            aria-pressed={page === leaf}
+            onClick={() => setPage(leaf)}
+          >
+            {copy[leaf]}
+          </button>
+        ))}
+      </nav>
+      <section key={page} className="journal-leaf" aria-label={copy[page]}>
+        <p role="status">{fieldTask(field, language, difficulty)}</p>
+        {page === "measurements" && (
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">{copy.point}</th>
+                {showHints && <th scope="col">{copy.healthy}</th>}
+                <th scope="col">{copy.before}</th>
+                <th scope="col">{copy.after}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fieldPads.map(({ id }) => (
+                <tr key={id}>
+                  <th scope="row">{copy.labels[id]}</th>
+                  {showHints && (
+                    <td>{fieldVoltage(language, id === "P3" ? 2.5 : 5)}</td>
+                  )}
+                  <td>
+                    <span
+                      className={
+                        field.before[id] === undefined
+                          ? undefined
+                          : "journal-ink"
+                      }
+                    >
+                      {fieldVoltage(language, field.before[id])}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className={
+                        field.after[id] === undefined
+                          ? undefined
+                          : "journal-ink"
+                      }
+                    >
+                      {fieldVoltage(language, field.after[id])}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {page === "diagnosis" && field.phase === "collect" && (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              dispatch({ type: "field-diagnose", fault, upstream, downstream });
+            }}
+          >
+            <label>
+              {copy.fault}
               <select
                 disabled={!ready}
-                value={value}
-                onChange={(event) => set(event.target.value)}
+                value={fault}
+                onChange={(event) => setFault(event.target.value)}
               >
                 <option value="">{copy.choose}</option>
-                {fieldPads.map(({ id }) => (
-                  <option key={id} value={id}>
-                    {copy.labels[id]}
-                  </option>
-                ))}
+                <option value="source">{copy.source}</option>
+                <option value="feed">{copy.feed}</option>
+                <option value="divider">{copy.divider}</option>
               </select>
             </label>
-          ))}
-          <button
-            disabled={
-              !ready ||
-              !fault ||
-              !upstream ||
-              !downstream ||
-              upstream === downstream
-            }
-          >
-            {copy.diagnose}
-          </button>
-          {field.incorrect && (
-            <p role="status">
-              {showHints ? copy.incorrect : difficultyCopy[language].incorrect}
-            </p>
-          )}
-        </form>
-      )}
+            {[
+              { label: copy.upstream, value: upstream, set: setUpstream },
+              { label: copy.downstream, value: downstream, set: setDownstream },
+            ].map(({ label, value, set }) => (
+              <label key={label}>
+                {label}
+                <select
+                  disabled={!ready}
+                  value={value}
+                  onChange={(event) => set(event.target.value)}
+                >
+                  <option value="">{copy.choose}</option>
+                  {fieldPads.map(({ id }) => (
+                    <option key={id} value={id}>
+                      {copy.labels[id]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+            <button
+              disabled={
+                !ready ||
+                !fault ||
+                !upstream ||
+                !downstream ||
+                upstream === downstream
+              }
+            >
+              {copy.diagnose}
+            </button>
+            {field.incorrect && (
+              <p role="status">
+                {showHints
+                  ? copy.incorrect
+                  : difficultyCopy[language].incorrect}
+              </p>
+            )}
+          </form>
+        )}
+      </section>
     </div>
   );
 }

@@ -20,6 +20,7 @@ test("package inventory is complete and repeated packaging reproduces contents",
   assert.deepEqual(files, before.files);
   assert.ok(files["Start Spark Demo.cmd"]);
   assert.ok(files["THIRD-PARTY-NOTICES.txt"]);
+  assert.ok(files["ART-ASSETS.md"]);
   assert.ok(
     !Object.keys(files).some(
       (name) => name.includes("node_modules") || name.includes(".map"),
@@ -63,6 +64,15 @@ test("packaged HTTP server confines reads, validates authority and stops cleanly
     assert.equal((await get("/", { method: "HEAD" })).body, "");
     const asset = index.body.match(/src="([^"]+\.js)"/)[1];
     assert.match((await get(asset)).headers["content-type"], /javascript/);
+    const assets = await inventory(join(output, "web"));
+    const paper = Object.keys(assets).find((name) =>
+      /^assets\/journal-paper-.*\.jpg$/.test(name),
+    );
+    assert.ok(paper);
+    assert.ok(assets[paper].bytes < 40 * 1024);
+    const image = await get(`/${paper}`, { method: "HEAD" });
+    assert.equal(image.status, 200);
+    assert.equal(image.headers["content-type"], "image/jpeg");
     for (const path of [
       "/../manifest.json",
       "/%2e%2e/manifest.json",

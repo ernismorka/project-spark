@@ -635,7 +635,9 @@ function App() {
                       className={
                         session.phase === "diagnosing"
                           ? "game-menu diagnostic-menu"
-                          : "game-menu"
+                          : field?.notebook
+                            ? "game-menu field-journal-menu"
+                            : "game-menu"
                       }
                       ref={menu}
                       role={session.phase === "title" ? "region" : "dialog"}
@@ -875,12 +877,12 @@ function App() {
                           <button onClick={end}>{g.returnTitle}</button>
                         </>
                       )}
-                      {session.phase !== "diagnosing" && (
+                      {session.phase !== "diagnosing" && !field?.notebook && (
                         <p className="menu-controls">
                           {fieldActive ? fieldText.controls : g.controls}
                         </p>
                       )}
-                      {session.phase !== "diagnosing" && (
+                      {session.phase !== "diagnosing" && !field?.notebook && (
                         <p className="menu-controls">{g.camera}</p>
                       )}
                     </div>

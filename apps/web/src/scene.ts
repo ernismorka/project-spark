@@ -73,7 +73,7 @@ export async function mountScene(
     app.graphicsDevice.maxPixelRatio = Math.min(window.devicePixelRatio, 1.5);
     app.scene.ambientLight = new pc.Color(0.56, 0.69, 0.79);
     batchGroupId = app.batcher!.addGroup("static-board", false, 32)!.id;
-    geometry = createGeometry(app.root, batchGroupId);
+    geometry = createGeometry(app.root, device, batchGroupId);
     const pcb = buildWorld(geometry);
     app.batcher!.generate([batchGroupId]);
     const player = buildEngineer(geometry, app.root);

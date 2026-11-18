@@ -1,5 +1,9 @@
 # Game design document
 
+## M13 Visual Identity & Field Journal
+
+The T1 service area demonstrates an original miniature-workshop look with an ivory rounded housing, copper footing, dark connector panel and blue display. The engineer's journal separates measurements and diagnosis into two leaves. It opens on live readings, turns on player input and reveals recorded voltages as ink. Players retain keyboard access, EN/LT and reduced motion. Guidance tiers still govern which hints appear.
+
 ## M12 Graphics & Interaction Animations
 
 The PCB uses distinct copper, solder-mask and component finishes. The engineer turns, strides and settles into an idle pose. Accepted field actions briefly show the corresponding meter probe or repair tool and contact feedback. The verified trace pulses when the last valid recheck completes. The cues preserve the M11 visibility rules for navigational guidance and the unchanged M10 evidence and repair rules.

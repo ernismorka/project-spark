@@ -53,3 +53,13 @@ The first full Linux M11 run found the narrow Lithuanian legacy diagnostics exit
 Windows doctor and headed `pnpm verify` passed, including 94 unit/integration tests, three release tests and all 34 Chromium and Firefox checks. The field test covers a rejected probe, a real reading, repair, reduced-motion feedback and final commissioning. Existing EN/LT, difficulty, cooperative, paused-render and cleanup scenarios passed.
 
 Inspected M11 and M12 captures of the opening board, trace junction and verified 1080p field view, plus M12 meter and repair contact frames. The edge silkscreen marks added four opening draw calls, from 74 to 78. The short 1080p field observations on the Windows host matched M11's local values: 4.20/4.30 ms median/p95 in headed Chromium and 4.16/4.18 ms in headed Firefox. The scene gzip rose from 284.40 kB to 285.33 kB. These observations are scoped to the tested host and do not certify sustained representative hardware performance.
+
+## M13 Visual Identity & Field Journal
+
+[M12 PR #16](https://github.com/ernismorka/project-spark/pull/16) merged at `7ecc53d`. M13's original T1 mesh and journal paper are documented in [ART_ASSETS.md](ART_ASSETS.md), which ships with the package. The journal has keyboard-operable measurement and diagnosis pages, live solver readings and reduced-motion support. Solver, board behavior and repair rules remain as in M12.
+
+Windows doctor and headed `pnpm verify` passed with 94 unit and integration tests, three release checks and all 34 browser checks across Chromium and Firefox. The physical field playthrough exercises English keyboard page navigation and diagnosis, the 390 px Lithuanian readings, reduced motion and commissioning. Reviewed before/after captures from the first probe, the 390 px Lithuanian measurements page and the desktop English diagnosis page. The comparison led to darker form labels and a more compact desktop form.
+
+The opening scene used 80 draw calls in both browsers, up from 78 in M12. Baking the T1 surfaces into one mesh brought the count down from the first M13 pass of 88. The scene gzip grew from 285.33 kB to 298.98 kB, and the journal paper is a separate 23.64 kB JPEG. In short 1080p field samples on the same Windows host, Chromium reported 4.20/4.30 ms median/p95, matching M12. Firefox reported 4.16/8.34 ms, up from 4.16/4.18 ms in M12. The separate Firefox opening scene sample still reported 4.16/4.18 ms. These are host-specific observations. Sustained performance on representative hardware remains unverified.
+
+[PR #17](https://github.com/ernismorka/project-spark/pull/17) tracks review and exact final-head CI.

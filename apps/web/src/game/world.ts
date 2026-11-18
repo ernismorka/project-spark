@@ -83,9 +83,7 @@ export function buildWorld(g: Geometry) {
     } else {
       for (const side of [-1, 1])
         shape("box", [x + side * 1.7, 0.04, z], [0.15, 0.04, 3], p.ink);
-      shape("box", [x, 0.6, z], [2.4, 1.2, 1.4], p.chip);
-      const screen = shape("box", [x, 1.4, z], [2.1, 0.7, 0.14], p.blue);
-      screen.setEulerAngles(-20, 0, 0);
+      shape("terminal", [x, 0, z], [1, 1, 1], p.terminal);
     }
   }
   for (const s of solids.filter((s) => s.id.startsWith("step")))

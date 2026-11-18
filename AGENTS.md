@@ -4,7 +4,7 @@
 
 Read README.md, docs/GDD.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, docs/EXECUTION_PLAN.md and docs/DEVELOPMENT_STATUS.md before continuing. GDD and roadmap are the product source of truth. Do not expand them without authorization.
 
-M11 PR #15 is merged as f9e0dd7. The owner approved M12 Graphics & Interaction Animations. Follow docs/EXECUTION_PLAN.md. Keep M12 in the browser renderer and presentation. Preserve difficulty guidance and the solver, fault, repair, commissioning and cooperative rules. No new dependencies or public deployment/release. Domain code remains serializable and browser-independent. Later milestones require owner approval.
+M12 PR #16 is merged as 7ecc53d. The owner approved M13 Visual Identity & Field Journal. Follow docs/EXECUTION_PLAN.md and record art provenance in docs/ART_ASSETS.md. Keep M13 to the T1 service area and the journal presentation. Preserve difficulty guidance, collisions and the solver, fault, repair, commissioning and cooperative rules. No new dependencies or public deployment/release. Later milestones require owner approval.
 
 ## Autonomous workflow
 
@@ -30,4 +30,4 @@ Preserve sandbox and security restrictions. Never modify machine-wide Codex appr
 
 ## Session continuity
 
-On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M12 is authorized on merged PR #15. After submitting M12, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.
+On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M13 is authorized on merged PR #16. After submitting M13, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.

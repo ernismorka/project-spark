@@ -486,6 +486,21 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await expect(canvas).toHaveAttribute("data-interaction-motion", "idle");
   await expect(button(/Bridge trace/)).toHaveCount(0);
   await button("Field notebook").click();
+  const diagnosisPage = page.getByRole("button", {
+    name: "Diagnosis",
+    exact: true,
+  });
+  const measurementsPage = page.getByRole("button", {
+    name: "Measurements",
+    exact: true,
+  });
+  await expect(button("Back to the board")).toBeFocused();
+  await press("Tab");
+  await expect(measurementsPage).toBeFocused();
+  await press("Tab");
+  await expect(diagnosisPage).toBeFocused();
+  await press("Enter");
+  await expect(diagnosisPage).toHaveAttribute("aria-pressed", "true");
   await expect(button("Check diagnosis")).toBeDisabled();
   await button("Back to the board").click();
   await walkTo(page, 3.5, -14);
@@ -521,6 +536,10 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await expect(
     page.getByRole("columnheader", { name: "Healthy", exact: true }),
   ).toHaveCount(0);
+  await expect(page.getByRole("row").filter({ hasText: "P1" })).toContainText(
+    "5.00 V",
+  );
+  await diagnosisPage.click();
   await page.getByLabel("Suspect segment").selectOption("divider");
   await page.getByLabel("Upstream evidence").selectOption("P1");
   await page.getByLabel("Downstream evidence").selectOption("P2");
@@ -533,6 +552,12 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await expect(
     page.getByRole("columnheader", { name: "Healthy", exact: true }),
   ).toBeVisible();
+  await diagnosisPage.click();
+  await expect(button("Check diagnosis")).toBeInViewport();
+  await page.screenshot({
+    path: info.outputPath("m13-diagnosis-en.png"),
+    animations: "disabled",
+  });
   await expect(page.getByText(/Look for voltage on one side/)).toBeVisible();
   await page.getByLabel("Upstream evidence").selectOption("P1");
   await page.getByLabel("Downstream evidence").selectOption("P2");
@@ -588,10 +613,26 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await page.getByRole("combobox").focus();
   await page.getByRole("combobox").selectOption("lt");
   await button("Tęsti tyrinėjimą").click();
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await button("Matavimų užrašai").click();
+  await expect(page.locator(".field-journal-menu")).toHaveCSS(
+    "animation-name",
+    "none",
+  );
+  await expect(page.locator(".journal-leaf")).toHaveCSS(
+    "animation-name",
+    "none",
+  );
+  await expect(page.locator(".journal-ink").first()).toHaveCSS(
+    "animation-name",
+    "none",
+  );
   await expect(page.getByRole("row").filter({ hasText: "P3" })).toContainText(
     "2,50 V",
   );
+  await page.screenshot({
+    path: info.outputPath("m13-notebook-desktop-lt.png"),
+  });
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await page.evaluate(
@@ -599,8 +640,14 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
     ),
   ).toBe(true);
   await page.screenshot({ path: info.outputPath("m10-notebook-lt.png") });
+  expect(
+    await page
+      .locator(".journal-leaf")
+      .evaluate((leaf) => leaf.scrollWidth <= leaf.clientWidth),
+  ).toBe(true);
   await page.setViewportSize({ width: 1280, height: 720 });
   await button("Grįžti į plokštę").click();
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.getByRole("combobox").focus();
   await page.getByRole("combobox").selectOption("en");
   await button("Resume exploration").click();
