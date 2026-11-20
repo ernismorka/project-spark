@@ -12,8 +12,10 @@ function joint(parent: pc.Entity, name: string, x = 0, y = 0, z = 0) {
 export function buildEngineer(workshop: Workshop, root: pc.Entity) {
   const entity = joint(root, "engineer");
   const body = joint(entity, "engineer-pose");
-  workshop("torso", body);
+  const torso = workshop("torso", body);
   const head = workshop("helmet", body, 0, 1.29);
+  const shield = workshop("faceShield", head, 0, 0.43, 0.25);
+  shield.enabled = false;
   const eyes = [-1, 1].map((side) =>
     workshop("eye", head, side * 0.135, 0.196, 0.409),
   );
@@ -50,6 +52,7 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
   return {
     entity,
     body,
+    leftHand: arms[0].hand,
     hand: arms[1].hand,
     book,
     left,
@@ -64,6 +67,7 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
       journal: number,
       journalYaw: number,
       reduced: boolean,
+      guard = 0,
     ) {
       const ease = reduced ? 1 : 1 - Math.exp(-14 * dt);
       const turn = Math.atan2(
@@ -76,7 +80,7 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
         Math.atan2(
           Math.sin(targetHeading - heading),
           Math.cos(targetHeading - heading),
-        ) * ease;
+        ) * (journal === 1 ? 1 : ease);
       entity.setLocalEulerAngles(0, heading * pc.math.RAD_TO_DEG, 0);
       activity += (Math.min(speed / 3.6, 1) - activity) * ease;
       runBlend += (easePose((speed - 4) / 3) - runBlend) * ease;
@@ -89,13 +93,14 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
       const settle = easePose(journal / journalKeys.lift);
       body.setLocalPosition(
         0,
-        breath + Math.abs(sway) * groundedBlend * 0.057 - reach * 0.075,
+        (breath + Math.abs(sway) * groundedBlend * 0.057) * (1 - settle) -
+          reach * 0.075,
         0,
       );
       body.setLocalEulerAngles(
-        reach * 14 + activity * 8 * runBlend,
-        sway * 5,
-        sway * 3,
+        reach * 14 + activity * 8 * runBlend * (1 - settle),
+        sway * 5 * (1 - settle),
+        sway * 3 * (1 - settle),
       );
       head.setLocalEulerAngles(
         3 + settle * 10 - reach * 5,
@@ -118,21 +123,27 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
         (journal - journalKeys.lift) / (journalKeys.spread - journalKeys.lift),
       );
       book.enabled = journal >= journalKeys.grip;
+      const firstPerson = journal >= 0.88;
+      head.enabled = !firstPerson;
+      torso.enabled = !firstPerson;
+      for (const leg of legs) leg.upper.enabled = !firstPerson;
+      shield.enabled = guard > 0.01;
+      shield.setLocalEulerAngles(-95 * (1 - guard), 0, 0);
       if (book.enabled) {
         book.setLocalPosition(
           -0.45 * (1 - lifted),
-          0.84 + 0.23 * lifted,
-          -0.17 + 0.64 * lifted,
+          0.84 + 0.24 * lifted,
+          -0.17 + 0.7 * lifted,
         );
         book.setLocalEulerAngles(
-          49 * lifted,
+          -43 * lifted,
           -36 * (1 - lifted),
           12 * (1 - lifted),
         );
         const size = 0.23 + 0.69 * lifted;
         book.setLocalScale(size, size, size);
-        left.setLocalEulerAngles(0, 0, -91 + 87 * spread);
-        right.setLocalEulerAngles(0, 0, 91 - 87 * spread);
+        left.setLocalEulerAngles(0, 0, -91 + 91 * spread);
+        right.setLocalEulerAngles(0, 0, 91 - 91 * spread);
       }
       const swing = activity * groundedBlend * (reduced ? 0.45 : 1);
       for (let i = 0; i < 2; i++) {
@@ -178,9 +189,9 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
         const amount =
           i === 0 ? easePose(journal / 0.2) : easePose((journal - 0.22) / 0.34);
         grip.set(
-          pc.math.lerp(-0.47, side * (0.16 + spread * 0.36), lifted),
-          pc.math.lerp(0.85, 1.0 + (1 - spread) * 0.125, lifted),
-          pc.math.lerp(-0.12, 0.44, lifted),
+          pc.math.lerp(-0.47, side * (0.16 + spread * 0.46), lifted),
+          pc.math.lerp(0.85, 0.92 + (1 - spread) * 0.205, lifted),
+          pc.math.lerp(-0.12, 0.33 + (1 - spread) * 0.12, lifted),
         );
         upperDirection.sub2(grip, upper.getLocalPosition());
         const distance = Math.min(0.478, upperDirection.length());

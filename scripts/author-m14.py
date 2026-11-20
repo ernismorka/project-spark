@@ -86,6 +86,9 @@ class Model:
                 if axis == 0:
                     point = (point[1], -point[0], point[2])
                     normal = (normal[1], -normal[0], normal[2])
+                elif axis == 2:
+                    point = (point[0], -point[2], point[1])
+                    normal = (normal[0], -normal[2], normal[1])
                 self.vertex(tuple(a + b for a, b in zip(origin, point)), normal, color)
         self.quads(start, len(profile), segments + 1)
         return self
@@ -296,6 +299,67 @@ for x, z, shade in ((-29, 8, "d89968"), (29.3, -16, "6dacc0"), (-30, -27, "7b9fc
     for tab in (-1, 1):
         bench.box((x + tab * 1.6, 2.15, z), (1.15, 0.3, 3.5), 0.12, "a0b5b9")
     bench.box((x, -0.41, z + 3.56), (4.45, 0.95, 0.18), 0.084, "668ea1")
+
+# M15 field kit, sized to the engineer's articulated hands.
+meter = part("fieldMeter")
+meter.box((0, 0, 0), (0.64, 0.85, 0.215), 0.075, "203747")
+meter.box((0, 0.008, 0.049), (0.592, 0.798, 0.144), 0.061, "ffc260")
+meter.box((0, 0.027, 0.105), (0.482, 0.668, 0.047), 0.023, "293f4a")
+meter.box((0, 0.243, 0.130), (0.426, 0.248, 0.038), 0.017, "122f36")
+meter.box((0, 0.246, 0.151), (0.378, 0.198, 0.012), 0.005, "9bcdb3")
+for side in (-1, 1):
+    shade = "293042" if side < 0 else "ef635f"
+    meter.lathe((side * 0.176, -0.248, 0.131),
+               [(0, 0.064), (0.023, 0.068), (0.047, 0.056), (0.047, 0.034)], shade,
+               segments=14, axis=2)
+    for offset in (-0.235, 0.0, 0.235):
+        meter.box((side * 0.302, offset, 0.015), (0.063, 0.105, 0.137), 0.024, "283844")
+for i in range(9):
+    angle = math.radians(27 + 33 * i)
+    meter.oval((math.cos(angle) * 0.144, math.sin(angle) * 0.144 - 0.047, 0.131),
+               (0.019, 0.016, 0.014), "87b7aa" if i == 5 else "c6b194", 8, 4)
+
+dial = part("meterDial")
+dial.lathe((0, 0, 0), [(0, 0.101), (0.021, 0.107), (0.051, 0.08), (0.053, 0)],
+           "537177", segments=20, axis=2)
+dial.box((0, 0, 0.052), (0.061, 0.165, 0.035), 0.014, "bfd4c7")
+dial.box((0, 0.057, 0.072), (0.027, 0.036, 0.009), 0.004, "f3d48d")
+
+for name, color, dark in (("redProbe", "e75655", "8e353a"), ("blackProbe", "344452", "172a37")):
+    probe = part(name)
+    probe.lathe((0, 0, 0), [(-0.345, 0.010), (-0.302, 0.027), (-0.23, 0.032)],
+                "b8ced1", segments=12, axis=2)
+    probe.lathe((0, 0, 0), [(-0.253, 0.027), (-0.181, 0.053), (-0.168, 0.078),
+                            (-0.137, 0.081), (-0.118, 0.056), (0.035, 0.053),
+                            (0.061, 0.036)], color, segments=16, axis=2)
+    for z in (-0.114, -0.072, -0.030, 0.012):
+        probe.lathe((0, 0, z), [(-0.013, 0.055), (0.012, 0.055)], dark, segments=12, axis=2)
+    probe.lathe((0, 0, 0.055), [(0.0, 0.035), (0.055, 0.018), (0.091, 0.014)],
+                dark, segments=12, axis=2)
+
+iron = part("solderPen")
+iron.lathe((0, 0, 0), [(-0.63, 0.019), (-0.59, 0.037), (-0.48, 0.048), (-0.40, 0.061)],
+           "cbccd0", segments=16, axis=2)
+iron.lathe((0, 0, 0), [(-0.44, 0.054), (-0.394, 0.08), (-0.26, 0.082), (-0.234, 0.059)],
+           "e37d48", segments=16, axis=2)
+iron.box((0, 0, -0.085), (0.208, 0.199, 0.442), 0.063, "304657")
+iron.box((0, 0.094, -0.098), (0.122, 0.053, 0.304), 0.024, "426879")
+iron.box((0, 0.123, -0.109), (0.079, 0.018, 0.124), 0.008, "94e2bc")
+iron.box((0, 0, 0.127), (0.162, 0.153, 0.132), 0.05, "eea15f")
+
+shield = part("faceShield")
+shield.box((0, -0.041, 0.094), (0.72, 0.101, 0.1), 0.043, "b37440")
+shield.box((0, -0.221, 0.209), (0.682, 0.378, 0.153), 0.073, "db9954")
+shield.box((0, -0.222, 0.285), (0.526, 0.218, 0.045), 0.02, "353849")
+shield.box((0, -0.197, 0.31), (0.391, 0.107, 0.015), 0.007, "b06e50")
+for side in (-1, 1):
+    shield.oval((side * 0.303, -0.035, 0.106), (0.122, 0.12, 0.101),
+                "d1af76", 12, 6)
+
+bridge = part("solderBridge")
+bridge.box((0, 0, 0), (0.399, 0.087, 1.49), 0.039, "b5c8c5")
+for z in (-0.525, -0.267, 0.0, 0.267, 0.525):
+    bridge.oval((0, 0.035, z), (0.348, 0.153, 0.396), "a9bebb", 12, 6)
 
 data = bytearray()
 views = []

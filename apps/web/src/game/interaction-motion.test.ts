@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { FieldState } from "@spark/game-core";
-import { acceptedFieldMotion } from "./interaction-motion";
+import {
+  acceptedFieldMotion,
+  fieldMotionDuration,
+  toolPose,
+} from "./interaction-motion";
 
 const collecting: FieldState = {
   phase: "collect",
@@ -53,5 +57,43 @@ describe("field animation events", () => {
       kind: "verified",
       site: { id: "P3" },
     });
+  });
+});
+
+it("seats the common lead before the voltage probe and holds both during the reading", () => {
+  const reference = toolPose("probe", 0.49, false);
+  expect(reference.black).toBe(1);
+  expect(reference.red).toBeLessThan(1);
+  expect(reference.contact).toBe(false);
+  const reading = toolPose("probe", 0.7, false);
+  expect(reading).toMatchObject({ black: 1, red: 1, contact: true });
+  expect(
+    toolPose("probe", fieldMotionDuration("probe", false), false),
+  ).toMatchObject({
+    reach: 0,
+    red: 0,
+    black: 0,
+    contact: false,
+  });
+});
+
+it("builds one continuous bead and suppresses tool motion and heat with reduced motion", () => {
+  expect(toolPose("repair", 0.35, false)).toMatchObject({
+    solder: 0,
+    contact: false,
+  });
+  const middle = toolPose("repair", 0.95, false);
+  expect(middle.solder).toBeCloseTo(0.5);
+  expect(middle.contact).toBe(true);
+  expect(toolPose("repair", 1.9, false)).toMatchObject({
+    solder: 1,
+    heat: 0,
+    contact: false,
+  });
+  expect(toolPose("repair", 0.95, true)).toMatchObject({
+    solder: 1,
+    heat: 0,
+    reach: 0,
+    contact: false,
   });
 });

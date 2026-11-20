@@ -494,6 +494,12 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await expect(canvas).toHaveAttribute("data-journal", "opening");
   await expect(canvas).toHaveAttribute("data-journal", "open");
   await expect(canvas).toHaveAttribute("data-journal-book", "true");
+  await expect(canvas).toHaveAttribute("data-camera-view", "first-person");
+  await expect(page.getByRole("dialog")).toHaveCSS(
+    "background-color",
+    "rgba(0, 0, 0, 0)",
+  );
+  await expect(page.getByRole("dialog").getByRole("table")).toHaveCount(1);
   expect(
     Number(await canvas.getAttribute("data-camera-distance")),
   ).toBeLessThan(beforeJournalDistance);
@@ -519,12 +525,15 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await press("KeyN");
   await expect(canvas).toHaveAttribute("data-journal", "closing");
   await expect(canvas).toHaveAttribute("data-journal", "closed");
+  await expect(canvas).toHaveAttribute("data-camera-view", "follow");
   await expect(canvas).toHaveAttribute("data-journal-book", "false");
   await expect(canvas).toBeFocused();
   await walkTo(page, 3.5, -14);
   await walkTo(page, -3.5, -15);
   await measure("P1", "5.00 V", "probe");
-  await page.screenshot({ path: info.outputPath("m12-probe.png") });
+  await expect(canvas).toHaveAttribute("data-tool-contact", "true");
+  await expect(canvas).toHaveAttribute("data-meter-voltage", "5.00 V");
+  await page.screenshot({ path: info.outputPath("m15-probe.png") });
   await expect(canvas).toHaveAttribute("data-probe-highlights", "2");
   await changeDifficulty("Engineer (Hard)");
   await expect(canvas).toHaveAttribute("data-probe-highlights", "0");
@@ -588,7 +597,12 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await page.screenshot({ path: info.outputPath("m10-localized-trace.png") });
   await press("KeyQ");
   await expect(canvas).toHaveAttribute("data-interaction-motion", "repair");
-  await page.screenshot({ path: info.outputPath("m12-repair.png") });
+  await expect
+    .poll(async () => Number(await canvas.getAttribute("data-trace-fill")))
+    .toBeGreaterThan(0.08);
+  expect(Number(await canvas.getAttribute("data-trace-fill"))).toBeLessThan(1);
+  await page.screenshot({ path: info.outputPath("m15-repair.png") });
+  await expect(canvas).toHaveAttribute("data-trace-fill", "1.000");
   await expect(canvas).toHaveAttribute("data-circuit-status", "restored");
   await expect(button(/Bridge trace/)).toHaveCount(0);
   await walkTo(page, -3.5, -15);
@@ -634,6 +648,7 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await button("Matavimų užrašai").click();
   await expect(canvas).toHaveAttribute("data-journal", "open");
+  await expect(canvas).toHaveAttribute("data-camera-view", "first-person");
   await expect(canvas).toHaveAttribute("data-journal-book", "true");
   await expect(page.locator(".field-journal-menu")).toHaveCSS(
     "animation-name",
@@ -651,7 +666,7 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
     "2,50 V",
   );
   await page.screenshot({
-    path: info.outputPath("m13-notebook-desktop-lt.png"),
+    path: info.outputPath("m15-notebook-desktop-lt.png"),
   });
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
@@ -665,6 +680,9 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
       .locator(".journal-leaf")
       .evaluate((leaf) => leaf.scrollWidth <= leaf.clientWidth),
   ).toBe(true);
+  await button("Diagnozė").focus();
+  await press("Tab");
+  await expect(page.locator(".journal-leaf")).toBeFocused();
   await page.setViewportSize({ width: 1280, height: 720 });
   await press("Escape");
   await expect(canvas).toHaveAttribute("data-journal", "closed");

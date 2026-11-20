@@ -82,3 +82,21 @@ The accelerated opening scene used 64 draw calls in both browsers, down from 80 
 The [first Linux CI run](https://github.com/ernismorka/project-spark/actions/runs/44324188823) passed 31 of 34 browser checks. Chromium's SwiftShader path timed out in the field route and frame sample and fell behind real input in the orientation test. Local SwiftShader reproduction confirmed a large slowdown at full resolution. The fix caps the 3D framebuffer to half scale for recognized CPU renderers and simplifies lighting and large-surface shaders on those adapters. The full-resolution hardware path used for the captures and the accessible HTML journal retain their render settings. The workload test now verifies the software canvas scale when applicable.
 
 [PR #18](https://github.com/ernismorka/project-spark/pull/18) tracks review and exact final-head CI.
+
+## M15 Immersive Tools & Interactions
+
+Started from merged M14 `e7806af` on `codex/m15-immersive-tools`. The eye-level notebook view aligns one accessible journal to the physical paper. An accepted probe action places the COM and voltage probes in sequence and exposes the solver reading on the LCD. The soldering pass shows the shield, heat, sparks and an advancing bead. Core keeps the original proximity, diagnosis and fresh-reading verification gates. Reduced motion switches to the settled views and values.
+
+Windows doctor, lint, type checking, 99 unit and integration tests, reproducible production packaging, three release tests and all 34 headed Chromium and Firefox checks passed in the full rerun. Three earlier Firefox input failures occurred before tool use and did not recur. The final keyboard-scroll refinement passed four focused packaged checks across both browsers.
+
+The opening scene used 64 draw calls in both Windows browsers, matching M14. A brief 1080p Windows field sample reported Chromium at 4.20/8.30 ms median/p95 and Firefox at 4.16/4.18 ms. The focused rerun kept the same medians and measured 8.32 ms p95 in Firefox. The recorded M14 field sample was 4.20/4.40 ms in Chromium and 4.16/4.18 ms in Firefox. These are short browser observations on the test host. The original asset kit adds 128 kB, and the leads update one small mesh only when a probe is in use. See [asset provenance](ART_ASSETS.md).
+
+Reviewed the packaged desktop captures and the 390 px Lithuanian journal. Moving the COM pad off the signal trace makes the two connections distinct. The narrow journal shows all readings and its page can take keyboard focus when scrolling is needed.
+
+| Checkpoint                  | M14                                     | M15                                    |
+| --------------------------- | --------------------------------------- | -------------------------------------- |
+| Verified Lithuanian journal | [Before](evidence/m15/notebook-m14.png) | [After](evidence/m15/notebook-m15.png) |
+| P1 voltage measurement      | [Before](evidence/m15/probe-m14.png)    | [After](evidence/m15/probe-m15.png)    |
+| Feed-trace repair           | [Before](evidence/m15/repair-m14.png)   | [After](evidence/m15/repair-m15.png)   |
+
+[PR #19](https://github.com/ernismorka/project-spark/pull/19) tracks review and exact final-head CI.

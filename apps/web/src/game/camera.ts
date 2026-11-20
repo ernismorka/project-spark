@@ -9,6 +9,8 @@ export const cameraSettings = {
   maxZoom: 14,
   smoothing: 10,
 };
+export const journalEyeHeight = 1.67;
+export type ToolCamera = { site: { x: number; z: number }; blend: number };
 export function clipDistance(from: Vec3, to: Vec3): number {
   const distance = Math.hypot(to.x - from.x, to.y - from.y, to.z - from.z);
   let fraction = 1;
@@ -84,6 +86,7 @@ export class FollowCamera {
     reducedMotion = false,
     journal = 0,
     aspect = 1.7,
+    tool?: ToolCamera,
   ) {
     this.displayedZoom +=
       (this.zoom - this.displayedZoom) *
@@ -130,32 +133,62 @@ export class FollowCamera {
       );
       this.entity.lookAt(this.target);
     }
-    if (this.entity.camera)
-      this.entity.camera.fov = pc.math.lerp(58, 49, journal);
-    if (journal === 0) return;
+    if (this.entity.camera) {
+      const pageFov = Math.max(
+        61,
+        2 * Math.atan(0.78 / Math.max(aspect, 0.4)) * pc.math.RAD_TO_DEG,
+      );
+      this.entity.camera.fov = pc.math.lerp(58, pageFov, journal);
+    }
+    if (journal === 0) {
+      if (!tool || tool.blend <= 0) return;
+      const { site, blend } = tool;
+      this.journalTarget.set(
+        (position.x + site.x) * 0.5,
+        position.y + 0.67,
+        (position.z + site.z) * 0.5,
+      );
+      this.journalView.set(site.x - position.x, 0, site.z - position.z);
+      if (this.journalView.lengthSq() < 0.04)
+        this.journalView.set(-Math.sin(this.yaw), 0, -Math.cos(this.yaw));
+      this.journalView.normalize();
+      const x = this.journalView.x;
+      const z = this.journalView.z;
+      this.journalView.set(
+        this.journalTarget.x + x * 2.45 + z * 1.65,
+        position.y + 2.15,
+        this.journalTarget.z + z * 2.45 - x * 1.65,
+      );
+      const clearance = clipDistance(this.journalTarget, this.journalView);
+      if (clearance < 0.55)
+        this.journalView.set(
+          this.journalTarget.x + z * 2.2,
+          position.y + 2.8,
+          this.journalTarget.z - x * 2.2,
+        );
+      this.view.lerp(this.entity.getPosition(), this.journalView, blend);
+      this.view.lerp(
+        this.journalTarget,
+        this.view,
+        clipDistance(this.journalTarget, this.view),
+      );
+      this.journalTarget.lerp(this.target, this.journalTarget, blend);
+      this.entity.setPosition(this.view);
+      this.entity.lookAt(this.journalTarget);
+      return;
+    }
     const c = Math.cos(this.yaw);
     const s = Math.sin(this.yaw);
-    const portrait = aspect < 1.2;
-    const pullback = portrait ? 3.32 : 2.0;
-    const side = pc.math.clamp((aspect - 0.86) * 0.58, 0, 0.85);
     this.journalTarget.set(
-      position.x + side * c,
-      position.y + (portrait ? 0.14 : 1.24),
-      position.z - side * s,
+      position.x - 0.515 * s,
+      position.y + 1.095,
+      position.z - 0.515 * c,
     );
     this.journalView.set(
-      position.x + pullback * s + (side + 0.12) * c,
-      position.y + (portrait ? 3.4 : 2.31),
-      position.z + pullback * c - (side + 0.12) * s,
+      position.x + 0.025 * s,
+      position.y + journalEyeHeight,
+      position.z + 0.025 * c,
     );
-    if (clipDistance(desiredTarget, this.journalView) < 0.48) {
-      // At the face of a tall component the top of the open book is still visible.
-      this.journalView.set(
-        position.x + 0.14 * s,
-        position.y + 3,
-        position.z + 0.14 * c,
-      );
-    }
     this.view.lerp(this.entity.getPosition(), this.journalView, journal);
     this.view.lerp(
       desiredTarget,

@@ -32,6 +32,8 @@ export function createGeometry(
     terminal,
     background,
     healthy: material("#83f2ad", true),
+    solderHeat: material("#ff8849", true),
+    solderSpark: material("#ffe49b", true),
     board: material("#206f61", false, 0.07),
     edge: material("#14383a"),
     copper: material("#d89759", false, 0.34),

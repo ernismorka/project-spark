@@ -24,6 +24,7 @@ const en = {
   collect: "Find the probe pads and record all three voltages.",
   ready: "Open the notebook and locate the break from the readings.",
   located: "Trace localized. Follow the beacon and bridge the break.",
+  soldering: "Soldering the feed trace…",
   recheck: "Trace bridged. Measure all three pads again.",
   verified: "Repair verified. Return to T1 to commission the device.",
   probe: "Probe pad",
@@ -68,6 +69,7 @@ const lt: typeof en = {
   collect: "Surask matavimo taškus ir užrašyk visas tris įtampas.",
   ready: "Atsiversk užrašus ir pagal matavimus nustatyk trūkį.",
   located: "Trūkio vieta nustatyta. Sek švyturiu ir sujunk takelį.",
+  soldering: "Lituojamas maitinimo takelis…",
   recheck: "Takelis sujungtas. Dar kartą išmatuok visus tris taškus.",
   verified: "Remontas patvirtintas. Grįžk į T1 parengti įrenginio.",
   probe: "Matuoti įtampą",
@@ -173,14 +175,33 @@ export function FieldNotebook({
           </button>
         ))}
       </nav>
-      <section key={page} className="journal-leaf" aria-label={copy[page]}>
-        <p role="status">{fieldTask(field, language, difficulty)}</p>
+      <section
+        key={page}
+        className="journal-leaf"
+        aria-label={copy[page]}
+        tabIndex={0}
+      >
+        {page === "diagnosis" && (
+          <p role="status">{fieldTask(field, language, difficulty)}</p>
+        )}
         {page === "measurements" && (
           <table>
+            <colgroup>
+              <col
+                className={
+                  showHints ? "journal-label with-reference" : "journal-label"
+                }
+              />
+              {showHints && <col className="journal-reference" />}
+              <col className="journal-gutter" />
+              <col />
+              <col />
+            </colgroup>
             <thead>
               <tr>
                 <th scope="col">{copy.point}</th>
                 {showHints && <th scope="col">{copy.healthy}</th>}
+                <td className="journal-gutter" aria-hidden="true" />
                 <th scope="col">{copy.before}</th>
                 <th scope="col">{copy.after}</th>
               </tr>
@@ -192,6 +213,7 @@ export function FieldNotebook({
                   {showHints && (
                     <td>{fieldVoltage(language, id === "P3" ? 2.5 : 5)}</td>
                   )}
+                  <td className="journal-gutter" aria-hidden="true" />
                   <td>
                     <span
                       className={

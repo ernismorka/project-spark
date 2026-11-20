@@ -1,5 +1,11 @@
 # Architecture
 
+## M15 immersive field tools
+
+The reversible notebook timeline brings the camera to eye level. At the settled pose, the browser projects the physical leaves into CSS pixels. One semantic journal, aligned to that spread, provides the visible ink and the existing keyboard and assistive-technology controls. The camera restores the follow view on close.
+
+The renderer detects accepted field transitions and stages the corresponding tool motion. Both probe tips reach dedicated surfaces, with the COM tip on the modeled GND point. The LCD publishes the real solver value at contact. For repair the shield drops, a short soldering pass fills the visual gap and the bead cools. These poses never become inputs to the circuit model. The ideal feed joins on the existing accepted repair, while verification still depends on fresh solver readings. Reduced motion bypasses the camera, placement, sparks and bead animation.
+
 ## M14 character art and physical notebook
 
 The original `workshop.glb` loads with the scene. The board uses static batches, while named character meshes share a rigid joint hierarchy with keyed gait poses and two-segment arms. Lighting, silkscreen and contact shadows remain presentation. Collision and target distances still come from game-core.

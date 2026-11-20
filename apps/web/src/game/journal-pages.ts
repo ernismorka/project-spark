@@ -1,126 +1,97 @@
 import * as pc from "playcanvas";
-import { fieldPads, type FieldState } from "@spark/game-core";
-import type { Language } from "@spark/shared";
-import { fieldCopy, fieldTask, fieldVoltage } from "../FieldDiagnostics";
-import type { Difficulty } from "../difficulty";
+import paperUrl from "../assets/journal-paper.jpg?url";
 
-export function buildJournalPages(
+export async function buildJournalPaper(
   device: pc.GraphicsDevice,
-  left: pc.Entity,
-  right: pc.Entity,
+  wings: readonly pc.Entity[],
+  signal: AbortSignal,
 ) {
-  const pages = [left, right].map((wing, i) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 384;
-    canvas.height = 512;
-    const context = canvas.getContext("2d")!;
-    const texture = new pc.Texture(device, {
-      name: "Live journal page",
-      width: canvas.width,
-      height: canvas.height,
-      mipmaps: true,
-      minFilter: pc.FILTER_LINEAR_MIPMAP_LINEAR,
-      magFilter: pc.FILTER_LINEAR,
-      addressU: pc.ADDRESS_CLAMP_TO_EDGE,
-      addressV: pc.ADDRESS_CLAMP_TO_EDGE,
-    });
-    texture.setSource(canvas);
-    const material = new pc.StandardMaterial();
-    material.useLighting = false;
-    material.diffuse.set(0, 0, 0);
-    material.emissive.set(1, 1, 1);
-    material.emissiveMap = texture;
-    material.update();
-    const mesh = pc.Mesh.fromGeometry(
-      device,
-      new pc.PlaneGeometry({
-        halfExtents: new pc.Vec2(0.264, 0.358),
-        widthSegments: 1,
-        lengthSegments: 1,
-      }),
-    );
-    const page = new pc.Entity("printed journal leaf");
-    page.addComponent("render", {
-      meshInstances: [new pc.MeshInstance(mesh, material, page)],
-    });
-    page.setLocalPosition(i === 0 ? -0.315 : 0.315, 0.022, 0);
-    wing.addChild(page);
-    return { context, texture, material };
+  const image = new Image();
+  image.src = paperUrl;
+  await image.decode();
+  signal.throwIfAborted();
+  const texture = new pc.Texture(device, {
+    name: "notebook paper",
+    width: image.naturalWidth,
+    height: image.naturalHeight,
+    mipmaps: true,
+    minFilter: pc.FILTER_LINEAR_MIPMAP_LINEAR,
+    addressU: pc.ADDRESS_CLAMP_TO_EDGE,
+    addressV: pc.ADDRESS_CLAMP_TO_EDGE,
   });
-  let lastField: FieldState | undefined;
-  let lastLanguage: Language | undefined;
-  let lastDifficulty: Difficulty | undefined;
-  return {
-    write(field: FieldState, language: Language, difficulty: Difficulty) {
-      if (
-        field === lastField &&
-        language === lastLanguage &&
-        difficulty === lastDifficulty
-      )
-        return;
-      lastField = field;
-      lastLanguage = language;
-      lastDifficulty = difficulty;
-      const copy = fieldCopy[language];
-      pages.forEach(({ context: ctx, texture }, i) => {
-        ctx.fillStyle = i === 0 ? "#fff1cf" : "#fff5dd";
-        ctx.fillRect(0, 0, 384, 512);
-        ctx.strokeStyle = "#527a8c28";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for (let x = 18; x < 378; x += 18) {
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, 512);
-        }
-        for (let y = 18; y < 512; y += 18) {
-          ctx.moveTo(0, y);
-          ctx.lineTo(384, y);
-        }
-        ctx.stroke();
-        ctx.fillStyle = "#294b5d";
-        ctx.font = "bold 25px sans-serif";
-        ctx.fillText(i === 0 ? copy.measurements : copy.stage, 26, 51, 332);
-        ctx.font = "italic 25px Georgia, serif";
-        ctx.fillText(i === 0 ? copy.before : copy.after, 27, 92, 330);
-        ctx.strokeStyle = "#bb7757";
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(25, 114);
-        ctx.lineTo(357, 114);
-        ctx.stroke();
-        fieldPads.forEach(({ id }, index) => {
-          const y = 168 + index * 88;
-          ctx.font = "bold 24px sans-serif";
-          ctx.fillStyle = "#425768";
-          ctx.fillText(copy.labels[id], 28, y, 330);
-          ctx.font = "italic bold 34px Georgia, serif";
-          ctx.fillStyle = "#12697a";
-          ctx.fillText(
-            fieldVoltage(language, (i === 0 ? field.before : field.after)[id]),
-            28,
-            y + 37,
-          );
-        });
-        ctx.font = "17px sans-serif";
-        ctx.fillStyle = "#425768";
-        const lines: string[] = [];
-        for (const word of fieldTask(field, language, difficulty).split(" ")) {
-          const index = lines.length - 1;
-          const next = index < 0 ? word : `${lines[index]} ${word}`;
-          if (index < 0 || ctx.measureText(next).width > 330) lines.push(word);
-          else lines[index] = next;
-        }
-        lines
-          .slice(0, 3)
-          .forEach((line, index) => ctx.fillText(line, 27, 419 + index * 22));
-        texture.upload();
-      });
-    },
-    dispose() {
-      for (const { material, texture } of pages) {
-        material.destroy();
-        texture.destroy();
+  texture.setSource(image);
+  const material = new pc.StandardMaterial();
+  material.useLighting = false;
+  material.diffuse.set(0, 0, 0);
+  material.emissive.set(1, 1, 1);
+  material.emissiveMap = texture;
+  material.update();
+  const mesh = pc.Mesh.fromGeometry(
+    device,
+    new pc.PlaneGeometry({
+      halfExtents: new pc.Vec2(0.263, 0.357),
+      widthSegments: 1,
+      lengthSegments: 1,
+    }),
+  );
+  wings.forEach((wing, index) => {
+    const leaf = new pc.Entity("paper surface");
+    leaf.setLocalPosition(index === 0 ? -0.315 : 0.315, 0.022, 0);
+    leaf.addComponent("render", {
+      meshInstances: [new pc.MeshInstance(mesh, material, leaf)],
+    });
+    wing.addChild(leaf);
+  });
+  return () => {
+    material.destroy();
+    texture.destroy();
+  };
+}
+
+// Fit the one interactive HTML spread to the visible paper. At the end of
+// the draw animation the book is perpendicular to the first-person camera.
+export function projectJournal(
+  canvas: HTMLCanvasElement,
+  camera: pc.Entity,
+  book: pc.Entity,
+) {
+  const layer = canvas.parentElement!;
+  const point = new pc.Vec3();
+  const view = new pc.Mat4();
+  return () => {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    if (!width || !height) return;
+    const lens =
+      (0.5 * height) / Math.tan(camera.camera!.fov * pc.math.DEG_TO_RAD * 0.5);
+    view.copy(camera.getWorldTransform()).invert();
+    const transform = book.getWorldTransform();
+    let left = width,
+      right = 0,
+      top = height,
+      bottom = 0;
+    for (const x of [-0.56, 0.56]) {
+      for (const z of [-0.34, 0.34]) {
+        view.transformPoint(
+          transform.transformPoint(point.set(x, 0.026, z), point),
+          point,
+        );
+        const px = width / 2 + (lens * point.x) / -point.z;
+        const py = height / 2 - (lens * point.y) / -point.z;
+        left = Math.min(left, px);
+        right = Math.max(right, px);
+        top = Math.min(top, py);
+        bottom = Math.max(bottom, py);
       }
-    },
+    }
+    // A modest gutter keeps controls clear of the cover and paper edges.
+    left = Math.max(6, left + 6);
+    right = Math.min(width - 6, right - 6);
+    top = Math.max(6, top + 4);
+    bottom = Math.min(height - 6, bottom - 4);
+    layer.style.setProperty("--journal-left", `${left}px`);
+    layer.style.setProperty("--journal-top", `${top}px`);
+    layer.style.setProperty("--journal-width", `${right - left}px`);
+    layer.style.setProperty("--journal-height", `${bottom - top}px`);
   };
 }

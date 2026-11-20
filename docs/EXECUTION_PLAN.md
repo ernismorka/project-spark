@@ -50,3 +50,14 @@ The owner authorized M14 on merged M13 `926f255`. Use `codex/m14-character-art` 
 4. Record asset provenance and capture comparable browser frames. Exercise open, view, close, reduced motion and the complete repair/commissioning route in packaged browser tests. Run the full verifier and review rendering workload before opening the PR.
 
 Implementation, packaged local verification and before/after captures are complete. [Development status](DEVELOPMENT_STATUS.md) records the results and measured workload. [PR #18](https://github.com/ernismorka/project-spark/pull/18) tracks final-head checks and review. A later milestone requires owner approval.
+
+## M15 Immersive Tools & Interactions
+
+The owner authorized M15 on merged M14 `e7806af`. Use `codex/m15-immersive-tools`.
+
+1. Move the journal camera through the existing draw animation to eye level. Align the bilingual HTML readings and controls to the physical pages so the original keyboard workflow remains available on the book itself.
+2. Extend the original workshop kit with the meter, probes, soldering pen and face guard. Animate the reference and signal contacts and show the accepted solver reading on the instrument.
+3. Stage the accepted trace repair with the visor, heat, limited sparks and a visually progressive bridge. Keep the existing domain repair and fresh verification requirements.
+4. Check the opening, contact, soldering and verified states in both packaged browser projects. Inspect matched M14/M15 captures, record timing and draw counts, and submit the evidence and asset provenance for review.
+
+Implementation, packaged browser checks and before/after captures are complete. See [Development status](DEVELOPMENT_STATUS.md) for the verification and workload results. [PR #19](https://github.com/ernismorka/project-spark/pull/19) tracks final-head CI and review. A later milestone requires owner approval.

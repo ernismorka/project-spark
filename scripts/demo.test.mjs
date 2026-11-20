@@ -77,7 +77,7 @@ test("packaged HTTP server confines reads, validates authority and stops cleanly
       /^assets\/workshop-.*\.glb$/.test(name),
     );
     assert.ok(workshop);
-    assert.ok(assets[workshop].bytes < 1.25 * 1024 * 1024);
+    assert.ok(assets[workshop].bytes < 1.4 * 1024 * 1024);
     const mesh = await get(`/${workshop}`, { method: "HEAD" });
     assert.equal(mesh.status, 200);
     assert.equal(mesh.headers["content-type"], "model/gltf-binary");

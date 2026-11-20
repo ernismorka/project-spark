@@ -119,7 +119,7 @@ Accepted terminal edits persist when closed/reopened. Circuit/program edits inva
 
 For the M10 field route, complete First Contact at T1 and choose **Pick up multimeter**. Follow the meter’s location cue and press **Q** within reach of each pad. Open the field notebook to compare evidence with the healthy readings, select a suspect trace and identify the two readings that locate the break. Walk to the revealed junction and press **Q** to bridge it. Probe all three pads again, then return to T1 for commissioning. The classic terminal diagnostics option remains available when you choose your route at T1. See [M10_PLAN.md](docs/M10_PLAN.md).
 
-Press **N** or use the **Field notebook** button to draw the book and move the camera toward its pages. The physical spread prints the current before/after measurements. Use the adjacent keyboard-accessible controls to compare evidence and check a diagnosis. **N**, **Esc** or **Back to the board** closes the notebook. The reduced-motion preference shows the final poses immediately.
+Press **N** or use the **Field notebook** button to draw the book and read from the engineer's point of view. The pages contain the keyboard-accessible evidence table and diagnosis controls. **N**, **Esc** or **Back to the board** closes the notebook. At a probe pad, **Q** places both leads and reads the solver voltage on the meter. When the break is localized, **Q** solders the feed; fresh readings still verify the repair. Reduced motion shows the settled states immediately.
 
 ## M11 guidance difficulty
 

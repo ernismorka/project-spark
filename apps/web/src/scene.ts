@@ -10,7 +10,7 @@ import { createGeometry } from "./game/geometry";
 import { buildFieldFixtures, buildWorld } from "./game/world";
 import { buildEngineer } from "./game/engineer";
 import { loadWorkshop } from "./game/workshop-art";
-import { buildJournalPages } from "./game/journal-pages";
+import { buildJournalPaper, projectJournal } from "./game/journal-pages";
 import { buildWorkshopDecals } from "./game/workshop-decals";
 import {
   advanceJournal,
@@ -24,6 +24,8 @@ import { objectiveTarget } from "./game/navigation";
 import type { Difficulty } from "./difficulty";
 import {
   acceptedFieldMotion,
+  fieldMotionDuration,
+  toolPose,
   type FieldMotion,
 } from "./game/interaction-motion";
 import { buildFieldEffects } from "./game/field-effects";
@@ -37,6 +39,7 @@ export interface SceneBridge {
   fieldUse: () => boolean;
   journalToggle: () => boolean;
   journalStage: (stage: JournalStage) => void;
+  soldering: (active: boolean) => void;
   language: () => Language;
   difficulty: () => Difficulty;
 }
@@ -56,7 +59,8 @@ export async function mountScene(
   }
   let app: pc.AppBase | undefined;
   let geometry: ReturnType<typeof createGeometry> | undefined;
-  let pages: ReturnType<typeof buildJournalPages> | undefined;
+  let disposePaper: (() => void) | undefined;
+  let tools: ReturnType<typeof buildFieldEffects> | undefined;
   let decals: ReturnType<typeof buildWorkshopDecals> | undefined;
   let input: ReturnType<typeof bindInput> | undefined;
   let observer: ResizeObserver | undefined;
@@ -70,8 +74,9 @@ export async function mountScene(
     observer?.disconnect();
     if (update) app?.off("update", update);
     if (batchGroupId !== undefined) app?.batcher?.removeGroup(batchGroupId);
-    pages?.dispose();
     decals?.dispose();
+    disposePaper?.();
+    tools?.dispose();
     geometry?.dispose();
     app?.destroy();
     if (!app) device.destroy();
@@ -117,9 +122,21 @@ export async function mountScene(
     decals = buildWorkshopDecals(device, app.root, batchGroupId);
     app.batcher!.generate([batchGroupId]);
     const player = buildEngineer(workshop, app.root);
-    pages = buildJournalPages(device, player.left, player.right);
-    const fieldFixtures = buildFieldFixtures(geometry, app.root, player.body);
-    const animateField = buildFieldEffects(geometry, app.root, player.hand);
+    disposePaper = await buildJournalPaper(
+      device,
+      [player.left, player.right],
+      signal,
+    );
+    const fieldFixtures = buildFieldFixtures(geometry, app.root, workshop);
+    tools = buildFieldEffects(
+      geometry,
+      device,
+      workshop,
+      app.root,
+      player.body,
+      player.hand,
+      player.leftHand,
+    );
     const motionPreference = matchMedia("(prefers-reduced-motion: reduce)");
     const cameraEntity = new pc.Entity("follow-camera");
     cameraEntity.addComponent("camera", {
@@ -130,6 +147,7 @@ export async function mountScene(
     });
     app.root.addChild(cameraEntity);
     const camera = new FollowCamera(cameraEntity);
+    const placeJournal = projectJournal(canvas, cameraEntity, player.book);
     const light = new pc.Entity();
     light.addComponent("light", {
       type: "directional",
@@ -178,6 +196,7 @@ export async function mountScene(
     let lastLanguage: Language | undefined;
     let lastReduced = motionPreference.matches;
     let fieldMotion: FieldMotion | undefined;
+    let soldering = false;
     let motionTime = 0;
     update = (delta: number) => {
       const state = bridge.get();
@@ -229,7 +248,6 @@ export async function mountScene(
         canvas.dataset.journal = stage;
         bridge.journalStage(stage);
       }
-      if (field && journal > 0) pages!.write(field, language, difficulty);
       if (started) {
         fieldMotion = started;
         motionTime = 0;
@@ -237,14 +255,19 @@ export async function mountScene(
       if (
         state.phase !== "playing" ||
         journal > 0 ||
-        motionTime >= (reduced ? 0.35 : 0.8)
+        (fieldMotion &&
+          motionTime >= fieldMotionDuration(fieldMotion.kind, reduced))
       )
         fieldMotion = undefined;
       if (state.phase !== lastPhase) {
         input!.release();
         lastPhase = state.phase;
       }
-      if (state.phase === "playing" && journal === 0) {
+      if (
+        state.phase === "playing" &&
+        journal === 0 &&
+        (!fieldMotion || reduced)
+      ) {
         accumulator += dt;
         while (accumulator >= movement.step) {
           bridge.dispatch(input!.step(), false);
@@ -263,13 +286,16 @@ export async function mountScene(
         next.player.position.z,
       );
       const speed =
-        journal > 0
+        journal > 0 || (fieldMotion && !reduced)
           ? 0
           : Math.hypot(next.player.velocity.x, next.player.velocity.z);
-      const reach =
-        fieldMotion && !reduced && speed < 1.2
-          ? Math.min(1, motionTime * 7, (0.8 - motionTime) * 5)
-          : 0;
+      const pose = toolPose(fieldMotion?.kind, motionTime, reduced);
+      const nextSoldering = fieldMotion?.kind === "repair" && !reduced;
+      if (nextSoldering !== soldering) {
+        soldering = nextSoldering;
+        bridge.soldering(soldering);
+      }
+      const reach = pose.reach;
       const facing =
         reach > 0 && fieldMotion
           ? Math.atan2(
@@ -285,20 +311,39 @@ export async function mountScene(
         facing,
         reach,
         journal,
-        camera.yaw,
+        camera.yaw + Math.PI,
         reduced,
+        fieldMotion?.kind === "repair" ? reach : 0,
       );
       canvas.dataset.journalBook = String(player.book.enabled);
-      animateField(fieldMotion, motionTime, reduced, reach);
+      const voltage = tools!.update(
+        field,
+        fieldMotion,
+        pose,
+        motionTime,
+        language,
+        journal > 0,
+        reduced,
+      );
+      canvas.dataset.meterVoltage = voltage;
       canvas.dataset.interactionMotion = fieldMotion?.kind ?? "idle";
       canvas.dataset.interactionTool = String(reach > 0.05);
+      canvas.dataset.toolContact = String(pose.contact);
+      canvas.dataset.traceFill = (
+        field?.phase === "recheck" || field?.phase === "verified"
+          ? pose.solder
+          : 0
+      ).toFixed(3);
       camera.update(
         next.player.position,
         dt,
         reduced,
         easePose((journal - journalKeys.camera) / (1 - journalKeys.camera)),
         canvas.clientWidth / Math.max(1, canvas.clientHeight),
+        fieldMotion ? { site: fieldMotion.site, blend: reach } : undefined,
       );
+      if (stage === "open") placeJournal();
+      canvas.dataset.cameraView = stage === "open" ? "first-person" : "follow";
       const destination = objectiveTarget(next.step);
       pcb.marker.enabled =
         difficulty !== "engineer" && !field && next.phase !== "complete";
@@ -307,8 +352,8 @@ export async function mountScene(
           field,
           next.step === 5 && next.phase === "complete" && !next.diagnosis,
           difficulty,
-          reach,
-          journal > 0,
+          pose.solder,
+          pose.heat > 0.08,
         ),
       );
       canvas.dataset.guidanceBeacon = String(pcb.marker.enabled);
