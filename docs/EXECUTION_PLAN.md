@@ -59,3 +59,5 @@ The owner authorized M15 on merged M14 `e7806af`. Use `codex/m15-immersive-tools
 2. Extend the original workshop kit with the meter, probes, soldering pen and face guard. Animate the reference and signal contacts and show the accepted solver reading on the instrument.
 3. Stage the accepted trace repair with the visor, heat, limited sparks and a visually progressive bridge. Keep the existing domain repair and fresh verification requirements.
 4. Check the opening, contact, soldering and verified states in both packaged browser projects. Inspect matched M14/M15 captures, record timing and draw counts, and submit the evidence and asset provenance for review.
+
+Implementation, packaged browser checks and before/after captures are complete. See [Development status](DEVELOPMENT_STATUS.md) for the verification and workload results. [PR #19](https://github.com/ernismorka/project-spark/pull/19) tracks final-head CI and review. A later milestone requires owner approval.
