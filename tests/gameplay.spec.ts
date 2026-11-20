@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { traceViewHeight } from "../apps/web/src/game/trace-view";
 async function position(page: Page) {
   return page.locator("canvas").evaluate((c) => ({
     x: Number(c.dataset.playerX),
@@ -484,7 +485,7 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await press("KeyQ");
   await expect(meter.locator("output")).toHaveText("—");
   await expect(canvas).toHaveAttribute("data-interaction-motion", "idle");
-  await expect(button(/Bridge trace/)).toHaveCount(0);
+  await expect(button(/Open trace repair/)).toHaveCount(0);
   const beforeJournalDistance = Number(
     await canvas.getAttribute("data-camera-distance"),
   );
@@ -593,18 +594,141 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await expect(page.getByRole("dialog")).toContainText("Trace localized");
   await button("Back to the board").click();
   await walkTo(page, -7, -3);
-  await expect(button(/Bridge trace/)).toBeVisible();
+  await expect(button(/Open trace repair/)).toBeVisible();
   await page.screenshot({ path: info.outputPath("m10-localized-trace.png") });
   await press("KeyQ");
-  await expect(canvas).toHaveAttribute("data-interaction-motion", "repair");
-  await expect
-    .poll(async () => Number(await canvas.getAttribute("data-trace-fill")))
-    .toBeGreaterThan(0.08);
-  expect(Number(await canvas.getAttribute("data-trace-fill"))).toBeLessThan(1);
-  await page.screenshot({ path: info.outputPath("m15-repair.png") });
-  await expect(canvas).toHaveAttribute("data-trace-fill", "1.000");
+  const bench = page.getByRole("dialog", { name: "Feed trace repair" });
+  const surface = page.getByTestId("trace-surface");
+  const stageIs = (stage: string) =>
+    expect(bench).toHaveAttribute("data-stage", stage);
+  const messageIs = (message: string) =>
+    expect(bench).toHaveAttribute("data-message", message);
+  const readyToLift = async () => {
+    await page.waitForFunction(
+      () =>
+        document.querySelector(".trace-bench")?.getAttribute("data-message") ===
+        "release",
+      undefined,
+      { timeout: 5_000 },
+    );
+  };
+  const aim = async (x: number, z: number) => {
+    const bounds = (await surface.boundingBox())!;
+    const scale = bounds.height / traceViewHeight(bounds.width / bounds.height);
+    await page.mouse.move(
+      bounds.x + bounds.width / 2 + scale * x,
+      bounds.y + bounds.height / 2 + scale * z,
+    );
+  };
+  const touch = async (x: number, z: number, accepted: () => Promise<void>) => {
+    await aim(x, z);
+    await page.mouse.down();
+    try {
+      await accepted();
+    } finally {
+      await page.mouse.up();
+    }
+  };
+  await stageIs("isolate");
+  await expect(canvas).toHaveAttribute("data-camera-view", "repair");
+  await page.getByRole("combobox").selectOption("lt");
+  const lithuanianBench = page.getByRole("dialog", {
+    name: "Maitinimo takelio remontas",
+  });
+  await lithuanianBench
+    .getByRole("button", { name: "Tikrinti grandinės vientisumą" })
+    .click();
+  await expect(lithuanianBench.getByRole("status")).toHaveText(
+    "Pirmiausia išjunk maitinimą.",
+  );
+  await page.getByRole("combobox").selectOption("en");
+  await expect(bench).toHaveAttribute("data-powered", "true");
+  await button(/Switch power off/).click();
+  await expect(bench).toHaveAttribute("data-powered", "false");
+  await stageIs("expose");
+  await button("Test continuity").click();
+  await messageIs("continuity-open");
+  await touch(0.88, -0.32, () => messageIs("miss"));
+  await aim(0, 0);
+  await surface.focus();
+  for (let i = 0; i < 8; i++) await press("ArrowUp");
+  await page.keyboard.down("Space");
+  await expect(bench).toHaveAttribute("data-ends", "1");
+  await page.keyboard.up("Space");
+  await button("Leave work area").click();
+  await expect(meter.locator("output")).toHaveText("POWER OFF");
+  await press("KeyQ");
+  await stageIs("expose");
+  await expect(bench).toHaveAttribute("data-ends", "1");
+  await touch(0, 0.69, () => stageIs("clean"));
+  for (const [step, next] of [
+    ["clean", "flux"],
+    ["flux", "tin"],
+  ] as const) {
+    await stageIs(step);
+    await touch(0, -0.69, () =>
+      expect(bench).toHaveAttribute("data-ends", "1"),
+    );
+    await touch(0, 0.69, () => stageIs(next));
+  }
+  await touch(0, -0.69, readyToLift);
+  await expect(bench).toHaveAttribute("data-ends", "1");
+  await touch(0, 0.69, readyToLift);
+  await stageIs("prepare");
+  await touch(-1.08, 0.34, () => stageIs("route"));
+  await touch(0, 0.69, () => messageIs("route-order"));
+  await aim(0, -0.69);
+  await page.mouse.down();
+  await expect(bench).toHaveAttribute("data-route", "1");
+  await aim(0.55, 0);
+  await expect(bench).toHaveAttribute("data-route", "2");
+  await aim(0, 0.69);
+  await stageIs("solder");
+  await page.mouse.up();
+  await touch(0, -0.69, () => messageIs("hot"));
+  await expect(bench).toHaveAttribute("data-ends", "0");
+  await touch(0, -0.69, readyToLift);
+  await expect(bench).toHaveAttribute("data-ends", "1");
+  await page.screenshot({ path: info.outputPath("m16-solder.png") });
+  const benchFrames = await page.evaluate(
+    () =>
+      new Promise<number[]>((resolve) => {
+        const frames: number[] = [];
+        let prior: number | undefined;
+        const sample = (now: number) => {
+          if (prior !== undefined) frames.push(now - prior);
+          prior = now;
+          if (frames.length < 40) requestAnimationFrame(sample);
+          else resolve(frames.sort((a, b) => a - b));
+        };
+        requestAnimationFrame(sample);
+      }),
+  );
+  console.log(
+    "M16 trace work area sample",
+    JSON.stringify({ medianMs: benchFrames[20], p95Ms: benchFrames[37] }),
+  );
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await touch(0, 0.69, readyToLift);
+  await stageIs("rinse");
+  await button("Test continuity").click();
+  await messageIs("clean-first");
+  await touch(0, -0.69, () => expect(bench).toHaveAttribute("data-ends", "1"));
+  await touch(0, 0.69, () => stageIs("continuity"));
+  await button("Test continuity").click();
+  await stageIs("seal");
+  await messageIs("continuity-pass");
+  await button(/Restore power/).click();
+  await messageIs("keep-isolated");
+  await expect(bench).toHaveAttribute("data-powered", "false");
+  await touch(0, -0.69, () => expect(bench).toHaveAttribute("data-ends", "1"));
+  await touch(0, 0.69, () => stageIs("restore"));
+  await page.screenshot({ path: info.outputPath("m16-sealed.png") });
+  await button(/Restore power/).click();
+  await expect(bench).toHaveCount(0);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(canvas).toHaveAttribute("data-circuit-status", "restored");
-  await expect(button(/Bridge trace/)).toHaveCount(0);
+  await expect(button(/Open trace repair/)).toHaveCount(0);
   await walkTo(page, -3.5, -15);
   await measure("P1", "5.00 V");
   await walkTo(page, -3.5, 16);

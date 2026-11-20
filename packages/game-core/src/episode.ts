@@ -9,13 +9,20 @@ import {
 } from "./programming";
 import { components, horizontalDistance, movement } from "./world";
 import {
+  atFieldSite,
   createField,
+  fieldPatch,
   fieldTarget,
   fieldTerminal,
   localizeFieldFault,
   useFieldSite,
   type FieldState,
 } from "./field";
+import {
+  cancelTraceContact,
+  commandTraceRepair,
+  createTraceRepair,
+} from "./trace-repair";
 export interface Episode {
   readonly session: Session;
   readonly workbench: Workbench;
@@ -112,6 +119,51 @@ export function commandEpisode(e: Episode, c: unknown): Episode {
     };
   }
   if (field) {
+    if (field.benchOpen && field.traceRepair) {
+      if (c.type === "close-field-repair") {
+        return {
+          ...e,
+          field: {
+            ...field,
+            benchOpen: false,
+            traceRepair: cancelTraceContact(field.traceRepair),
+          },
+          session: commandSession(e.session, { type: "resume" }),
+        };
+      }
+      if (
+        c.type !== "field-repair" ||
+        !("event" in c) ||
+        !("difficulty" in c) ||
+        (c.difficulty !== "apprentice" &&
+          c.difficulty !== "technician" &&
+          c.difficulty !== "engineer") ||
+        field.phase !== "located" ||
+        e.session.phase !== "paused" ||
+        !atFieldSite(e.session, fieldPatch)
+      )
+        return e;
+      const traceRepair = commandTraceRepair(
+        field.traceRepair,
+        c.event,
+        c.difficulty,
+      );
+      if (traceRepair === field.traceRepair) return e;
+      if (traceRepair.stage === "done") {
+        return {
+          ...e,
+          field: {
+            ...field,
+            traceRepair,
+            benchOpen: false,
+            phase: "recheck",
+            last: null,
+          },
+          session: commandSession(e.session, { type: "resume" }),
+        };
+      }
+      return { ...e, field: { ...field, traceRepair } };
+    }
     if (c.type === "field-notebook") {
       if (e.session.phase !== (field.notebook ? "paused" : "playing")) return e;
       const nextField = { ...field, notebook: !field.notebook };
@@ -130,6 +182,21 @@ export function commandEpisode(e: Episode, c: unknown): Episode {
       return next === field ? e : { ...e, field: next };
     }
     if (c.type === "field-use" && "target" in c) {
+      if (
+        field.phase === "located" &&
+        c.target === fieldPatch.id &&
+        fieldTarget(field, e.session)?.id === c.target
+      ) {
+        return {
+          ...e,
+          field: {
+            ...field,
+            benchOpen: true,
+            traceRepair: field.traceRepair ?? createTraceRepair(),
+          },
+          session: commandSession(e.session, { type: "pause" }),
+        };
+      }
       if (
         field.phase === "verified" &&
         c.target === fieldTerminal.id &&

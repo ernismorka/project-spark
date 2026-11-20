@@ -1,8 +1,7 @@
 import * as pc from "playcanvas";
-import type { FieldState } from "@spark/game-core";
+import { tracePowered, type FieldState } from "@spark/game-core";
 import type { Language } from "@spark/shared";
 import { fieldVoltage } from "../FieldDiagnostics";
-import type { Geometry } from "./geometry";
 import {
   probeGroundOffset,
   type FieldMotion,
@@ -144,7 +143,6 @@ function buildMeterScreen(device: pc.GraphicsDevice, meter: pc.Entity) {
 }
 
 export function buildFieldEffects(
-  g: Geometry,
   device: pc.GraphicsDevice,
   workshop: Workshop,
   root: pc.Entity,
@@ -152,7 +150,6 @@ export function buildFieldEffects(
   hand: pc.Entity,
   leftHand: pc.Entity,
 ) {
-  const { shape, palette } = g;
   const meter = workshop("fieldMeter", body);
   meter.setLocalScale(0.76, 0.76, 0.76);
   const dial = workshop("meterDial", meter, 0, -0.047, 0.135);
@@ -163,17 +160,6 @@ export function buildFieldEffects(
     workshop("redProbe", effects),
     workshop("blackProbe", effects),
   ];
-  const iron = workshop("solderPen", effects);
-  const heat = shape(
-    "sphere",
-    [0, 0, 0],
-    [1, 1, 1],
-    palette.solderHeat,
-    effects,
-  );
-  const sparks = Array.from({ length: 7 }, () =>
-    shape("box", [0, 0, 0], [0.035, 0.07, 0.035], palette.solderSpark, effects),
-  );
   const leads = createLeads(device, effects);
   const target = new pc.Vec3();
   const tip = new pc.Vec3();
@@ -212,11 +198,13 @@ export function buildFieldEffects(
       readingBook: boolean,
       reduced: boolean,
     ) {
-      const repair = motion?.kind === "repair";
-      meter.enabled = !!field && !readingBook && !repair;
+      meter.enabled = !!field && !readingBook && !field.benchOpen;
       if (field !== observedField || pose.contact || !motion || reduced) {
-        if (!motion || repair || reduced || pose.contact || elapsed > 0.95) {
-          const site = field?.last;
+        if (!motion || reduced || pose.contact || elapsed > 0.95) {
+          const site =
+            field?.traceRepair && !tracePowered(field.traceRepair.stage)
+              ? undefined
+              : field?.last;
           shownSite = site ?? "";
           const readings =
             field?.phase === "collect" || field?.phase === "located"
@@ -245,55 +233,24 @@ export function buildFieldEffects(
       effects.enabled = active;
       if (!active || !motion) return voltage;
       const { x, z } = motion.site;
-      iron.enabled = repair;
-      for (const probe of probes) probe.enabled = !repair;
-      leads.entity.enabled = !repair;
-      heat.enabled = repair && pose.heat > 0.01;
-      if (!repair) {
-        for (let i = 0; i < 2; i++) {
-          const red = i === 0;
-          rest.copy((red ? hand : leftHand).getPosition());
-          target.set(
-            x + (red ? 0 : probeGroundOffset.x),
-            red ? 0.158 : 0.112,
-            z + (red ? 0 : probeGroundOffset.z),
-          );
-          const probe = probes[i];
-          aim(probe, rest, target, red ? pose.red : pose.black, 0.345);
-          meter
-            .getWorldTransform()
-            .transformPoint(
-              jack.set(red ? 0.176 : -0.176, -0.248, 0.173),
-              jack,
-            );
-          probe
-            .getWorldTransform()
-            .transformPoint(cable.set(0, 0, 0.14), cable);
-          leads.curve(i, jack, cable);
-        }
-        leads.upload();
-        for (const spark of sparks) spark.enabled = false;
-        return voltage;
-      }
-      rest.copy(hand.getPosition());
-      target.set(x, 0.145, z - 0.66 + pose.solder * 1.32);
-      aim(iron, rest, target, pose.contact ? 1 : pose.reach, 0.63);
-      heat.setPosition(target.x, target.y, target.z);
-      heat.setLocalScale(0.32 * pose.heat, 0.12 * pose.heat, 0.32 * pose.heat);
-      for (let i = 0; i < sparks.length; i++) {
-        const spark = sparks[i];
-        const t = ((elapsed - 0.47) * 2.8 + i * 0.53) % 1;
-        spark.enabled = pose.contact && t >= 0 && t < 0.76;
-        if (!spark.enabled) continue;
-        const a = i * 2.39 + Math.floor(elapsed * 4) * 0.67;
-        spark.setPosition(
-          target.x + Math.cos(a) * t * 0.91,
-          target.y + 1.65 * t * (1 - t),
-          target.z + Math.sin(a) * t * 0.85,
+      leads.entity.enabled = true;
+      for (let i = 0; i < 2; i++) {
+        const red = i === 0;
+        rest.copy((red ? hand : leftHand).getPosition());
+        target.set(
+          x + (red ? 0 : probeGroundOffset.x),
+          red ? 0.158 : 0.112,
+          z + (red ? 0 : probeGroundOffset.z),
         );
-        spark.setEulerAngles(26 - i * 17, i * 39, 19 + i * 24);
-        spark.setLocalScale(0.035, (1 - t) * 0.2, 0.035);
+        const probe = probes[i];
+        aim(probe, rest, target, red ? pose.red : pose.black, 0.345);
+        meter
+          .getWorldTransform()
+          .transformPoint(jack.set(red ? 0.176 : -0.176, -0.248, 0.173), jack);
+        probe.getWorldTransform().transformPoint(cable.set(0, 0, 0.14), cable);
+        leads.curve(i, jack, cable);
       }
+      leads.upload();
       return voltage;
     },
     dispose() {

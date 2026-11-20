@@ -2,6 +2,7 @@ import { solveDC } from "@spark/electronics";
 import type { DCCircuit, Session } from "@spark/shared";
 import { diagnosticCircuit } from "./diagnosis";
 import { components, horizontalDistance } from "./world";
+import type { TraceRepair } from "./trace-repair";
 
 export const fieldPads = [
   { id: "P1", x: -3.5, z: -15, node: "VCC" },
@@ -20,6 +21,8 @@ export type FieldState = Readonly<{
   notebook: boolean;
   incorrect: boolean;
   last: PadId | null;
+  benchOpen?: boolean;
+  traceRepair?: TraceRepair;
 }>;
 
 export function createField(): FieldState {
@@ -84,8 +87,7 @@ export function useFieldSite(
 ): FieldState {
   if (fieldTarget(field, session)?.id !== id || typeof id !== "string")
     return field;
-  if (field.phase === "located")
-    return { ...field, phase: "recheck", last: null };
+  if (field.phase === "located") return field;
   const pad = fieldPads.find((point) => point.id === id);
   if (!pad) return field;
   const restored = field.phase === "recheck";

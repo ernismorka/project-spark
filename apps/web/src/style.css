@@ -1192,3 +1192,158 @@ footer {
     height: calc(100dvh - 310px);
   }
 }
+
+.trace-bench {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  color: #e9f6f2;
+  overflow: hidden;
+}
+.trace-surface {
+  position: absolute;
+  inset: 0;
+  cursor: crosshair;
+  touch-action: none;
+  outline: none;
+}
+.trace-surface:focus-visible {
+  outline: 2px solid #d7edbb;
+  outline-offset: -3px;
+}
+.trace-title,
+.trace-buttons,
+.trace-status {
+  position: absolute;
+  padding: 10px 13px;
+  border: 1px solid #83afa97d;
+  border-radius: 9px;
+  background: #102c38f2;
+  box-shadow: 0 5px 18px #0926325c;
+}
+.trace-title {
+  top: 14px;
+  left: 14px;
+  width: min(30%, 295px);
+  pointer-events: none;
+}
+.trace-title h3 {
+  margin: 0 0 4px;
+  font-size: clamp(1rem, 1.6vw, 1.36rem);
+}
+.trace-title p,
+.trace-status p {
+  margin: 0;
+}
+.trace-title .trace-step {
+  color: #f3c986;
+  font:
+    700 0.75rem ui-monospace,
+    monospace;
+  margin-bottom: 6px;
+}
+.trace-instruction,
+#trace-controls,
+.trace-assist {
+  color: #c5ddda;
+  line-height: 1.38;
+  font-size: 0.79rem;
+}
+.trace-buttons {
+  top: 14px;
+  right: 14px;
+  display: grid;
+  gap: 5px;
+  max-width: 29%;
+}
+.trace-buttons button {
+  min-height: 32px;
+  padding: 5px 9px;
+  color: #e9f6f2;
+  background: #254654;
+  border: 1px solid #729999;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 0.82rem;
+}
+.trace-buttons button:hover {
+  background: #365cac;
+}
+.trace-buttons button strong {
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  display: block;
+  color: #a4efd0;
+}
+.trace-buttons button[data-live="true"] strong {
+  color: #ffc187;
+}
+.trace-close {
+  justify-self: end;
+}
+.trace-status {
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(535px, calc(100% - 26px));
+  pointer-events: none;
+  padding: 9px 12px;
+}
+.trace-readouts {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: #d0f1de;
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+}
+.trace-heat {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.trace-heat meter {
+  width: 85px;
+  height: 12px;
+}
+.trace-status .trace-feedback {
+  color: #fff2cd;
+  font-size: 0.87rem;
+  font-weight: 650;
+  margin: 3px 0 2px;
+}
+.trace-bench[data-message="hot"] .trace-feedback,
+.trace-bench[data-message="need-power-off"] .trace-feedback {
+  color: #ffc3a9;
+}
+.trace-bench[data-message="release"] .trace-feedback,
+.trace-bench[data-message="continuity-pass"] .trace-feedback {
+  color: #abefc1;
+}
+.trace-status .trace-assist {
+  color: #efe2a7;
+}
+
+@media (max-width: 680px) {
+  .trace-title,
+  .trace-buttons {
+    top: 8px;
+    padding: 7px;
+  }
+  .trace-title {
+    left: 8px;
+    width: 49%;
+  }
+  .trace-buttons {
+    right: 8px;
+    max-width: 46%;
+  }
+  .trace-buttons button {
+    min-height: 30px;
+  }
+  .trace-status {
+    bottom: 8px;
+    width: calc(100% - 16px);
+  }
+}

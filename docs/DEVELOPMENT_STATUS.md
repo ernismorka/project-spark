@@ -100,3 +100,9 @@ Reviewed the packaged desktop captures and the 390 px Lithuanian journal. Moving
 | Feed-trace repair           | [Before](evidence/m15/repair-m14.png)   | [After](evidence/m15/repair-m15.png)   |
 
 [PR #19](https://github.com/ernismorka/project-spark/pull/19) tracks review and exact final-head CI.
+
+## M16 Interactive PCB Trace Repair
+
+Started from merged M15 `20e7dd5` on `codex/m16-trace-repair`. The field repair now opens a 3D work area at the localized break. It covers isolation, copper preparation, jumper routing, controlled soldering, cleanup, unpowered continuity, sealing and power restoration. The solver still owns the final voltage sweep. Tool damage and permanent failure are outside the scenario. Mistakes leave completed work in place and can be reattempted.
+
+The work area uses the existing board, field tools and renderer. Difficulty changes guidance, contact area and the time available to lift the iron. Power and continuity requirements apply in all three tiers. Leaving during work keeps the supply isolated and restores progress upon return.

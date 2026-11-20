@@ -1,6 +1,7 @@
 import * as pc from "playcanvas";
 import {
   nearbyComponents,
+  fieldPatch,
   movement,
   world,
   type FieldState,
@@ -29,6 +30,8 @@ import {
   type FieldMotion,
 } from "./game/interaction-motion";
 import { buildFieldEffects } from "./game/field-effects";
+import { buildTraceBench } from "./game/trace-bench";
+import { traceViewHeight, type TraceAim } from "./game/trace-view";
 export interface SceneBridge {
   get: () => Session;
   dispatch: (command: ExplorationCommand, publish?: boolean) => void;
@@ -39,7 +42,7 @@ export interface SceneBridge {
   fieldUse: () => boolean;
   journalToggle: () => boolean;
   journalStage: (stage: JournalStage) => void;
-  soldering: (active: boolean) => void;
+  traceAim: () => TraceAim;
   language: () => Language;
   difficulty: () => Difficulty;
 }
@@ -128,8 +131,8 @@ export async function mountScene(
       signal,
     );
     const fieldFixtures = buildFieldFixtures(geometry, app.root, workshop);
+    const traceBench = buildTraceBench(geometry, workshop, app.root);
     tools = buildFieldEffects(
-      geometry,
       device,
       workshop,
       app.root,
@@ -196,12 +199,13 @@ export async function mountScene(
     let lastLanguage: Language | undefined;
     let lastReduced = motionPreference.matches;
     let fieldMotion: FieldMotion | undefined;
-    let soldering = false;
     let motionTime = 0;
+    const traceCenter = new pc.Vec3(fieldPatch.x, 0.12, fieldPatch.z);
     update = (delta: number) => {
       const state = bridge.get();
       const activated = bridge.activated?.() ?? false;
       const field = bridge.field();
+      const benchOpen = !!field?.benchOpen;
       const difficulty = bridge.difficulty();
       const language = bridge.language();
       const reduced = motionPreference.matches;
@@ -210,6 +214,7 @@ export async function mountScene(
       app!.autoRender =
         visible &&
         (state.phase === "playing" ||
+          benchOpen ||
           state !== lastState ||
           activated !== lastActivated ||
           field !== lastField ||
@@ -255,8 +260,7 @@ export async function mountScene(
       if (
         state.phase !== "playing" ||
         journal > 0 ||
-        (fieldMotion &&
-          motionTime >= fieldMotionDuration(fieldMotion.kind, reduced))
+        (fieldMotion && motionTime >= fieldMotionDuration(reduced))
       )
         fieldMotion = undefined;
       if (state.phase !== lastPhase) {
@@ -275,6 +279,7 @@ export async function mountScene(
         }
       } else accumulator = 0;
       const next = bridge.get();
+      player.entity.enabled = !benchOpen;
       player.entity.setPosition(
         next.player.position.x,
         next.player.position.y,
@@ -290,11 +295,6 @@ export async function mountScene(
           ? 0
           : Math.hypot(next.player.velocity.x, next.player.velocity.z);
       const pose = toolPose(fieldMotion?.kind, motionTime, reduced);
-      const nextSoldering = fieldMotion?.kind === "repair" && !reduced;
-      if (nextSoldering !== soldering) {
-        soldering = nextSoldering;
-        bridge.soldering(soldering);
-      }
       const reach = pose.reach;
       const facing =
         reach > 0 && fieldMotion
@@ -313,7 +313,6 @@ export async function mountScene(
         journal,
         camera.yaw + Math.PI,
         reduced,
-        fieldMotion?.kind === "repair" ? reach : 0,
       );
       canvas.dataset.journalBook = String(player.book.enabled);
       const voltage = tools!.update(
@@ -329,21 +328,43 @@ export async function mountScene(
       canvas.dataset.interactionMotion = fieldMotion?.kind ?? "idle";
       canvas.dataset.interactionTool = String(reach > 0.05);
       canvas.dataset.toolContact = String(pose.contact);
-      canvas.dataset.traceFill = (
-        field?.phase === "recheck" || field?.phase === "verified"
-          ? pose.solder
-          : 0
-      ).toFixed(3);
-      camera.update(
-        next.player.position,
-        dt,
-        reduced,
-        easePose((journal - journalKeys.camera) / (1 - journalKeys.camera)),
-        canvas.clientWidth / Math.max(1, canvas.clientHeight),
-        fieldMotion ? { site: fieldMotion.site, blend: reach } : undefined,
-      );
+      const aspect = canvas.clientWidth / Math.max(1, canvas.clientHeight);
+      if (benchOpen) {
+        const fov = 41;
+        cameraEntity.camera!.fov = fov;
+        cameraEntity.setPosition(
+          traceCenter.x,
+          traceCenter.y +
+            traceViewHeight(aspect) /
+              (2 * Math.tan((fov * pc.math.DEG_TO_RAD) / 2)),
+          traceCenter.z,
+        );
+        cameraEntity.lookAt(traceCenter, pc.Vec3.FORWARD);
+      } else {
+        camera.update(
+          next.player.position,
+          dt,
+          reduced,
+          easePose((journal - journalKeys.camera) / (1 - journalKeys.camera)),
+          aspect,
+          fieldMotion ? { site: fieldMotion.site, blend: reach } : undefined,
+        );
+      }
       if (stage === "open") placeJournal();
-      canvas.dataset.cameraView = stage === "open" ? "first-person" : "follow";
+      canvas.dataset.cameraView = benchOpen
+        ? "repair"
+        : stage === "open"
+          ? "first-person"
+          : "follow";
+      traceBench(
+        field?.traceRepair,
+        benchOpen,
+        field?.phase === "verified",
+        bridge.traceAim(),
+        difficulty,
+        reduced,
+        time,
+      );
       const destination = objectiveTarget(next.step);
       pcb.marker.enabled =
         difficulty !== "engineer" && !field && next.phase !== "complete";
@@ -352,8 +373,6 @@ export async function mountScene(
           field,
           next.step === 5 && next.phase === "complete" && !next.diagnosis,
           difficulty,
-          pose.solder,
-          pose.heat > 0.08,
         ),
       );
       canvas.dataset.guidanceBeacon = String(pcb.marker.enabled);

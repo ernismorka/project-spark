@@ -151,19 +151,10 @@ export function buildFieldFixtures(
   const gap = shape(
     "box",
     [fieldPatch.x, 0.06, fieldPatch.z],
-    [0.3, 0.06, 1],
+    [0.32, 0.06, 1.35],
     p.board,
     board,
   );
-  const patch = workshop(
-    "solderBridge",
-    board,
-    fieldPatch.x,
-    0.105,
-    fieldPatch.z,
-  );
-  const patchMesh = patch.render!.meshInstances![0];
-  const cooled = patchMesh.material;
   const marker = shape(
     "cone",
     [fieldPatch.x, 2, fieldPatch.z],
@@ -185,37 +176,13 @@ export function buildFieldFixtures(
   let previousField: FieldState | undefined;
   let previousAvailable = false;
   let previousDifficulty: Difficulty | undefined;
-  let previousFill = -1;
-  let previousHot = false;
   let highlighted = 0;
   return (
     field: FieldState | undefined,
     available: boolean,
     difficulty: Difficulty,
-    fill: number,
-    hot: boolean,
   ) => {
     const phase = field?.phase;
-    if (
-      field !== previousField ||
-      fill !== previousFill ||
-      hot !== previousHot
-    ) {
-      const joined = phase === "recheck" || phase === "verified";
-      patch.enabled = joined && fill > 0.004;
-      if (patch.enabled) {
-        patch.setLocalScale(1, 1, fill);
-        patch.setLocalPosition(
-          fieldPatch.x,
-          0.105,
-          fieldPatch.z - 0.745 * (1 - fill),
-        );
-        patchMesh.material =
-          phase === "verified" ? p.healthy : hot ? p.solderHeat : cooled;
-      }
-      previousFill = fill;
-      previousHot = hot;
-    }
     if (
       field === previousField &&
       available === previousAvailable &&
@@ -228,7 +195,8 @@ export function buildFieldFixtures(
     board.enabled = !!phase || available;
     pads.enabled = !!phase;
     stored.enabled = available && !phase;
-    marker.enabled = difficulty !== "engineer" && phase === "located";
+    marker.enabled =
+      difficulty !== "engineer" && phase === "located" && !field?.benchOpen;
     gap.enabled = !!phase && phase !== "collect";
     const sweep =
       phase === "collect"
