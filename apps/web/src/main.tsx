@@ -51,6 +51,7 @@ function App() {
   const e = episodeCopy[state.language];
   const field = episode.field;
   const [journalStage, setJournalStage] = useState<JournalStage>("closed");
+  const [soldering, setSoldering] = useState(false);
   const playing = session.phase === "playing" && journalStage === "closed";
   const language = useRef(state.language);
   language.current = state.language;
@@ -118,11 +119,13 @@ function App() {
     let dispose: (() => void) | undefined;
     setStatus("loading");
     setJournalStage("closed");
+    setSoldering(false);
     const element = canvas.current!;
     const lost = (event: Event) => {
       event.preventDefault();
       dispatch({ type: "pause" });
       setJournalStage("closed");
+      setSoldering(false);
       setStatus("error");
       controller.abort();
       queueMicrotask(() => dispose?.());
@@ -136,6 +139,7 @@ function App() {
           field: () => current.current.field,
           language: () => language.current,
           journalStage: setJournalStage,
+          soldering: setSoldering,
           journalToggle: () => {
             const { field, session } = current.current;
             if (
@@ -414,7 +418,9 @@ function App() {
                   : episode.activated
                     ? e.world
                     : field && !session.repair.completed
-                      ? fieldTask(field, state.language, difficulty)
+                      ? soldering
+                        ? fieldText.soldering
+                        : fieldTask(field, state.language, difficulty)
                       : session.repair.completed
                         ? episodeTask
                         : session.step === 5
@@ -465,7 +471,7 @@ function App() {
               <>
                 {playing && field && (
                   <>
-                    {navigation && fieldGuide && (
+                    {navigation && fieldGuide && !soldering && (
                       <div className="compass">
                         <span>{fieldText.next}</span>
                         <span>
@@ -692,7 +698,7 @@ function App() {
                         if (e.key === "Tab") {
                           const buttons = Array.from(
                             e.currentTarget.querySelectorAll<HTMLElement>(
-                              "button:not(:disabled), select:not(:disabled)",
+                              'button:not(:disabled), select:not(:disabled), .journal-leaf[tabindex="0"]',
                             ),
                           );
                           if (

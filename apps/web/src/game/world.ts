@@ -11,6 +11,7 @@ import {
 import type { Geometry } from "./geometry";
 import type { Difficulty } from "../difficulty";
 import type { Workshop } from "./workshop-art";
+import { probeGroundOffset } from "./interaction-motion";
 export function buildWorld(
   g: Geometry,
   workshop: Workshop,
@@ -125,15 +126,23 @@ export function buildWorld(
 export function buildFieldFixtures(
   g: Geometry,
   root: pc.Entity,
-  engineer: pc.Entity,
+  workshop: Workshop,
 ) {
   const board = new pc.Entity("field-fixtures");
   root.addChild(board);
   const pads = new pc.Entity("probe-pads");
   board.addChild(pads);
   const { shape, palette: p } = g;
-  for (const pad of fieldPads)
+  for (const pad of fieldPads) {
     shape("cylinder", [pad.x, 0.09, pad.z], [0.95, 0.14, 0.95], p.silver, pads);
+    shape(
+      "cylinder",
+      [pad.x + probeGroundOffset.x, 0.072, pad.z + probeGroundOffset.z],
+      [0.31, 0.077, 0.31],
+      p.visor,
+      pads,
+    );
+  }
   const highlights = fieldPads.map(({ id, x, z }) => ({
     id,
     ring: shape("cylinder", [x, 0.07, z], [1.42, 0.07, 1.42], p.suit, pads),
@@ -146,13 +155,15 @@ export function buildFieldFixtures(
     p.board,
     board,
   );
-  const patch = shape(
-    "box",
-    [fieldPatch.x, 0.11, fieldPatch.z],
-    [0.5, 0.14, 1.65],
-    p.suit,
+  const patch = workshop(
+    "solderBridge",
     board,
+    fieldPatch.x,
+    0.105,
+    fieldPatch.z,
   );
+  const patchMesh = patch.render!.meshInstances![0];
+  const cooled = patchMesh.material;
   const marker = shape(
     "cone",
     [fieldPatch.x, 2, fieldPatch.z],
@@ -161,40 +172,50 @@ export function buildFieldFixtures(
     board,
   );
   marker.setEulerAngles(180, 0, 0);
-  const stored = shape(
-    "box",
-    [fieldTerminal.x + 0.85, 1.24, fieldTerminal.z],
-    [0.38, 0.18, 0.35],
-    p.suit,
+  const stored = workshop(
+    "fieldMeter",
     board,
+    fieldTerminal.x + 0.55,
+    1.43,
+    fieldTerminal.z,
   );
-  const meter = shape(
-    "box",
-    [0.5, 0.94, 0.21],
-    [0.27, 0.36, 0.15],
-    p.suit,
-    engineer,
-  );
-  shape("box", [0, 0.12, 0.51], [0.7, 0.3, 0.03], p.visor, meter);
+  stored.setLocalScale(0.52, 0.52, 0.52);
+  stored.setLocalEulerAngles(-76, 0, -10);
   board.enabled = false;
-  meter.enabled = false;
   let previousField: FieldState | undefined;
   let previousAvailable = false;
   let previousDifficulty: Difficulty | undefined;
+  let previousFill = -1;
+  let previousHot = false;
   let highlighted = 0;
   return (
     field: FieldState | undefined,
     available: boolean,
     difficulty: Difficulty,
-    reach: number,
-    journal: boolean,
+    fill: number,
+    hot: boolean,
   ) => {
-    meter.enabled = !!field && !journal;
-    if (field) {
-      meter.setLocalPosition(0.5, 0.94 + reach * 0.26, 0.21 + reach * 0.16);
-      meter.setLocalEulerAngles(-reach * 24, 0, 0);
-    }
     const phase = field?.phase;
+    if (
+      field !== previousField ||
+      fill !== previousFill ||
+      hot !== previousHot
+    ) {
+      const joined = phase === "recheck" || phase === "verified";
+      patch.enabled = joined && fill > 0.004;
+      if (patch.enabled) {
+        patch.setLocalScale(1, 1, fill);
+        patch.setLocalPosition(
+          fieldPatch.x,
+          0.105,
+          fieldPatch.z - 0.745 * (1 - fill),
+        );
+        patchMesh.material =
+          phase === "verified" ? p.healthy : hot ? p.solderHeat : cooled;
+      }
+      previousFill = fill;
+      previousHot = hot;
+    }
     if (
       field === previousField &&
       available === previousAvailable &&
@@ -208,9 +229,7 @@ export function buildFieldFixtures(
     pads.enabled = !!phase;
     stored.enabled = available && !phase;
     marker.enabled = difficulty !== "engineer" && phase === "located";
-    gap.enabled = phase === "located";
-    patch.enabled = phase === "recheck" || phase === "verified";
-    patch.render!.material = phase === "verified" ? p.healthy : p.suit;
+    gap.enabled = !!phase && phase !== "collect";
     const sweep =
       phase === "collect"
         ? field?.before

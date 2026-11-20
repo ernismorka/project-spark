@@ -1,5 +1,7 @@
 # Roadmap
 
+M15 Immersive Tools & Interactions is authorized on merged [M14 PR #18](https://github.com/ernismorka/project-spark/pull/18). It covers the first-person journal, the field multimeter, and visible soldering while preserving existing circuit and verification rules.
+
 M14 Character & Art Overhaul is authorized on merged [M13 PR #17](https://github.com/ernismorka/project-spark/pull/17). It covers an original articulated character, a PCB workshop art kit and a physical field notebook. Acceptance includes before/after captures, bilingual keyboard access, reduced motion and the complete diagnostic and programming route.
 
 M13 Visual Identity & Field Journal is authorized on merged [M12 PR #16](https://github.com/ernismorka/project-spark/pull/16). The slice covers T1's visual identity, a live two-leaf journal and browser validation of the existing route. [ART_ASSETS.md](ART_ASSETS.md) records artwork and mesh provenance.
