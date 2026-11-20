@@ -39,3 +39,14 @@ The owner authorized M13 on merged M12 `7ecc53d`. Use `codex/m13-field-journal` 
 Acceptance covers the offline assets and their provenance, a real EN/LT field playthrough, keyboard page navigation and diagnosis, reduced motion, narrow layout, before/after captures and a comparable scene-workload sample.
 
 Local implementation and verification are complete. See [Development status](DEVELOPMENT_STATUS.md) for browser results, capture review and workload observations. [PR #17](https://github.com/ernismorka/project-spark/pull/17) tracks final-head checks and review. A later milestone requires owner approval.
+
+## M14 Character & Art Overhaul
+
+The owner authorized M14 on merged M13 `926f255`. Use `codex/m14-character-art` and keep the existing fixed-step controls, collisions, episode authority and diagnostic gates.
+
+1. Capture the opening board and field notebook on M13. Establish an original workshop palette with ivory, petrol blue, marigold and copper.
+2. Author a compact 3D kit for the engineer, notebook and main board landmarks. Use a joint hierarchy and keyed poses for gait, idle and taking out the notebook. Keep immutable board meshes in static batches.
+3. Route N and the visible notebook control through the existing episode command. Freeze traversal, animate the book and camera, show live evidence on the physical pages and retain localized keyboard-operable diagnosis controls. Reverse the sequence on close and bypass animated motion when reduced motion is set.
+4. Record asset provenance and capture comparable browser frames. Exercise open, view, close, reduced motion and the complete repair/commissioning route in packaged browser tests. Run the full verifier and review rendering workload before opening the PR.
+
+Implementation, packaged local verification and before/after captures are complete. [Development status](DEVELOPMENT_STATUS.md) records the results and measured workload. [PR #18](https://github.com/ernismorka/project-spark/pull/18) tracks final-head checks and review. A later milestone requires owner approval.

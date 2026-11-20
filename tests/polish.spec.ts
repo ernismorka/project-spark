@@ -46,8 +46,13 @@ test("records the comparable 3D view and rendering workload", async ({
     .click();
   const result = await page.evaluate(
     () =>
-      new Promise<{ drawsPerFrame: number; renderer: string }>((resolve) => {
-        const gl = document.querySelector("canvas")!.getContext("webgl2")!;
+      new Promise<{
+        drawsPerFrame: number;
+        renderer: string;
+        renderScale: number;
+      }>((resolve) => {
+        const canvas = document.querySelector("canvas")!;
+        const gl = canvas.getContext("webgl2")!;
         const debug = gl.getExtension("WEBGL_debug_renderer_info");
         const renderer = debug
           ? String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL))
@@ -61,6 +66,7 @@ test("records the comparable 3D view and rendering workload", async ({
               drawsPerFrame:
                 (Number(Reflect.get(window, "__sparkDraws")) - start) / frames,
               renderer,
+              renderScale: canvas.width / canvas.clientWidth,
             });
         };
         requestAnimationFrame(sample);
@@ -73,6 +79,10 @@ test("records the comparable 3D view and rendering workload", async ({
   });
   await page.screenshot({ path: info.outputPath("m6-view.png") });
   expect(result.drawsPerFrame).toBeGreaterThan(0);
+  if (
+    /swiftshader|llvmpipe|softpipe|software rasterizer/i.test(result.renderer)
+  )
+    expect(result.renderScale).toBeCloseTo(0.5, 2);
   await page.keyboard.press("Escape");
   await expect(
     page.getByRole("button", { name: "Resume exploration" }),

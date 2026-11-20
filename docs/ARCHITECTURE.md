@@ -1,5 +1,13 @@
 # Architecture
 
+## M14 character art and physical notebook
+
+The original `workshop.glb` loads with the scene. The board uses static batches, while named character meshes share a rigid joint hierarchy with keyed gait poses and two-segment arms. Lighting, silkscreen and contact shadows remain presentation. Collision and target distances still come from game-core.
+
+Known CPU WebGL renderers use a half-scale framebuffer, a simpler material on the wide board and bench surfaces, and one directional light. Hardware-accelerated adapters keep the normal framebuffer budget and light rig. Journal controls stay at CSS resolution on both.
+
+N and the HUD button dispatch the existing notebook toggle after the multimeter is acquired. The accepted domain pause starts the reversible grip, lift, cover and camera sequence. Browser input remains locked until the reverse sequence ends. The canvas renders during transitions and settles to invalidation-only rendering once the notebook is open. Two physical pages print live before/after readings, while the keyboard-operable EN/LT journal provides diagnosis and the full readings table. Reduced motion goes directly to the settled poses. The browser owns all animation timing.
+
 ## M13 T1 art and field journal
 
 T1's original rounded mesh is bundled with the browser scene. The housing, screen and sockets use one baked vertex-colored mesh and participate in the existing board batching. Collision and interaction still use the existing game-core coordinates. The field journal renders live values, localized evidence and guarded diagnosis controls over a small packaged texture. Page selection is UI-only. Motion uses CSS and respects the browser's reduced-motion preference. See [ART_ASSETS.md](ART_ASSETS.md) for the assets and provenance.
@@ -38,7 +46,7 @@ The six mission stages are strictly ordered: leave pad, inspect resistor, scan a
 
 ## Rendering and lifecycle
 
-Scene bootstrap preserves AppBase with only render/camera/light systems. game/geometry.ts owns reusable materials; game/world.ts builds procedural component and engineer visuals; game/input.ts owns browser listeners and pointer lock; game/camera.ts owns orbit, smooth follow, zoom, pitch clamp and segment-vs-expanded-box camera obstruction. Camera collision pulls the camera toward the player before an obstruction. Minimum near clip is 0.08. Visual limbs animate from velocity; no mission rules exist in renderer code.
+Scene bootstrap preserves AppBase with render, camera and light systems. `game/world.ts` places components and static scenery, `game/engineer.ts` poses the visual rig, and `game/input.ts` owns browser listeners and pointer lock. `game/camera.ts` owns orbit, smooth follow, zoom, pitch clamp and segment-vs-expanded-box camera obstruction. Camera collision pulls the camera toward the player before an obstruction. Minimum near clip is 0.08. Visual locomotion follows velocity and grounding. Mission rules remain in game-core.
 
 React keeps the authoritative session in a ref for synchronous command processing and publishes immutable snapshots at 10 Hz for HUD updates. Canvas data attributes expose read-only position/phase/camera observations for browser verification; no test teleport, injected progression command or global cheat API exists. Menus focus their first button and trap Tab inside the dialog. Resume returns focus to canvas. Clicking canvas requests pointer lock; dragging is also supported if denied. Escape, blur, menu transition and context loss clear input and release lock. Losing pointer lock pauses play.
 

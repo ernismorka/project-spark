@@ -21,16 +21,17 @@ Open http://127.0.0.1:5173 and choose Begin exploration. WebGL 2 and hardware ac
 
 ## Controls
 
-| Input                     | Action                                |
-| ------------------------- | ------------------------------------- |
-| WASD                      | Move relative to camera               |
-| Shift                     | Run                                   |
-| Space                     | Jump                                  |
-| Click canvas / mouse drag | Capture pointer / orbit camera        |
-| Mouse wheel               | Zoom                                  |
-| E                         | Inspect selected nearby component     |
-| F                         | Identify supported selected component |
-| Esc                       | Pause/release mouse; close inspection |
+| Input                     | Action                                                           |
+| ------------------------- | ---------------------------------------------------------------- |
+| WASD                      | Move relative to camera                                          |
+| Shift                     | Run                                                              |
+| Space                     | Jump                                                             |
+| Click canvas / mouse drag | Capture pointer / orbit camera                                   |
+| Mouse wheel               | Zoom                                                             |
+| E                         | Inspect selected nearby component                                |
+| F                         | Identify supported selected component                            |
+| N                         | Open or close the field notebook after picking up the multimeter |
+| Esc                       | Pause/release mouse; close inspection                            |
 
 Buttons support keyboard focus. Pause offers Resume and End session. Inspection freezes motion and returns with Continue exploring. The closest eligible component is selected automatically; nearby buttons choose another. Falling respawns at the starting pad while keeping progress. Controls and movement constants live in apps/web/src/game/input.ts and packages/game-core/src/world.ts.
 
@@ -117,6 +118,8 @@ Accepted terminal edits persist when closed/reopened. Circuit/program edits inva
 ## M10 field diagnostics
 
 For the M10 field route, complete First Contact at T1 and choose **Pick up multimeter**. Follow the meter’s location cue and press **Q** within reach of each pad. Open the field notebook to compare evidence with the healthy readings, select a suspect trace and identify the two readings that locate the break. Walk to the revealed junction and press **Q** to bridge it. Probe all three pads again, then return to T1 for commissioning. The classic terminal diagnostics option remains available when you choose your route at T1. See [M10_PLAN.md](docs/M10_PLAN.md).
+
+Press **N** or use the **Field notebook** button to draw the book and move the camera toward its pages. The physical spread prints the current before/after measurements. Use the adjacent keyboard-accessible controls to compare evidence and check a diagnosis. **N**, **Esc** or **Back to the board** closes the notebook. The reduced-motion preference shows the final poses immediately.
 
 ## M11 guidance difficulty
 

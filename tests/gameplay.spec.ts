@@ -485,7 +485,18 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await expect(meter.locator("output")).toHaveText("—");
   await expect(canvas).toHaveAttribute("data-interaction-motion", "idle");
   await expect(button(/Bridge trace/)).toHaveCount(0);
-  await button("Field notebook").click();
+  const beforeJournalDistance = Number(
+    await canvas.getAttribute("data-camera-distance"),
+  );
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await canvas.focus();
+  await press("KeyN");
+  await expect(canvas).toHaveAttribute("data-journal", "opening");
+  await expect(canvas).toHaveAttribute("data-journal", "open");
+  await expect(canvas).toHaveAttribute("data-journal-book", "true");
+  expect(
+    Number(await canvas.getAttribute("data-camera-distance")),
+  ).toBeLessThan(beforeJournalDistance);
   const diagnosisPage = page.getByRole("button", {
     name: "Diagnosis",
     exact: true,
@@ -502,7 +513,14 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await press("Enter");
   await expect(diagnosisPage).toHaveAttribute("aria-pressed", "true");
   await expect(button("Check diagnosis")).toBeDisabled();
-  await button("Back to the board").click();
+  const readingPosition = await position(page);
+  await press("KeyW");
+  expect(await position(page)).toEqual(readingPosition);
+  await press("KeyN");
+  await expect(canvas).toHaveAttribute("data-journal", "closing");
+  await expect(canvas).toHaveAttribute("data-journal", "closed");
+  await expect(canvas).toHaveAttribute("data-journal-book", "false");
+  await expect(canvas).toBeFocused();
   await walkTo(page, 3.5, -14);
   await walkTo(page, -3.5, -15);
   await measure("P1", "5.00 V", "probe");
@@ -615,6 +633,8 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await button("Tęsti tyrinėjimą").click();
   await page.emulateMedia({ reducedMotion: "reduce" });
   await button("Matavimų užrašai").click();
+  await expect(canvas).toHaveAttribute("data-journal", "open");
+  await expect(canvas).toHaveAttribute("data-journal-book", "true");
   await expect(page.locator(".field-journal-menu")).toHaveCSS(
     "animation-name",
     "none",
@@ -646,7 +666,8 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
       .evaluate((leaf) => leaf.scrollWidth <= leaf.clientWidth),
   ).toBe(true);
   await page.setViewportSize({ width: 1280, height: 720 });
-  await button("Grįžti į plokštę").click();
+  await press("Escape");
+  await expect(canvas).toHaveAttribute("data-journal", "closed");
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.getByRole("combobox").focus();
   await page.getByRole("combobox").selectOption("en");

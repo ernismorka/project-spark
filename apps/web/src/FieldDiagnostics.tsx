@@ -13,7 +13,7 @@ const en = {
   pages: "Journal pages",
   stage: "Field diagnostics",
   controls:
-    "WASD · Walk   Shift · Run   Space · Jump   Q · Use meter or repair   Esc · Pause",
+    "WASD · Walk   Shift · Run   Space · Jump   Q · Use meter or repair   N · Notebook   Esc · Pause",
   choice:
     "The controller is malfunctioning. Investigate on the board with the multimeter or use the terminal diagnostics.",
   restored:
@@ -57,7 +57,7 @@ const lt: typeof en = {
   pages: "Užrašų puslapiai",
   stage: "Diagnostika plokštėje",
   controls:
-    "WASD · Eiti   Shift · Bėgti   Space · Šokti   Q · Matuoti ar taisyti   Esc · Pristabdyti",
+    "WASD · Eiti   Shift · Bėgti   Space · Šokti   Q · Matuoti ar taisyti   N · Užrašai   Esc · Pristabdyti",
   choice:
     "Valdiklis sugedęs. Ieškok gedimo plokštėje multimetru arba naudok terminalo diagnostiką.",
   restored:

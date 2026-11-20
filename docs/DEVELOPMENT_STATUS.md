@@ -63,3 +63,22 @@ Windows doctor and headed `pnpm verify` passed with 94 unit and integration test
 The opening scene used 80 draw calls in both browsers, up from 78 in M12. Baking the T1 surfaces into one mesh brought the count down from the first M13 pass of 88. The scene gzip grew from 285.33 kB to 298.98 kB, and the journal paper is a separate 23.64 kB JPEG. In short 1080p field samples on the same Windows host, Chromium reported 4.20/4.30 ms median/p95, matching M12. Firefox reported 4.16/8.34 ms, up from 4.16/4.18 ms in M12. The separate Firefox opening scene sample still reported 4.16/4.18 ms. These are host-specific observations. Sustained performance on representative hardware remains unverified.
 
 [PR #17](https://github.com/ernismorka/project-spark/pull/17) tracks review and exact final-head CI.
+
+## M14 Character & Art Overhaul
+
+Started from merged M13 `926f255` on `codex/m14-character-art`. The original [workshop art kit](ART_ASSETS.md) replaces the flat component silhouettes and primitive engineer. N opens the physical field notebook after T1 multimeter pickup. The notebook holds live solver readings and retains bilingual keyboard-operated diagnosis. The scene locks movement through the close animation and honors reduced motion.
+
+Windows doctor and all packaged verification stages passed with 97 unit and integration tests, three release tests and all 34 headed Chromium and Firefox checks. The browser run used port 5173 to keep the existing M13 playtest on 4173. The field scenario checks the N open and reverse transitions, stable movement while reading, physical book visibility, camera push, keyboard-operated diagnosis, reduced motion, narrow Lithuanian layout and the complete repair and programming route. The paused-render and GPU cleanup checks passed in both browsers.
+
+Visual review used real 1280 × 720 packaged captures at the same checkpoints. Also inspected the 390 px Lithuanian notebook for readable evidence and controls.
+
+| Checkpoint                  | M13                                    | M14                                   |
+| --------------------------- | -------------------------------------- | ------------------------------------- |
+| Opening board               | [Before](evidence/m14/board-m13.png)   | [After](evidence/m14/board-m14.png)   |
+| Verified Lithuanian journal | [Before](evidence/m14/journal-m13.png) | [After](evidence/m14/journal-m14.png) |
+
+The accelerated opening scene used 64 draw calls in both browsers, down from 80 in M13 and 104 before widening the M14 static batch groups. The workshop asset adds 1.28 MB of local GLB data. Scene JS gzip is approximately 320 kB compared with 298.98 kB in M13. In brief 1080p Windows samples, Chromium reported 4.20/4.40 ms median/p95 in the verified field view and 4.20/8.30 ms at the opening board. Firefox reported 4.16/4.18 ms in both views. The M13 field measurements were 4.20/4.30 ms in Chromium and 4.16/8.34 ms in Firefox. These observations describe the test host. Sustained play on representative hardware remains unverified.
+
+The [first Linux CI run](https://github.com/ernismorka/project-spark/actions/runs/44324188823) passed 31 of 34 browser checks. Chromium's SwiftShader path timed out in the field route and frame sample and fell behind real input in the orientation test. Local SwiftShader reproduction confirmed a large slowdown at full resolution. The fix caps the 3D framebuffer to half scale for recognized CPU renderers and simplifies lighting and large-surface shaders on those adapters. The full-resolution hardware path used for the captures and the accessible HTML journal retain their render settings. The workload test now verifies the software canvas scale when applicable.
+
+[PR #18](https://github.com/ernismorka/project-spark/pull/18) tracks review and exact final-head CI.
