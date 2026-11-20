@@ -94,7 +94,7 @@ export function buildTraceBench(
     fixed("sphere", x, 0.163, z, 0.255, 0.105, 0.255, p.silver),
   );
   const finish = traceEnds.map(({ x, z }) =>
-    fixed("cylinder", x, 0.153, z, 0.462, 0.08, 0.462, p.traceSeal),
+    fixed("cylinder", x, 0.174, z, 0.462, 0.099, 0.462, p.traceSeal),
   );
 
   fixed("box", jumperTray.x, 0.12, jumperTray.z, 0.58, 0.2, 0.78, p.chip, work);

@@ -69,3 +69,5 @@ The owner authorized M16 on merged M15 `20e7dd5`. Use `codex/m16-trace-repair`.
 1. Move field repair to a serializable, power-gated sequence. Validate tool contacts, route order, heat and release before accepting the two joints. Require unpowered solver-backed continuity, sealing and power restoration before the original voltage sweep.
 2. Reuse the board and existing tool models for a close-up of the one field break. Show each material change, recast recoverable mistakes as specific feedback, and give equivalent pointer and keyboard operation. Localize EN/LT and adapt target tolerance and hints by difficulty.
 3. Exercise failure, retry, continuity and commissioning in unit tests and packaged browsers. Review real captures and record render workload and timing. Open a review PR without changing the demo delivery or cooperative pilot.
+
+The implementation is in [PR #20](https://github.com/ernismorka/project-spark/pull/20). See [Development status](DEVELOPMENT_STATUS.md) for verification evidence. The next milestone requires owner approval.
