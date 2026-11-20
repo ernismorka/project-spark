@@ -100,3 +100,17 @@ Reviewed the packaged desktop captures and the 390 px Lithuanian journal. Moving
 | Feed-trace repair           | [Before](evidence/m15/repair-m14.png)   | [After](evidence/m15/repair-m15.png)   |
 
 [PR #19](https://github.com/ernismorka/project-spark/pull/19) tracks review and exact final-head CI.
+
+## M16 Interactive PCB Trace Repair
+
+Started from merged M15 `20e7dd5` on `codex/m16-trace-repair`. The field repair now opens a 3D work area at the localized break. It covers isolation, copper preparation, jumper routing, controlled soldering, cleanup, unpowered continuity, sealing and power restoration. The solver still owns the final voltage sweep. Tool damage and permanent failure are outside the scenario. Mistakes leave completed work in place and can be reattempted.
+
+The work area uses the existing board, field tools and renderer. Difficulty changes guidance, contact area and the time available to lift the iron. Power and continuity requirements apply in all three tiers. Leaving during work keeps the supply isolated and restores progress upon return.
+
+The Windows environment check, lint, type checking, 102 unit and integration tests, reproducible production packaging and three release tests passed. All 17 headed Chromium checks and all 17 headless Firefox checks passed against the package. The initial headed Windows Firefox run was stopped after click timeouts in the title and difficulty tests before trace repair. The full headless rerun passed those checks and the repair playthrough. The repair route covers powered and open continuity rejection, a missed pad, keyboard exposure, leave and reentry, wrong routing order, overheat recovery, reduced motion, early power rejection and fresh voltage verification through commissioning.
+
+Reviewed the desktop soldering and sealed-joint captures in both browsers during development. The final coating covers the metal joint and leaves the insulated jumper visible. [M15 automatic repair](evidence/m15/repair-m15.png), [M16 soldering](evidence/m16/solder-m16.png), [M16 sealed joints](evidence/m16/sealed-m16.png).
+
+The opening board used 64 draw calls in both Windows browsers. Over 40 frame intervals at 1280 × 720 in the repair work area, median/p95 were 4.20/4.20 ms in headed Chromium and 4.16/4.18 ms in headless Firefox. At 1920 × 1080 after verification, the 90-frame samples were 4.20/8.40 ms in Chromium and 8.32/12.50 ms in Firefox. These are short observations on one test host. The production scene is approximately 323.14 kB gzip with the same 1.40 MB workshop asset as M15.
+
+[PR #20](https://github.com/ernismorka/project-spark/pull/20) tracks review and exact final-head CI.

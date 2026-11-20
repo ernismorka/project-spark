@@ -1,8 +1,12 @@
 # Game design document
 
+## M16 Interactive PCB Trace Repair
+
+At the localized feed break, the engineer opens a 3D work area and isolates the supply. The player exposes, cleans, fluxes and tins both pads, prepares the jumper, routes it around the break and solders its ends. The heat gauge and joint appearance indicate when to lift the iron. A missed pad, early lift, overheated joint or skipped routing anchor gives specific feedback and leaves accepted work in place. The player cleans both joints, proves unpowered continuity, seals the repair, restores power and retakes the three original DC readings. Difficulty changes hints and aim and heat tolerance. The other training and cooperative circuits keep their existing flows.
+
 ## M15 Immersive Tools & Interactions
 
-N moves the view to the engineer's eyes as they open the notebook. The physical leaves carry the readable field record and diagnosis controls. The multimeter's COM and signal probes settle on the board and the LCD displays the measured DC voltage. After the player localizes the feed break, the engineer lowers a protective shield and bridges the gap with a soldering pen. The player must take fresh readings afterward to verify the repair.
+N moves the view to the engineer's eyes as they open the notebook. The physical leaves carry the readable field record and diagnosis controls. The multimeter's COM and signal probes settle on the board and the LCD displays the measured DC voltage. The original soldering animation established the visual language for the interactive M16 repair.
 
 ## M14 Character & Art Overhaul
 

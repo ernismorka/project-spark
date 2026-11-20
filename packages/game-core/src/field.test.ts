@@ -6,6 +6,12 @@ import {
   type Episode,
 } from "./episode";
 import { fieldPads, fieldPatch, fieldTerminal, type PadId } from "./field";
+import {
+  jumperTray,
+  traceEnds,
+  traceRoute,
+  type TracePoint,
+} from "./trace-repair";
 
 const at = (
   episode: Episode,
@@ -88,7 +94,55 @@ it("requires distinct evidence, a local repair and a fresh solver sweep before T
   episode = send(episode, { type: "field-notebook" });
   expect(send(episode, patch)).toBe(episode);
   episode = send(at(episode, fieldPatch), patch);
+  expect(episode.field?.phase).toBe("located");
+  expect(episode.field?.benchOpen).toBe(true);
+  expect(episode.session.phase).toBe("paused");
+  expect(send(episode, { type: "resume" })).toBe(episode);
+  expect(measure(episode, "P1").field).toBe(episode.field);
+  const act = (event: unknown) => {
+    episode = send(episode, {
+      type: "field-repair",
+      event,
+      difficulty: "technician",
+    });
+  };
+  const hold = (point: TracePoint, ticks: number) => {
+    for (let i = 0; i < ticks; i++) act({ type: "contact", ...point });
+    act({ type: "release" });
+  };
+  act({ type: "continuity" });
+  expect(episode.field?.traceRepair?.message).toBe("need-power-off");
+  act({ type: "power" });
+  act({ type: "continuity" });
+  expect(episode.field?.traceRepair?.message).toBe("continuity-open");
+  hold(traceEnds[0], 5);
+  episode = send(episode, { type: "close-field-repair" });
+  expect(episode.session.phase).toBe("playing");
+  expect(episode.field?.traceRepair?.ends).toEqual([true, false]);
+  expect(measure(episode, "P2").field).toBe(episode.field);
+  episode = send(episode, patch);
+  hold(traceEnds[1], 5);
+  for (const ticks of [4, 4, 13]) for (const end of traceEnds) hold(end, ticks);
+  expect(episode.field?.traceRepair?.stage).toBe("prepare");
+  hold(jumperTray, 5);
+  for (const point of traceRoute) hold(point, 1);
+  expect(episode.field?.traceRepair?.stage).toBe("solder");
+  hold(traceEnds[0], 25);
+  expect(episode.field?.traceRepair?.message).toBe("hot");
+  expect(episode.field?.traceRepair?.ends).toEqual([false, false]);
+  for (const end of traceEnds) hold(end, 13);
+  act({ type: "continuity" });
+  expect(episode.field?.traceRepair?.message).toBe("clean-first");
+  for (const end of traceEnds) hold(end, 4);
+  act({ type: "continuity" });
+  expect(episode.field?.traceRepair?.message).toBe("continuity-pass");
+  expect(episode.field?.traceRepair?.stage).toBe("seal");
+  act({ type: "power" });
+  expect(episode.field?.traceRepair?.message).toBe("keep-isolated");
+  for (const end of traceEnds) hold(end, 4);
+  act({ type: "power" });
   expect(episode.field?.phase).toBe("recheck");
+  expect(episode.session.phase).toBe("playing");
   expect(send(episode, patch)).toBe(episode);
   expect(episode.field?.after).toEqual({});
   for (const { id } of fieldPads) episode = measure(episode, id);

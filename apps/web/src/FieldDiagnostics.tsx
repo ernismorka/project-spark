@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fieldPads, type FieldState } from "@spark/game-core";
+import { fieldPads, tracePowered, type FieldState } from "@spark/game-core";
 import type { Language } from "@spark/shared";
 import { difficultyCopy, type Difficulty } from "./difficulty";
 
@@ -24,11 +24,11 @@ const en = {
   collect: "Find the probe pads and record all three voltages.",
   ready: "Open the notebook and locate the break from the readings.",
   located: "Trace localized. Follow the beacon and bridge the break.",
-  soldering: "Soldering the feed trace…",
+  isolated: "Supply isolated. Return to the break to finish the repair.",
   recheck: "Trace bridged. Measure all three pads again.",
   verified: "Repair verified. Return to T1 to commission the device.",
   probe: "Probe pad",
-  patch: "Bridge trace",
+  patch: "Open trace repair",
   report: "Return to T1 report",
   close: "Back to the board",
   next: "Next location",
@@ -69,11 +69,11 @@ const lt: typeof en = {
   collect: "Surask matavimo taškus ir užrašyk visas tris įtampas.",
   ready: "Atsiversk užrašus ir pagal matavimus nustatyk trūkį.",
   located: "Trūkio vieta nustatyta. Sek švyturiu ir sujunk takelį.",
-  soldering: "Lituojamas maitinimo takelis…",
+  isolated: "Maitinimas atjungtas. Grįžk prie trūkio ir baik remontą.",
   recheck: "Takelis sujungtas. Dar kartą išmatuok visus tris taškus.",
   verified: "Remontas patvirtintas. Grįžk į T1 parengti įrenginio.",
   probe: "Matuoti įtampą",
-  patch: "Sujungti takelį",
+  patch: "Atverti takelio remontą",
   report: "Grįžti į T1 ataskaitą",
   close: "Grįžti į plokštę",
   next: "Kita vieta",
@@ -122,6 +122,8 @@ export function fieldTask(
 ) {
   const copy = fieldCopy[language];
   const guidance = difficultyCopy[language];
+  if (field.traceRepair && !tracePowered(field.traceRepair.stage))
+    return copy.isolated;
   if (difficulty === "engineer") return guidance.field[field.phase];
   if (
     field.phase === "collect" &&

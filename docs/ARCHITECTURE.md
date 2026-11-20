@@ -1,10 +1,16 @@
 # Architecture
 
+## M16 interactive trace repair
+
+`packages/game-core/src/trace-repair.ts` owns the serializable stage, pad completion, route, tool dwell and heat. The episode accepts bench commands only when the player has reached and opened the localized repair. Leaving clears the current contact and preserves progress and power state. Voltage probe commands are gated while isolated. The continuity check uses a separate ideal test source with the existing solver and joins the test pads only after both solder joints pass. Cleaning, continuity and sealing gate power restoration, which enables the original fresh field sweep and terminal commissioning.
+
+The browser samples pointer or keyboard contact at 50 ms and maps it into board coordinates using the same projection as the close-up camera. The 3D worksite derives tool action, materials, jumper and probe visibility from that state. Difficulty configures aim and thermal tolerances while every stage and electrical requirement remains shared. The heat score is a bounded interaction model. Tool and material changes use the existing geometry and kit, with no new asset download or solver work in the render loop.
+
 ## M15 immersive field tools
 
 The reversible notebook timeline brings the camera to eye level. At the settled pose, the browser projects the physical leaves into CSS pixels. One semantic journal, aligned to that spread, provides the visible ink and the existing keyboard and assistive-technology controls. The camera restores the follow view on close.
 
-The renderer detects accepted field transitions and stages the corresponding tool motion. Both probe tips reach dedicated surfaces, with the COM tip on the modeled GND point. The LCD publishes the real solver value at contact. For repair the shield drops, a short soldering pass fills the visual gap and the bead cools. These poses never become inputs to the circuit model. The ideal feed joins on the existing accepted repair, while verification still depends on fresh solver readings. Reduced motion bypasses the camera, placement, sparks and bead animation.
+The renderer detects accepted measurement transitions and stages the corresponding tool motion. Both probe tips reach dedicated surfaces, with the COM tip on the modeled GND point. The LCD publishes the real solver value at contact. Reduced motion skips probe placement animation. M16 now owns soldering and the accepted feed connection.
 
 ## M14 character art and physical notebook
 

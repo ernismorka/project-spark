@@ -39,6 +39,7 @@ export {
 export * from "./programming";
 export * from "./pilot";
 export * from "./episode";
+export * from "./trace-repair";
 export {
   atFieldSite,
   fieldDestinations,

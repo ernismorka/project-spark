@@ -14,8 +14,6 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
   const body = joint(entity, "engineer-pose");
   const torso = workshop("torso", body);
   const head = workshop("helmet", body, 0, 1.29);
-  const shield = workshop("faceShield", head, 0, 0.43, 0.25);
-  shield.enabled = false;
   const eyes = [-1, 1].map((side) =>
     workshop("eye", head, side * 0.135, 0.196, 0.409),
   );
@@ -67,7 +65,6 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
       journal: number,
       journalYaw: number,
       reduced: boolean,
-      guard = 0,
     ) {
       const ease = reduced ? 1 : 1 - Math.exp(-14 * dt);
       const turn = Math.atan2(
@@ -127,8 +124,6 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
       head.enabled = !firstPerson;
       torso.enabled = !firstPerson;
       for (const leg of legs) leg.upper.enabled = !firstPerson;
-      shield.enabled = guard > 0.01;
-      shield.setLocalEulerAngles(-95 * (1 - guard), 0, 0);
       if (book.enabled) {
         book.setLocalPosition(
           -0.45 * (1 - lifted),

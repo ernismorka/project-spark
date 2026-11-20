@@ -2,6 +2,9 @@ import { PilotPanel, pilotCopy } from "./PilotPanel";
 import { WorkbenchPanel, programmingCopy } from "./WorkbenchPanel";
 import { repairCopy } from "./repair-i18n";
 import { DiagnosticPanel } from "./DiagnosticPanel";
+import { TraceRepairPanel } from "./TraceRepairPanel";
+import { traceCopy } from "./trace-i18n";
+import type { TraceAim } from "./game/trace-view";
 import {
   FieldNotebook,
   fieldCopy,
@@ -22,6 +25,7 @@ import {
   horizontalDistance,
   fieldDestinations,
   fieldTarget,
+  tracePowered,
   type PadId,
 } from "@spark/game-core";
 import { languages } from "@spark/shared";
@@ -51,7 +55,7 @@ function App() {
   const e = episodeCopy[state.language];
   const field = episode.field;
   const [journalStage, setJournalStage] = useState<JournalStage>("closed");
-  const [soldering, setSoldering] = useState(false);
+  const traceAim = useRef<TraceAim>({ x: 0, z: 0, engaged: false });
   const playing = session.phase === "playing" && journalStage === "closed";
   const language = useRef(state.language);
   language.current = state.language;
@@ -119,13 +123,11 @@ function App() {
     let dispose: (() => void) | undefined;
     setStatus("loading");
     setJournalStage("closed");
-    setSoldering(false);
     const element = canvas.current!;
     const lost = (event: Event) => {
       event.preventDefault();
       dispatch({ type: "pause" });
       setJournalStage("closed");
-      setSoldering(false);
       setStatus("error");
       controller.abort();
       queueMicrotask(() => dispose?.());
@@ -139,7 +141,7 @@ function App() {
           field: () => current.current.field,
           language: () => language.current,
           journalStage: setJournalStage,
-          soldering: setSoldering,
+          traceAim: () => traceAim.current,
           journalToggle: () => {
             const { field, session } = current.current;
             if (
@@ -209,6 +211,7 @@ function App() {
   const showSceneMenu =
     session.phase !== "playing" &&
     !showingBoard &&
+    !field?.benchOpen &&
     (!field?.notebook || journalStage === "open");
   const nearby = nearbyComponents(session);
   const target = nearby.find((c) => c.id === selected) ?? nearby[0];
@@ -418,8 +421,8 @@ function App() {
                   : episode.activated
                     ? e.world
                     : field && !session.repair.completed
-                      ? soldering
-                        ? fieldText.soldering
+                      ? field.benchOpen
+                        ? traceCopy[state.language].title
                         : fieldTask(field, state.language, difficulty)
                       : session.repair.completed
                         ? episodeTask
@@ -471,7 +474,7 @@ function App() {
               <>
                 {playing && field && (
                   <>
-                    {navigation && fieldGuide && !soldering && (
+                    {navigation && fieldGuide && (
                       <div className="compass">
                         <span>{fieldText.next}</span>
                         <span>
@@ -501,15 +504,22 @@ function App() {
                     <aside className="field-meter" aria-label={fieldText.meter}>
                       <strong>{fieldText.meter} · DC / GND</strong>
                       <output role="status">
-                        {field.last ? `${field.last} · ` : ""}
-                        {fieldVoltage(
-                          state.language,
-                          field.last
-                            ? (field.phase === "collect" ||
-                              field.phase === "located"
-                                ? field.before
-                                : field.after)[field.last]
-                            : undefined,
+                        {field.traceRepair &&
+                        !tracePowered(field.traceRepair.stage) ? (
+                          traceCopy[state.language].isolated
+                        ) : (
+                          <>
+                            {field.last ? `${field.last} · ` : ""}
+                            {fieldVoltage(
+                              state.language,
+                              field.last
+                                ? (field.phase === "collect" ||
+                                  field.phase === "located"
+                                    ? field.before
+                                    : field.after)[field.last]
+                                : undefined,
+                            )}
+                          </>
                         )}
                       </output>
                       {fieldSite && (
@@ -642,6 +652,15 @@ function App() {
                       </aside>
                     )}
                   </>
+                )}
+                {field?.benchOpen && field.traceRepair && (
+                  <TraceRepairPanel
+                    repair={field.traceRepair}
+                    language={state.language}
+                    difficulty={difficulty}
+                    aim={traceAim}
+                    dispatch={dispatch}
+                  />
                 )}
                 {showingBoard && (
                   <div className="board-report" role="status">

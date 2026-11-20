@@ -30,7 +30,7 @@ describe("field animation events", () => {
     expect(acceptedFieldMotion(measured, undefined)).toBeUndefined();
   });
 
-  it("shows a probe for a fresh zero reading and repair only after localization", () => {
+  it("animates new measurements and leaves the repair work area in control of the tools", () => {
     const measured: FieldState = {
       ...collecting,
       before: { P2: 0 },
@@ -49,10 +49,7 @@ describe("field animation events", () => {
       site: { id: "P2" },
     });
     expect(acceptedFieldMotion(measured, located)).toBeUndefined();
-    expect(acceptedFieldMotion(located, patched)).toMatchObject({
-      kind: "repair",
-      site: { id: "FEED-LINK" },
-    });
+    expect(acceptedFieldMotion(located, patched)).toBeUndefined();
     expect(acceptedFieldMotion(patched, verified)).toMatchObject({
       kind: "verified",
       site: { id: "P3" },
@@ -67,9 +64,7 @@ it("seats the common lead before the voltage probe and holds both during the rea
   expect(reference.contact).toBe(false);
   const reading = toolPose("probe", 0.7, false);
   expect(reading).toMatchObject({ black: 1, red: 1, contact: true });
-  expect(
-    toolPose("probe", fieldMotionDuration("probe", false), false),
-  ).toMatchObject({
+  expect(toolPose("probe", fieldMotionDuration(false), false)).toMatchObject({
     reach: 0,
     red: 0,
     black: 0,
@@ -77,22 +72,8 @@ it("seats the common lead before the voltage probe and holds both during the rea
   });
 });
 
-it("builds one continuous bead and suppresses tool motion and heat with reduced motion", () => {
-  expect(toolPose("repair", 0.35, false)).toMatchObject({
-    solder: 0,
-    contact: false,
-  });
-  const middle = toolPose("repair", 0.95, false);
-  expect(middle.solder).toBeCloseTo(0.5);
-  expect(middle.contact).toBe(true);
-  expect(toolPose("repair", 1.9, false)).toMatchObject({
-    solder: 1,
-    heat: 0,
-    contact: false,
-  });
-  expect(toolPose("repair", 0.95, true)).toMatchObject({
-    solder: 1,
-    heat: 0,
+it("skips probe motion with reduced motion enabled", () => {
+  expect(toolPose("probe", 0.75, true)).toMatchObject({
     reach: 0,
     contact: false,
   });
