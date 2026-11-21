@@ -1,5 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
-import { traceViewHeight } from "../apps/web/src/game/trace-view";
+import {
+  traceScale,
+  traceToolbox,
+  traceToolboxPickZ,
+  traceView,
+} from "../apps/web/src/game/trace-view";
 async function position(page: Page) {
   return page.locator("canvas").evaluate((c) => ({
     x: Number(c.dataset.playerX),
@@ -593,7 +598,7 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await button("Check diagnosis").click();
   await expect(page.getByRole("dialog")).toContainText("Trace localized");
   await button("Back to the board").click();
-  await walkTo(page, -7, -3);
+  await walkTo(page, -4.35, -3);
   await expect(button(/Open trace repair/)).toBeVisible();
   await page.screenshot({ path: info.outputPath("m10-localized-trace.png") });
   await press("KeyQ");
@@ -614,11 +619,16 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   };
   const aim = async (x: number, z: number) => {
     const bounds = (await surface.boundingBox())!;
-    const scale = bounds.height / traceViewHeight(bounds.width / bounds.height);
-    await page.mouse.move(
-      bounds.x + bounds.width / 2 + scale * x,
-      bounds.y + bounds.height / 2 + scale * z,
-    );
+    const pointer = traceView(bounds.width, bounds.height).point(x, z);
+    await page.mouse.move(bounds.x + pointer.x, bounds.y + pointer.y);
+  };
+  const toolIs = async (name: string) => {
+    await expect(canvas).toHaveAttribute("data-repair-tool", name);
+    await expect
+      .poll(async () =>
+        Number(await canvas.getAttribute("data-repair-grip-error")),
+      )
+      .toBeLessThan(0.035);
   };
   const touch = async (x: number, z: number, accepted: () => Promise<void>) => {
     await aim(x, z);
@@ -631,6 +641,8 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   };
   await stageIs("isolate");
   await expect(canvas).toHaveAttribute("data-camera-view", "repair");
+  await expect(canvas).toHaveAttribute("data-repair-toolbox", "closed");
+  await page.screenshot({ path: info.outputPath("m17-site.png") });
   await page.getByRole("combobox").selectOption("lt");
   const lithuanianBench = page.getByRole("dialog", {
     name: "Maitinimo takelio remontas",
@@ -646,6 +658,16 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await button(/Switch power off/).click();
   await expect(bench).toHaveAttribute("data-powered", "false");
   await stageIs("expose");
+  await page.keyboard.down("Space");
+  await page.keyboard.up("Space");
+  await expect(bench).toHaveAttribute("data-ends", "0");
+  await expect(button("Open toolbox")).toBeVisible();
+  await aim(traceToolbox.x / traceScale, traceToolboxPickZ / traceScale);
+  await page.mouse.down();
+  await page.mouse.up();
+  await expect(canvas).toHaveAttribute("data-repair-toolbox", "open");
+  await toolIs("scraper");
+  await page.screenshot({ path: info.outputPath("m17-toolbox.png") });
   await button("Test continuity").click();
   await messageIs("continuity-open");
   await touch(0.88, -0.32, () => messageIs("miss"));
@@ -666,6 +688,7 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
     ["flux", "tin"],
   ] as const) {
     await stageIs(step);
+    if (step === "flux") await toolIs("sprayer");
     await touch(0, -0.69, () =>
       expect(bench).toHaveAttribute("data-ends", "1"),
     );
@@ -676,6 +699,7 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await touch(0, 0.69, readyToLift);
   await stageIs("prepare");
   await touch(-1.08, 0.34, () => stageIs("route"));
+  await toolIs("cable");
   await touch(0, 0.69, () => messageIs("route-order"));
   await aim(0, -0.69);
   await page.mouse.down();
@@ -685,11 +709,16 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await aim(0, 0.69);
   await stageIs("solder");
   await page.mouse.up();
-  await touch(0, -0.69, () => messageIs("hot"));
+  await toolIs("iron");
+  await touch(0, -0.69, async () => {
+    await readyToLift();
+    await page.screenshot({ path: info.outputPath("m17-solder.png") });
+    await messageIs("hot");
+  });
   await expect(bench).toHaveAttribute("data-ends", "0");
   await touch(0, -0.69, readyToLift);
   await expect(bench).toHaveAttribute("data-ends", "1");
-  await page.screenshot({ path: info.outputPath("m16-solder.png") });
+  await page.screenshot({ path: info.outputPath("m17-joint.png") });
   const benchFrames = await page.evaluate(
     () =>
       new Promise<number[]>((resolve) => {
@@ -705,7 +734,7 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
       }),
   );
   console.log(
-    "M16 trace work area sample",
+    "M17 trace work area sample",
     JSON.stringify({ medianMs: benchFrames[20], p95Ms: benchFrames[37] }),
   );
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -723,7 +752,7 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await expect(bench).toHaveAttribute("data-powered", "false");
   await touch(0, -0.69, () => expect(bench).toHaveAttribute("data-ends", "1"));
   await touch(0, 0.69, () => stageIs("restore"));
-  await page.screenshot({ path: info.outputPath("m16-sealed.png") });
+  await page.screenshot({ path: info.outputPath("m17-sealed.png") });
   await button(/Restore power/).click();
   await expect(bench).toHaveCount(0);
   await page.emulateMedia({ reducedMotion: "no-preference" });

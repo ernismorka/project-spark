@@ -4,7 +4,7 @@
 
 Read README.md, docs/GDD.md, docs/ARCHITECTURE.md, docs/ROADMAP.md, docs/EXECUTION_PLAN.md and docs/DEVELOPMENT_STATUS.md before continuing. GDD and roadmap are the product source of truth. Do not expand them without authorization.
 
-M15 PR #19 is merged as 20e7dd5. The owner approved M16 Interactive PCB Trace Repair. Follow docs/EXECUTION_PLAN.md and record art provenance in docs/ART_ASSETS.md. M16 covers one physical field repair site with power isolation, staged tool work, repair verification, EN/LT and difficulty-based guidance and tolerance. Preserve classic diagnostics, commissioning, cooperative play and the existing solver. No new dependencies or public deployment/release. Later milestones require owner approval.
+M16 PR #20 is merged as 5d5d96b. The owner approved M17 Industrial-Scale Micro-World Repair. Follow docs/EXECUTION_PLAN.md and record art provenance in docs/ART_ASSETS.md. M17 revises the scale, art and equipment for the single field repair. Preserve its power gates, stage and solver rules, recovery, accessibility, difficulty and EN/LT. Keep classic diagnostics, commissioning and cooperative play available. Scale comes from authentic electronic components and tools. No new dependencies or public deployment/release. Later milestones require owner approval.
 
 ## Autonomous workflow
 
@@ -30,4 +30,4 @@ Preserve sandbox and security restrictions. Never modify machine-wide Codex appr
 
 ## Session continuity
 
-On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M16 is authorized on merged PR #19. After submitting M16, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.
+On resume, read the two tracking files, fetch/inspect main and the milestone PR/CI, confirm the approved baseline, and continue the first executable unfinished task. M17 is authorized on merged PR #20. After submitting M17, limit work to its fixes/review until owner approval. Human gameplay and representative hardware tests are deferred for a consolidated playtest, not routine implementation blockers. Do not claim scheduled/background execution unless an actual documented automation has been configured. See docs/AUTONOMOUS_WORKFLOW.md.

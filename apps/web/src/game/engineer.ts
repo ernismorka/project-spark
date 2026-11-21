@@ -18,6 +18,8 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
     workshop("eye", head, side * 0.135, 0.196, 0.409),
   );
   workshop("mouth", head, 0, 0.103, 0.406);
+  const shield = workshop("faceShield", head, 0, 0.4, 0.32);
+  shield.enabled = false;
   const legs = [-1, 1].map((side) => {
     const upper = workshop("thigh", body, side * 0.19, 0.65);
     return { upper, lower: workshop("boot", upper, 0, -0.28) };
@@ -47,6 +49,40 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
   let activity = 0;
   let runBlend = 0;
   let groundedBlend = 1;
+  function gripArm(index: number, target: pc.Vec3, amount: number) {
+    const { upper, lower } = arms[index];
+    upperDirection.sub2(target, upper.getLocalPosition());
+    const distance = Math.min(0.478, upperDirection.length());
+    upperDirection.normalize();
+    const along =
+      (0.27 ** 2 - 0.218 ** 2 + distance ** 2) /
+      (2 * Math.max(distance, 0.005));
+    elbow
+      .copy(down)
+      .sub(
+        lowerDirection.copy(upperDirection).mulScalar(down.dot(upperDirection)),
+      )
+      .normalize();
+    elbow.mulScalar(Math.sqrt(Math.max(0, 0.27 ** 2 - along ** 2)));
+    elbow.add(upperDirection.mulScalar(along));
+    lowerDirection
+      .sub2(target, upper.getLocalPosition())
+      .sub(elbow)
+      .normalize();
+    upperRotation.setFromDirections(down, elbow.normalize());
+    inverse
+      .copy(upperRotation)
+      .invert()
+      .transformVector(lowerDirection, lowerDirection);
+    lowerRotation.setFromDirections(down, lowerDirection);
+    upper.setLocalRotation(
+      upperRotation.slerp(upper.getLocalRotation(), upperRotation, amount),
+    );
+    lower.setLocalRotation(
+      lowerRotation.slerp(lower.getLocalRotation(), lowerRotation, amount),
+    );
+  }
+  const wristRotation = new pc.Quat().setFromEulerAngles(-78, 0, 0);
   return {
     entity,
     body,
@@ -55,6 +91,18 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
     book,
     left,
     right,
+    operate(left: pc.Vec3, right: pc.Vec3, weld: boolean) {
+      for (let i = 0; i < arms.length; i++) {
+        const { upper, lower, hand } = arms[i];
+        gripArm(i, i === 0 ? left : right, 1);
+        inverse
+          .mul2(upper.getLocalRotation(), lower.getLocalRotation())
+          .invert();
+        hand.setLocalRotation(inverse.mul(wristRotation));
+      }
+      shield.enabled = weld;
+      head.setLocalEulerAngles(14, 0, 0);
+    },
     animate(
       dt: number,
       time: number,
@@ -122,6 +170,7 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
       book.enabled = journal >= journalKeys.grip;
       const firstPerson = journal >= 0.88;
       head.enabled = !firstPerson;
+      shield.enabled = false;
       torso.enabled = !firstPerson;
       for (const leg of legs) leg.upper.enabled = !firstPerson;
       if (book.enabled) {
@@ -188,38 +237,7 @@ export function buildEngineer(workshop: Workshop, root: pc.Entity) {
           pc.math.lerp(0.85, 0.92 + (1 - spread) * 0.205, lifted),
           pc.math.lerp(-0.12, 0.33 + (1 - spread) * 0.12, lifted),
         );
-        upperDirection.sub2(grip, upper.getLocalPosition());
-        const distance = Math.min(0.478, upperDirection.length());
-        upperDirection.normalize();
-        const along =
-          (0.27 ** 2 - 0.218 ** 2 + distance ** 2) /
-          (2 * Math.max(distance, 0.005));
-        elbow
-          .copy(down)
-          .sub(
-            lowerDirection
-              .copy(upperDirection)
-              .mulScalar(down.dot(upperDirection)),
-          )
-          .normalize();
-        elbow.mulScalar(Math.sqrt(Math.max(0, 0.27 ** 2 - along ** 2)));
-        elbow.add(upperDirection.mulScalar(along));
-        lowerDirection
-          .sub2(grip, upper.getLocalPosition())
-          .sub(elbow)
-          .normalize();
-        upperRotation.setFromDirections(down, elbow.normalize());
-        inverse
-          .copy(upperRotation)
-          .invert()
-          .transformVector(lowerDirection, lowerDirection);
-        lowerRotation.setFromDirections(down, lowerDirection);
-        upper.setLocalRotation(
-          upperRotation.slerp(upper.getLocalRotation(), upperRotation, amount),
-        );
-        lower.setLocalRotation(
-          lowerRotation.slerp(lower.getLocalRotation(), lowerRotation, amount),
-        );
+        gripArm(i, grip, amount);
       }
     },
   };

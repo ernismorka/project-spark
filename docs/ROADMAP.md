@@ -1,5 +1,7 @@
 # Roadmap
 
+M17 Industrial-Scale Micro-World Repair is authorized on merged [M16 PR #20](https://github.com/ernismorka/project-spark/pull/20). It revises the scale, art and equipment for the one feed repair, using enlarged PCB details and the existing electrical validation. Acceptance covers visible tool handling and physical grips, real browser captures and performance, and regression coverage for the complete M16 workflow.
+
 M16 Interactive PCB Trace Repair is authorized on merged [M15 PR #19](https://github.com/ernismorka/project-spark/pull/19). It adds one power-gated repair work area with staged tool use, recoverable mistakes, a soldered jumper, solver-backed continuity and the existing voltage recheck. Acceptance includes bilingual keyboard and pointer play, reduced motion, difficulty-based guidance and tolerances, and packaged browser verification. See [Execution plan](EXECUTION_PLAN.md).
 
 M15 Immersive Tools & Interactions is authorized on merged [M14 PR #18](https://github.com/ernismorka/project-spark/pull/18). It covers the first-person journal, the field multimeter, and visible soldering while preserving existing circuit and verification rules.

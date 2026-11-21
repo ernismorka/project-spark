@@ -114,3 +114,24 @@ Reviewed the desktop soldering and sealed-joint captures in both browsers during
 The opening board used 64 draw calls in both Windows browsers. Over 40 frame intervals at 1280 × 720 in the repair work area, median/p95 were 4.20/4.20 ms in headed Chromium and 4.16/4.18 ms in headless Firefox. At 1920 × 1080 after verification, the 90-frame samples were 4.20/8.40 ms in Chromium and 8.32/12.50 ms in Firefox. These are short observations on one test host. The production scene is approximately 323.14 kB gzip with the same 1.40 MB workshop asset as M15.
 
 [PR #20](https://github.com/ernismorka/project-spark/pull/20) tracks review and exact final-head CI.
+
+## M17 Industrial-Scale Micro-World Repair
+
+Started from merged M16 `5d5d96b` on `codex/m17-industrial-repair`. The localized break is a fractured copper feed with tapered ends, exposed substrate and debris. It sits 2.65 board units east of the former site to give D1 and the working engineer clearance. Nearby vias, capacitor terminations and the original engineer establish scale. The oblique camera, pointer and keyboard use the same work plane.
+
+The player can open the hinged toolbox from the worksite or its keyboard-accessible control. The stage brings the scraper, flux sprayer, stripped jumper and shoulder iron into the engineer's hands. The model solves both arms to the equipment grips. The cable follows the pointer as the player routes it between its anchors. Heat, solder and finish reflect the original unpowered repair and solver verification stages. Reduced motion settles the lid and equipment immediately and suppresses particles.
+
+Windows environment, lint, type checking, 105 unit and integration tests, production packaging and three release tests passed. All 17 headed Chromium and all 17 headless Firefox checks passed before the final lid clearance and coating polish. The final package passed the focused repair replay in both browsers. The repair route exercises selecting the toolbox on the board, articulated grip alignment, failure recovery, unpowered continuity, sealing, fresh voltages and commissioning.
+
+The desktop captures show the relative scale at arrival, the open case and scraper, active soldering, and the sealed jumper. The 1280 × 720 sealed captures compare the same step.
+
+| Checkpoint          | M16                                                       | M17                                                                 |
+| ------------------- | --------------------------------------------------------- | ------------------------------------------------------------------- |
+| Worksite on arrival |                                                           | [Fractured copper feed](evidence/m17/worksite.png)                  |
+| Equipment           |                                                           | [Toolbox and scraper](evidence/m17/toolbox.png)                     |
+| Soldering           | [Solder pen and first joint](evidence/m16/solder-m16.png) | [Shoulder iron with active contact](evidence/m17/active-solder.png) |
+| Sealed jumper       | [M16](evidence/m16/sealed-m16.png)                        | [M17](evidence/m17/sealed.png)                                      |
+
+In matched 1920 × 1080 headed Chromium runs on the Radeon 780M, the framebuffer was 1827 × 810. During active soldering, Chrome presentation feedback measured M16 at 238.2 FPS, with 4.17 ms median and 4.22 ms p95. M17 measured 239.3 FPS, with 4.17 ms median and 4.25 ms p95 over 1,441 intervals. The longest M17 interval was 8.36 ms. The AMD 3D-engine samples were 70–72% in both runs. These are short observations on one hardware configuration. The opening board remained at 64 draw calls in both local browser projects.
+
+The gzip scene bundle is 325.98 kB, up from 323.14 kB in M16. The production workshop asset and dependency set are unchanged. [Asset provenance](ART_ASSETS.md).

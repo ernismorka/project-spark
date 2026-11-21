@@ -1,5 +1,11 @@
 # Architecture
 
+## M17 repair scale and equipment
+
+The localized worksite maps the M16 target coordinates onto the enlarged feed. The orthographic camera and pointer mapping share the same board plane and inclination. The repair actor reuses the exploration engineer rig. Articulated arms solve to grip points in the same coordinate frame as the equipped tool, so changes in pose carry the tool and hands together.
+
+The toolbox open state lives in the browser for the current repair. It enables tool input and stages lid opening and pickup. The copper surfaces, cable segments, heat and finishes derive from the authoritative M16 repair state. The solver, contact windows, difficulty tolerances and recovery rules retain their existing implementation.
+
 ## M16 interactive trace repair
 
 `packages/game-core/src/trace-repair.ts` owns the serializable stage, pad completion, route, tool dwell and heat. The episode accepts bench commands only when the player has reached and opened the localized repair. Leaving clears the current contact and preserves progress and power state. Voltage probe commands are gated while isolated. The continuity check uses a separate ideal test source with the existing solver and joins the test pads only after both solder joints pass. Cleaning, continuity and sealing gate power restoration, which enables the original fresh field sweep and terminal commissioning.

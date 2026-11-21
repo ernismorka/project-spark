@@ -3,6 +3,8 @@ import type { TraceMessage, TraceStage } from "@spark/game-core";
 const en = {
   title: "Feed trace repair",
   surface: "Tool work area",
+  toolbox: "Open toolbox",
+  equip: "Open the toolbox to equip the repair tools.",
   controls:
     "Aim with the pointer or arrow keys. Hold to work. Keyboard: hold Space, then release.",
   close: "Leave work area",
@@ -24,15 +26,15 @@ const en = {
     ],
     expose: [
       "Expose copper",
-      "Hold the scraper on each end to remove its coating.",
+      "Hold the scraper on each end to strip the damaged coating.",
     ],
     clean: ["Clean the copper", "Hold the cleaning swab on both exposed ends."],
-    flux: ["Apply flux", "Touch the applicator to both cleaned ends."],
+    flux: ["Apply flux", "Spray both cleaned copper ends."],
     tin: [
       "Tin both ends",
       "Hold the iron steady and lift it when the heat gauge enters the target range.",
     ],
-    prepare: ["Prepare the jumper", "Hold the cutter on the wire in the tray."],
+    prepare: ["Prepare the jumper", "Strip the heavy cable in its tray."],
     route: [
       "Route the jumper",
       "Start at the upper pad, pass through the guide on the right, then reach the lower pad.",
@@ -80,6 +82,8 @@ const en = {
 const lt: typeof en = {
   title: "Maitinimo takelio remontas",
   surface: "Įrankio darbo sritis",
+  toolbox: "Atverti įrankių dėžę",
+  equip: "Atverk įrankių dėžę ir pasiimk remonto įrankius.",
   controls:
     "Nukreipk pele arba rodyklėmis. Laikyk nuspaudęs, kad dirbtum. Klaviatūra: laikyk tarpo klavišą, tada atleisk.",
   close: "Palikti darbo sritį",
@@ -105,14 +109,14 @@ const lt: typeof en = {
       "Nuvalyk varį",
       "Palaikyk valymo tamponą prie abiejų atidengtų galų.",
     ],
-    flux: ["Užtepk fliuso", "Priliesk aplikatoriumi abu nuvalytus galus."],
+    flux: ["Užpurkšk fliuso", "Apipurkšk abu nuvalytus vario galus."],
     tin: [
       "Alavuok galus",
       "Laikyk lituoklį stabiliai ir pakelk jį, kai rodmuo pasieks tinkamą diapazoną.",
     ],
     prepare: [
       "Paruošk jungiamąjį laidą",
-      "Palaikyk žnyples prie laido padėkle.",
+      "Nuimk storo laido izoliaciją padėkle.",
     ],
     route: [
       "Nutiesk laidą",

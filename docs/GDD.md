@@ -1,5 +1,9 @@
 # Game design document
 
+## M17 Industrial-Scale Micro-World Repair
+
+The localized feed is a broad PCB copper conductor with torn edges, exposed laminate and nearby plated vias and a ceramic capacitor. At the site the engineer opens a hinged equipment case, holds the scraper and sprayer, maneuvers the thick insulated jumper and braces a soldering tool at the shoulder. Both gloves stay on their handles. Copper, flux, solder and the protective finish are visible as the original M16 repair advances.
+
 ## M16 Interactive PCB Trace Repair
 
 At the localized feed break, the engineer opens a 3D work area and isolates the supply. The player exposes, cleans, fluxes and tins both pads, prepares the jumper, routes it around the break and solders its ends. The heat gauge and joint appearance indicate when to lift the iron. A missed pad, early lift, overheated joint or skipped routing anchor gives specific feedback and leaves accepted work in place. The player cleans both joints, proves unpowered continuity, seals the repair, restores power and retakes the three original DC readings. Difficulty changes hints and aim and heat tolerance. The other training and cooperative circuits keep their existing flows.

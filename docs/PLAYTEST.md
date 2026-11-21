@@ -27,3 +27,7 @@ M7 extension: after verified repair, evaluate whether players notice the constru
 At T1, choose the handheld multimeter and diagnose the feed break with the field notebook. At the localized junction, press **Q** to open the work area. Try to test continuity while powered and check that the feedback tells you to switch off. Isolate the supply, prepare both pads and route the jumper. Try missing a pad, lifting the iron early and holding it too long. Verify that you can retry and keep the work you completed. Leave with **Esc** and return to check that completed contacts and power isolation persist.
 
 Clean the new joints, pass continuity with the supply off, seal both ends and restore power. The fresh readings should be 5.00 V at P1 and P2 and 2.50 V at P3 before returning to T1. Repeat with arrow keys and **Space**, try the Engineer tier and reduced motion, and check which aiming and heat cues you can follow in English and Lithuanian.
+
+## M17 worksite playtest
+
+At the localized feed break, compare the engineer with the copper fracture, vias and nearby components. Click the toolbox itself and confirm that the lid opens and the engineer takes up the scraper. On a keyboard, use the **Open toolbox** button. Watch both gloves while moving the cable and while heating a joint. Check that the tool follows the selected contact and that the cable, solder and coating show the progress of the original repair.

@@ -7,6 +7,7 @@ export function createGeometry(
   batchGroupId: number,
 ) {
   const materials: pc.StandardMaterial[] = [];
+  const meshes: pc.Mesh[] = [];
   const material = (color: string, glow = false, finish = 0.14) => {
     const m = new pc.StandardMaterial();
     m.diffuse = new pc.Color().fromString(color);
@@ -48,6 +49,69 @@ export function createGeometry(
     visor: material("#153b50"),
     white: material("#f0edcf"),
     brown: material("#9b5b37"),
+    busCopper: material("#d27b42", false, 0.42),
+    busEdge: material("#61372b", false, 0.19),
+    busMask: material("#235e58", false, 0.16),
+    oxide: material("#774c43", false, 0.12),
+    toolCase: material("#b86835", false, 0.22),
+  };
+  const solid = (
+    parent: pc.Entity,
+    outline: readonly (readonly [number, number])[],
+    low: number,
+    top: number,
+    center: [number, number],
+    face: pc.StandardMaterial,
+    edge: pc.StandardMaterial,
+  ) => {
+    const entity = new pc.Entity("machined copper");
+    const topPositions = [center[0], top, center[1]];
+    const sidePositions: number[] = [];
+    const topIndices: number[] = [];
+    const sideIndices: number[] = [];
+    for (let i = 0; i < outline.length; i++) {
+      const [x, z] = outline[i];
+      const [nextX, nextZ] = outline[(i + 1) % outline.length];
+      topPositions.push(x, top, z);
+      topIndices.push(0, ((i + 1) % outline.length) + 1, i + 1);
+      const base = i * 4;
+      sidePositions.push(
+        x,
+        low,
+        z,
+        nextX,
+        low,
+        nextZ,
+        nextX,
+        top,
+        nextZ,
+        x,
+        top,
+        z,
+      );
+      sideIndices.push(base, base + 2, base + 1, base, base + 3, base + 2);
+    }
+    const surface = (
+      positions: number[],
+      indices: number[],
+      coating: pc.StandardMaterial,
+    ) => {
+      const mesh = new pc.Mesh(device);
+      mesh.setPositions(positions);
+      mesh.setNormals(pc.calculateNormals(positions, indices));
+      mesh.setIndices(indices);
+      mesh.update();
+      meshes.push(mesh);
+      return new pc.MeshInstance(mesh, coating, entity);
+    };
+    entity.addComponent("render", {
+      meshInstances: [
+        surface(topPositions, topIndices, face),
+        surface(sidePositions, sideIndices, edge),
+      ],
+    });
+    parent.addChild(entity);
+    return entity;
   };
   let terminalMesh: pc.Mesh | undefined;
   const shape = (
@@ -76,7 +140,11 @@ export function createGeometry(
   return {
     palette,
     shape,
-    dispose: () => materials.forEach((m) => m.destroy()),
+    solid,
+    dispose() {
+      for (const mesh of meshes) mesh.destroy();
+      for (const mat of materials) mat.destroy();
+    },
   };
 }
 export type Geometry = ReturnType<typeof createGeometry>;

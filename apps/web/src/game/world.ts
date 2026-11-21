@@ -148,13 +148,6 @@ export function buildFieldFixtures(
     ring: shape("cylinder", [x, 0.07, z], [1.42, 0.07, 1.42], p.suit, pads),
   }));
   shape("box", [-5.25, 0.05, -15], [3.5, 0.04, 0.22], p.copper, pads);
-  const gap = shape(
-    "box",
-    [fieldPatch.x, 0.06, fieldPatch.z],
-    [0.32, 0.06, 1.35],
-    p.board,
-    board,
-  );
   const marker = shape(
     "cone",
     [fieldPatch.x, 2, fieldPatch.z],
@@ -197,7 +190,6 @@ export function buildFieldFixtures(
     stored.enabled = available && !phase;
     marker.enabled =
       difficulty !== "engineer" && phase === "located" && !field?.benchOpen;
-    gap.enabled = !!phase && phase !== "collect";
     const sweep =
       phase === "collect"
         ? field?.before

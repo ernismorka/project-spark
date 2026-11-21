@@ -9,7 +9,7 @@ export const fieldPads = [
   { id: "P2", x: -7, z: 16, node: "FEED" },
   { id: "P3", x: 7, z: 9, node: "SENSE" },
 ] as const;
-export const fieldPatch = { id: "FEED-LINK", x: -7, z: -3 } as const;
+export const fieldPatch = { id: "FEED-LINK", x: -4.35, z: -3 } as const;
 export const fieldTerminal = components[4];
 export const fieldRange = 2.4;
 export type PadId = (typeof fieldPads)[number]["id"];

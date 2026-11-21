@@ -1,4 +1,4 @@
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import {
   tracePowered,
   traceStages,
@@ -8,7 +8,7 @@ import {
 } from "@spark/game-core";
 import type { Language } from "@spark/shared";
 import type { Difficulty } from "./difficulty";
-import { traceViewHeight, type TraceAim } from "./game/trace-view";
+import { overTraceToolbox, traceView, type TraceAim } from "./game/trace-view";
 import { traceCopy } from "./trace-i18n";
 
 export function TraceRepairPanel({
@@ -25,6 +25,7 @@ export function TraceRepairPanel({
   dispatch: (command: unknown) => void;
 }) {
   const copy = traceCopy[language];
+  const [toolbox, setToolbox] = useState(() => aim.current.toolbox);
   const [title, detail] = copy.steps[repair.stage];
   const live = tracePowered(repair.stage);
   const heat = repair.stage === "tin" || repair.stage === "solder";
@@ -42,6 +43,11 @@ export function TraceRepairPanel({
   const timer = useRef<number | undefined>(undefined);
   const pointer = useRef<number | undefined>(undefined);
   const surface = useRef<HTMLDivElement>(null);
+  const openToolbox = () => {
+    aim.current.toolbox = true;
+    setToolbox(true);
+    surface.current?.focus({ preventScroll: true });
+  };
   const sendRef = useRef<(event: unknown) => void>(() => {});
   sendRef.current = (event) =>
     dispatch({ type: "field-repair", event, difficulty });
@@ -53,7 +59,7 @@ export function TraceRepairPanel({
       z: aim.current.z,
     });
   const hold = () => {
-    if (aim.current.engaged) return;
+    if (aim.current.engaged || !aim.current.toolbox) return;
     aim.current.engaged = true;
     contact();
     timer.current = window.setInterval(contact, traceTickMs);
@@ -90,11 +96,12 @@ export function TraceRepairPanel({
     element: HTMLDivElement,
   ) => {
     const rect = element.getBoundingClientRect();
-    const height = traceViewHeight(rect.width / rect.height);
-    aim.current.x =
-      ((clientX - rect.left - rect.width / 2) / rect.height) * height;
-    aim.current.z =
-      ((clientY - rect.top - rect.height / 2) / rect.height) * height;
+    const point = traceView(rect.width, rect.height).aim(
+      clientX - rect.left,
+      clientY - rect.top,
+    );
+    aim.current.x = Math.max(-1.65, Math.min(1.65, point.x));
+    aim.current.z = Math.max(-1.2, Math.min(1.2, point.z));
   };
 
   return (
@@ -153,9 +160,13 @@ export function TraceRepairPanel({
           if (event.button !== 0 || aim.current.engaged) return;
           event.preventDefault();
           event.currentTarget.focus({ preventScroll: true });
+          follow(event.clientX, event.clientY, event.currentTarget);
+          if (!aim.current.toolbox) {
+            if (overTraceToolbox(aim.current.x, aim.current.z)) openToolbox();
+            return;
+          }
           pointer.current = event.pointerId;
           event.currentTarget.setPointerCapture(event.pointerId);
-          follow(event.clientX, event.clientY, event.currentTarget);
           hold();
         }}
         onPointerUp={(event) => {
@@ -208,6 +219,15 @@ export function TraceRepairPanel({
         )}
       </div>
       <div className="trace-buttons">
+        {!toolbox && (
+          <button
+            type="button"
+            className="trace-toolbox-button"
+            onClick={openToolbox}
+          >
+            {copy.toolbox}
+          </button>
+        )}
         <button
           type="button"
           data-live={live}
@@ -265,7 +285,7 @@ export function TraceRepairPanel({
         <p role="status" className="trace-feedback">
           {copy.messages[repair.message]}
         </p>
-        <p id="trace-controls">{copy.controls}</p>
+        <p id="trace-controls">{toolbox ? copy.controls : copy.equip}</p>
         {difficulty === "apprentice" && repair.stage !== "isolate" && (
           <p className="trace-assist">{copy.guide}</p>
         )}

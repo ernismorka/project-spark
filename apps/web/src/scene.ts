@@ -31,7 +31,14 @@ import {
 } from "./game/interaction-motion";
 import { buildFieldEffects } from "./game/field-effects";
 import { buildTraceBench } from "./game/trace-bench";
-import { traceViewHeight, type TraceAim } from "./game/trace-view";
+import {
+  traceContactY,
+  traceFocus,
+  traceInclination,
+  traceScale,
+  traceView,
+  type TraceAim,
+} from "./game/trace-view";
 export interface SceneBridge {
   get: () => Session;
   dispatch: (command: ExplorationCommand, publish?: boolean) => void;
@@ -200,7 +207,11 @@ export async function mountScene(
     let lastReduced = motionPreference.matches;
     let fieldMotion: FieldMotion | undefined;
     let motionTime = 0;
-    const traceCenter = new pc.Vec3(fieldPatch.x, 0.12, fieldPatch.z);
+    const traceCenter = new pc.Vec3(
+      fieldPatch.x + traceFocus.x * traceScale,
+      traceContactY,
+      fieldPatch.z + traceFocus.z * traceScale,
+    );
     update = (delta: number) => {
       const state = bridge.get();
       const activated = bridge.activated?.() ?? false;
@@ -330,17 +341,17 @@ export async function mountScene(
       canvas.dataset.toolContact = String(pose.contact);
       const aspect = canvas.clientWidth / Math.max(1, canvas.clientHeight);
       if (benchOpen) {
-        const fov = 41;
-        cameraEntity.camera!.fov = fov;
+        cameraEntity.camera!.projection = pc.PROJECTION_ORTHOGRAPHIC;
+        cameraEntity.camera!.orthoHeight =
+          traceView(canvas.clientWidth, canvas.clientHeight).worldHeight / 2;
         cameraEntity.setPosition(
           traceCenter.x,
-          traceCenter.y +
-            traceViewHeight(aspect) /
-              (2 * Math.tan((fov * pc.math.DEG_TO_RAD) / 2)),
-          traceCenter.z,
+          traceCenter.y + traceInclination.rise * 21,
+          traceCenter.z + traceInclination.run * 21,
         );
-        cameraEntity.lookAt(traceCenter, pc.Vec3.FORWARD);
+        cameraEntity.lookAt(traceCenter);
       } else {
+        cameraEntity.camera!.projection = pc.PROJECTION_PERSPECTIVE;
         camera.update(
           next.player.position,
           dt,
@@ -356,15 +367,19 @@ export async function mountScene(
         : stage === "open"
           ? "first-person"
           : "follow";
-      traceBench(
-        field?.traceRepair,
-        benchOpen,
-        field?.phase === "verified",
+      const operator = traceBench(
+        field,
         bridge.traceAim(),
         difficulty,
         reduced,
+        dt,
         time,
       );
+      canvas.dataset.repairToolbox = operator?.toolbox ?? "closed";
+      canvas.dataset.repairTool = operator?.gear ?? "none";
+      canvas.dataset.repairGripError = (operator?.gripError ?? 0).toFixed(4);
+      if (operator)
+        decals!.follow(operator.foot.x, operator.foot.y, operator.foot.z);
       const destination = objectiveTarget(next.step);
       pcb.marker.enabled =
         difficulty !== "engineer" && !field && next.phase !== "complete";
