@@ -136,4 +136,6 @@ In matched 1920 × 1080 headed Chromium runs on the Radeon 780M, the framebuffer
 
 The gzip scene bundle is 325.98 kB, up from 323.14 kB in M16. The production workshop asset and dependency set are unchanged. [Asset provenance](ART_ASSETS.md).
 
+The initial final-head Linux run passed 33 of 34 browser checks. Chromium's software rendering missed the brief probe-contact pose during a runner-side poll, while the solver reading was correct. The browser regression now installs a contact observer before taking the reading. It still requires the rendered contact pose. [Initial Linux run](https://github.com/ernismorka/project-spark/actions/runs/44880793245).
+
 [PR #21](https://github.com/ernismorka/project-spark/pull/21) tracks review and exact final-head CI.

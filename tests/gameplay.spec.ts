@@ -536,8 +536,21 @@ test("troubleshoots the physical feed, verifies it and commissions the device", 
   await expect(canvas).toBeFocused();
   await walkTo(page, 3.5, -14);
   await walkTo(page, -3.5, -15);
+  // Arm the observation before pressing Q. Software rendering can make the
+  // contact pose finish between the reading assertion and a runner-side poll.
+  await canvas.evaluate((element) => {
+    const observer = new MutationObserver(() => {
+      if (element.dataset.toolContact !== "true") return;
+      element.dataset.testProbeContact = "true";
+      observer.disconnect();
+    });
+    observer.observe(element, {
+      attributes: true,
+      attributeFilter: ["data-tool-contact"],
+    });
+  });
   await measure("P1", "5.00 V", "probe");
-  await expect(canvas).toHaveAttribute("data-tool-contact", "true");
+  await expect(canvas).toHaveAttribute("data-test-probe-contact", "true");
   await expect(canvas).toHaveAttribute("data-meter-voltage", "5.00 V");
   await page.screenshot({ path: info.outputPath("m15-probe.png") });
   await expect(canvas).toHaveAttribute("data-probe-highlights", "2");
