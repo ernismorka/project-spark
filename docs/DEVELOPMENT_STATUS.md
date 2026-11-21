@@ -135,3 +135,5 @@ The desktop captures show the relative scale at arrival, the open case and scrap
 In matched 1920 × 1080 headed Chromium runs on the Radeon 780M, the framebuffer was 1827 × 810. During active soldering, Chrome presentation feedback measured M16 at 238.2 FPS, with 4.17 ms median and 4.22 ms p95. M17 measured 239.3 FPS, with 4.17 ms median and 4.25 ms p95 over 1,441 intervals. The longest M17 interval was 8.36 ms. The AMD 3D-engine samples were 70–72% in both runs. These are short observations on one hardware configuration. The opening board remained at 64 draw calls in both local browser projects.
 
 The gzip scene bundle is 325.98 kB, up from 323.14 kB in M16. The production workshop asset and dependency set are unchanged. [Asset provenance](ART_ASSETS.md).
+
+[PR #21](https://github.com/ernismorka/project-spark/pull/21) tracks review and exact final-head CI.

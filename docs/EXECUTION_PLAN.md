@@ -80,3 +80,5 @@ The owner authorized M17 on merged M16 `5d5d96b`. Work on `codex/m17-industrial-
 2. Give the engineer a hinged toolbox and articulated grips. Show the scraper, flux sprayer, heavy cable and shoulder-supported iron in the existing stage sequence.
 3. Show surface changes, the cable under placement, molten solder, sparks and the seal as the existing state advances. Retain the same puzzle, failure recovery, EN/LT, difficulty tiers and power, continuity and voltage gates.
 4. Verify the complete packaged repair, focus and motion settings in Chromium and Firefox. Inspect matched M16 and M17 captures and compare frame presentation at a matched resolution. Record asset provenance and open the review PR.
+
+Implementation, local browser verification and capture review are complete. [PR #21](https://github.com/ernismorka/project-spark/pull/21) tracks review and final-head CI. See [Development status](DEVELOPMENT_STATUS.md) for the test and performance evidence. A later milestone requires owner approval.
