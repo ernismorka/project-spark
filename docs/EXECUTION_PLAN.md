@@ -71,3 +71,14 @@ The owner authorized M16 on merged M15 `20e7dd5`. Use `codex/m16-trace-repair`.
 3. Exercise failure, retry, continuity and commissioning in unit tests and packaged browsers. Review real captures and record render workload and timing. Open a review PR without changing the demo delivery or cooperative pilot.
 
 The implementation is in [PR #20](https://github.com/ernismorka/project-spark/pull/20). See [Development status](DEVELOPMENT_STATUS.md) for verification evidence. The next milestone requires owner approval.
+
+## M17 Industrial-Scale Micro-World Repair
+
+The owner authorized M17 on merged M16 `5d5d96b`. Work on `codex/m17-industrial-repair`. Scale and effort come from enlarged PCB copper, a visible fracture, authentic component details and electronics tools.
+
+1. Rebuild the localized feed break and framing. Maintain a single projection for the camera, mouse and keyboard, and keep the work targets reachable at small viewport sizes.
+2. Give the engineer a hinged toolbox and articulated grips. Show the scraper, flux sprayer, heavy cable and shoulder-supported iron in the existing stage sequence.
+3. Show surface changes, the cable under placement, molten solder, sparks and the seal as the existing state advances. Retain the same puzzle, failure recovery, EN/LT, difficulty tiers and power, continuity and voltage gates.
+4. Verify the complete packaged repair, focus and motion settings in Chromium and Firefox. Inspect matched M16 and M17 captures and compare frame presentation at a matched resolution. Record asset provenance and open the review PR.
+
+Implementation, local browser verification and capture review are complete. [PR #21](https://github.com/ernismorka/project-spark/pull/21) tracks review and final-head CI. See [Development status](DEVELOPMENT_STATUS.md) for the test and performance evidence. A later milestone requires owner approval.

@@ -55,7 +55,12 @@ function App() {
   const e = episodeCopy[state.language];
   const field = episode.field;
   const [journalStage, setJournalStage] = useState<JournalStage>("closed");
-  const traceAim = useRef<TraceAim>({ x: 0, z: 0, engaged: false });
+  const traceAim = useRef<TraceAim>({
+    x: 0,
+    z: 0,
+    engaged: false,
+    toolbox: false,
+  });
   const playing = session.phase === "playing" && journalStage === "closed";
   const language = useRef(state.language);
   language.current = state.language;
@@ -106,6 +111,9 @@ function App() {
   const dispatch = useCallback(
     (command: unknown, notify = true) => {
       current.current = commandEpisode(current.current, command);
+      if (!current.current.field?.traceRepair && traceAim.current.toolbox) {
+        traceAim.current = { x: 0, z: 0, engaged: false, toolbox: false };
+      }
       if (notify) publish();
     },
     [publish],

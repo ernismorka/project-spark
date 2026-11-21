@@ -27,6 +27,10 @@ The two notebook leaves share the original M13 paper texture. Live journal ink a
 
 The work area uses original Project Spark geometry and materials authored in `apps/web/src/game/trace-bench.ts` and `apps/web/src/game/geometry.ts`. The pads, tool tray, insulated jumper, joints, coating and sparks use existing PlayCanvas shapes. The glove, probes and soldering pen reuse the existing workshop GLB. The milestone adds no art downloads or third-party asset licenses.
 
+## M17 feed repair worksite
+
+The copper fracture profiles, conductor faces, plated vias, chip capacitor, toolbox and repair tools are original geometry authored in `apps/web/src/game/trace-bench.ts`, `trace-equipment.ts` and `geometry.ts`. The engineer, glove and visor reuse the existing workshop GLB. The lid, grip poses and controlled particles are animated in the scene. M17 adds no external model, texture or animation files.
+
 ## Journal texture prompt
 
 > Use case: stylized-concept. Asset type: background texture for the live UI of an open engineer field journal in an original playful miniature PCB adventure. Orthographic straight-on single full-bleed warm ivory engineering paper sheet, very fine pale muted blue grid, subtle real paper fibers, sparse tiny blue pencil circuit sketches exclusively in the extreme corners (abstract solder-pad dots, wire curves); broad uniform clean light center for dark text overlay. Minimal quiet printmaking, cream #f8f0db, slate-blue ink, fine tactile fiber detail, flat evenly lit, no shadow, no book edges. No text, letters, numbers, logos, watermark, objects, perspective, or heavy stains. Full bleed square.

@@ -130,3 +130,7 @@ Open **Difficulty** in the header from the title screen or during exploration. *
 Switch power off at the work area. Aim with the pointer or arrow keys and hold the mouse button or **Space** to use the tool. Expose, clean, flux and tin both ends. Prepare the jumper in the tray and route it across the gap. When tinning or soldering, release the tool inside the heat gauge's target range. Clean the joints, test continuity, seal both ends and restore power. Finish with fresh voltage readings at all three field probes.
 
 Apprentice adds target rings and gives the most room for aiming and releasing the iron. Technician gives short tool prompts and a moderate tolerance. Engineer leaves the stage, gauge and feedback visible with stricter tolerance. You can lift the tool or leave with **Esc** and return with completed work and isolation intact. Reduced motion suppresses welding sparks.
+
+## M17 worksite and toolbox
+
+Click the physical toolbox or focus **Open toolbox** and press **Enter** to equip the repair tools. The engineer operates the scraper, sprayer, cable and shoulder-supported iron over the fractured copper feed. The existing pointer and arrow-key controls place the active tool. Hold the mouse button or **Space** while working and release the iron in the indicated heat range.
